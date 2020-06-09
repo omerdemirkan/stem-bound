@@ -10,7 +10,8 @@ export class InstructorService {
     ) { }
 
     async createInstructor(instructor: object) {
-        return this.Instructor.create(instructor)
+        const newInstructor = await this.Instructor.create(instructor);
+        return newInstructor;
     }
 
     async findInstructors(where: object = {}, options?: {
