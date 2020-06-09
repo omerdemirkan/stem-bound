@@ -9,9 +9,9 @@ import eventsLoader from './events.loader'
 export default async function ({ app }: {
     app: Application
 }) {
-    diLoader();
     expressLoader(app);
-    eventsLoader();
+    diLoader();
+    eventsLoader()
 
     await mongooseLoader();
 
