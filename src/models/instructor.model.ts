@@ -36,9 +36,10 @@ const instructorSchema: Schema = new Schema({
                 maxlength: [40, 'Maximum of 40 characters allowed for specialties']
             }
         ],
-        required: [true, 'Specialties required'],
-        minlength: [1, 'At least one specialty required'],
-        maxlength: [10, 'Maximum of 10 specialties allowed']
+        validate: {
+            validator: (specialties: string[]) => (specialties.length <= 10 && specialties.length > 0),
+            message: props => `1 to 10 specialties required.`
+        }
     }
 });
 

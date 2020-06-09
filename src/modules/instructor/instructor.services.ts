@@ -6,8 +6,12 @@ import { Model, Document, Types } from 'mongoose';
 export class InstructorService {
     constructor(
         @Inject('eventEmitter') private eventEmitter: EventEmitter,
-        @Inject('InstructorModel') private Instructor: Model<Document>
+        @Inject('models.Instructor') private Instructor: Model<Document>
     ) { }
+
+    async createInstructor(instructor: object) {
+        return this.Instructor.create(instructor)
+    }
 
     async findInstructors(where: object = {}, options?: {
         sort: object,
@@ -45,5 +49,9 @@ export class InstructorService {
 
     deleteInstructorById(id: Types.ObjectId) {
         return this.Instructor.findByIdAndDelete(id);
+    }
+
+    deleteInstructorsByIds(ids: Types.ObjectId[]) {
+        return this.Instructor.deleteMany({_id: {$in: ids}});
     }
 }

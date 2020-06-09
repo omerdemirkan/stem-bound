@@ -13,14 +13,27 @@ instructorRouter.get(
     instructorControllers.getInstructorById
 );
 
+instructorRouter.post(
+    '/',
+    instructorControllers.createInstructor
+);
+
+// Because delete requests often don't use a request body.
+// Not a rest-ful approach but the most efficient in practice.
+
 instructorRouter.patch(
     '/:id',
     instructorControllers.updateInstructorById
 );
 
+instructorRouter.post(
+    '/delete-many',
+    instructorControllers.deleteInstructorsByIds
+);
+
 instructorRouter.delete(
     '/:id',
-    instructorControllers.deleteInstructorExpenseById
+    instructorControllers.deleteInstructorById
 );
 
 export default instructorRouter;

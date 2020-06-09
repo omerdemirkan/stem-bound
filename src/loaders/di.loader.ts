@@ -13,9 +13,14 @@ export default function() {
     Container.set('eventEmitter', new EventEmitter());
 
     Object.keys(models).forEach(modelName => {
-        Container.set(`${modelName}Model`, (models as any)[modelName]);
+        Container.set(`models.${modelName}`, (models as any)[modelName]);
     });
-    // Container.set('models', models);
+
+    Container.set('models', models);
+
+    // Object.keys(services).forEach(serviceName => {
+    //     Container.set(`services.${serviceName}`, (services as any)[serviceName]);
+    // })
     
     Container.set('rateLimiter', rateLimiter);
     Container.set('jwt', {
