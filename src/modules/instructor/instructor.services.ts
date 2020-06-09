@@ -1,6 +1,6 @@
 import { Service, Inject } from 'typedi'
 import { EventEmitter } from 'events';
-import { Model, Document, Types, isValidObjectId } from 'mongoose';
+import { Model, Document, Types } from 'mongoose';
 
 @Service()
 export class InstructorService {
@@ -36,10 +36,14 @@ export class InstructorService {
     }
 
     updateInstructorById(id: Types.ObjectId, newInstructor: object) {
-        return this.Instructor.findOneAndUpdate(id, newInstructor);
+        return this.Instructor.findByIdAndUpdate(id, newInstructor);
     }
 
-    deleteUsers(where: object) {
+    deleteInstructors(where: object) {
         return this.Instructor.deleteMany(where);
+    }
+
+    deleteInstructorById(id: Types.ObjectId) {
+        return this.Instructor.findByIdAndDelete(id);
     }
 }
