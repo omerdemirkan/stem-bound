@@ -1,6 +1,5 @@
 import express, { Application } from 'express';
 import config from './config';
-
 import loaders from './loaders';
 
 const app: Application = express();

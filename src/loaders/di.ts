@@ -1,11 +1,15 @@
 import { Container } from 'typedi';
+import models from '../models';
+
 import { EventEmitter } from 'events';
-import models from '../models'
+import rateLimiter from 'express-rate-limit';
+
+// Dependency Injection Loader,
+// for dependencies that might be changed, things that need one global instance, and things that will be injected into services.
+
 
 export default function() {
     Container.set('eventEmitter', new EventEmitter());
-    
-    Object.keys(models).forEach(function(modelName: string) {
-        Container.set(modelName, (models as any)[modelName]);
-    });
+    Container.set('models', models);
+    Container.set('rateLimiter', rateLimiter);
 }
