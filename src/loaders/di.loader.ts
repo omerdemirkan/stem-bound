@@ -17,10 +17,6 @@ export default function() {
     });
 
     Container.set('models', models);
-
-    // Object.keys(services).forEach(serviceName => {
-    //     Container.set(`services.${serviceName}`, (services as any)[serviceName]);
-    // })
     
     Container.set('rateLimiter', rateLimiter);
     Container.set('jwt', {
