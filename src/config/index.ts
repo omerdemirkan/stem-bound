@@ -7,5 +7,6 @@ if (envFound.error) {
 }
 
 export default {
-    port: process.env.PORT
+    port: process.env.PORT,
+    localDbUrl: process.env.LOCAL_DB_URL
 }
