@@ -25,7 +25,7 @@ export class InstructorService {
         .find(where)
         .sort(options?.sort)
         .skip(options?.skip || 0)
-        .limit(options?.limit || 0)
+        .limit(options?.limit || 20)
 
         return users;
     }
