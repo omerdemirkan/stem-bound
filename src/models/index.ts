@@ -1,7 +1,3 @@
 
 
-import Instructor from './instructor.model';
-
-export default {
-    Instructor
-}
+export {default as Instructor} from './instructor.model';

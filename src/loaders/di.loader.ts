@@ -1,8 +1,7 @@
 import { Container } from 'typedi';
 import config from '../config'
 
-import { EventEmitter } from 'events';
-import models from '../models';
+import * as models from '../models';
 import rateLimiter from 'express-rate-limit';
 import jwt from 'jsonwebtoken'
 
@@ -10,8 +9,6 @@ import jwt from 'jsonwebtoken'
 // for dependencies that might be changed, things that need one global instance, and things that will be injected into services.
 
 export default function() {
-    Container.set('eventEmitter', new EventEmitter());
-
     Object.keys(models).forEach(modelName => {
         Container.set(`models.${modelName}`, (models as any)[modelName]);
     });
