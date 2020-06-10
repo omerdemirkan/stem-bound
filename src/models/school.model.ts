@@ -55,7 +55,7 @@ const schoolSchema = new mongoose.Schema({
     name: {
         type: String,
         required: [true, "School name required."],
-        minlength: 4,
+        minlength: 2,
         maxlength: 100
     },
     ncesid: {

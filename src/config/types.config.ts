@@ -59,6 +59,11 @@ export interface SchoolDataLocal {
     },
     demographics: {
         enrollment: number,
-        numTeachers: number
+        numTeachers: number,
+        url: string
+    },
+    contact: {
+        telephone: string,
+        website: string
     }
 }

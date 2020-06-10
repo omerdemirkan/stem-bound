@@ -13,4 +13,9 @@ schoolRouter.get(
     schoolController.getSchoolById
 );
 
+schoolRouter.post(
+    '/refresh-database',
+    schoolController.refreshDatabase
+);
+
 export default schoolRouter;

@@ -29,7 +29,7 @@ export async function mapSchoolData(schoolsData: SchoolDataOriginal[]) {
         name: schoolData.NAME,
         ncesid: schoolData.NCESID,
         districtId: schoolData.DISTRICTID,
-        startGrade: +schoolData.ST_GRADE,
+        startGrade: +schoolData.ST_GRADE || -1,
         endGrade: +schoolData.END_GRADE,
         location: {
             country: schoolData.COUNTRY,

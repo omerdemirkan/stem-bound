@@ -1,11 +1,10 @@
 import { Service, Inject, Container } from 'typedi';
-import { SchoolDatabaseService } from '../../services';
 import { Model, Document, Types } from 'mongoose';
+import { refreshSchoolDatabase } from '../../jobs/school.jobs';
 
 @Service()
 export default class SchoolService {
     constructor(
-        private schoolDbService: SchoolDatabaseService,
         @Inject('models.School') private School: Model<Document>
     ) {}
 
@@ -29,5 +28,9 @@ export default class SchoolService {
 
     findOneById(id: Types.ObjectId) {
         return this.School.findById(id);
+    }
+
+    async refreshDatabase({ url } : { url?: string }) {
+        return await refreshSchoolDatabase({ url });
     }
 }

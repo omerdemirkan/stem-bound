@@ -38,3 +38,18 @@ export async function getSchoolById(req: Request, res: Response) {
         .json(errorParser.json(e));
     }
 }
+
+export async function refreshDatabase(req: Request, res: Response) {
+    try {
+        const { url } = req.body;
+        const data = await schoolService.refreshDatabase({ url });
+
+        res.json({
+            data
+        })
+    } catch (e) {
+        res
+        .status(errorParser.status(e))
+        .json(errorParser.json(e));
+    }
+}
