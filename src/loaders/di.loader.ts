@@ -3,7 +3,8 @@ import config from '../config'
 
 import * as models from '../models';
 import rateLimiter from 'express-rate-limit';
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
+import axios from 'axios';
 
 // Dependency Injection Loader,
 // for dependencies that might be changed, things that need one global instance, and things that will be injected into services.
@@ -24,4 +25,6 @@ export default function() {
             return jwt.verify(token, (config.accessTokenSecret as string), options)
         }
     });
+
+    Container.set('fetch', axios);
 }

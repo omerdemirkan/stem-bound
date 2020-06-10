@@ -42,7 +42,12 @@ export async function mapSchoolData(schoolsData: SchoolDataOriginal[]) {
         },
         demographics: {
             enrollment: +schoolData.ENROLLMENT,
-            numTeachers: +schoolData.FT_TEACHER
+            numTeachers: +schoolData.FT_TEACHER,
+            url: schoolData.SOURCE
+        },
+        contact: {
+            telephone: schoolData.TELEPHONE,
+            website: schoolData.WEBSITE
         }
     }))
 }
@@ -53,11 +58,11 @@ export async function getFilteredAndMappedSchoolData(schoolsData: SchoolDataOrig
     );
 }
 
-export function parseCsvAsync(csvString: string, options: csvParser.Options) {
-    return new Promise<SchoolDataOriginal[]>(function (resolve, reject) {
-        csvParser(csvString, options, async (err: any, schoolsData: SchoolDataOriginal[]) => {
+export function parseCsvAsync(csvString: string, options: csvParser.Options): Promise<any> {
+    return new Promise<any>(function (resolve, reject) {
+        csvParser(csvString, options, async (err: any, data) => {
             if (err) throw err;
-            resolve(schoolsData)
+            resolve(data)
         })
     });
 }

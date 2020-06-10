@@ -36,8 +36,20 @@ const demographicsSchema = new mongoose.Schema({
     },
     numTeachers: {
         type: Number
+    },
+    url: {
+        type: String
     }
 });
+
+const contactSchema = new mongoose.Schema({
+    telephone: {
+        type: String
+    },
+    website: {
+        type: String
+    }
+})
 
 const schoolSchema = new mongoose.Schema({
     name: {
@@ -70,6 +82,10 @@ const schoolSchema = new mongoose.Schema({
     demographics: {
         type: demographicsSchema,
         required: true
+    },
+    contact: {
+        type: contactSchema,
+        require: true
     }
 });
 
