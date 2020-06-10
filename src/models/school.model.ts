@@ -51,6 +51,9 @@ const schoolSchema = new mongoose.Schema({
         required: [true, "School ncesid required"],
         unique: true
     },
+    districtId: {
+        type: String
+    },
     startGrade: {
         type: Number
     },
