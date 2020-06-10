@@ -14,7 +14,7 @@ const locationSchema = new mongoose.Schema({
         required: [true, "School city required"]
     },
     zip: {
-        type: Number,
+        type: String,
         required: [true, "School zip code required"]
     },
     county: {
