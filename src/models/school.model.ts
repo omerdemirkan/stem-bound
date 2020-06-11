@@ -152,7 +152,7 @@ const schoolSchema = new Schema({
 });
 
 locationSchema.index({
-    geoJSON: '2d'
+    geoJSON: '2dsphere'
 });
 
 const School = mongoose.model('School', schoolSchema);

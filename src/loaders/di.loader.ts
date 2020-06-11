@@ -17,14 +17,7 @@ export default function() {
     Container.set('models', models);
     
     Container.set('rateLimiter', rateLimiter);
-    Container.set('jwt', {
-        sign: function (payload: string | object | Buffer, options?: jwt.SignOptions | undefined) {
-            return jwt.sign(payload, (config.accessTokenSecret as string), options)
-        },
-        verify: function (token: string, options?: jwt.VerifyOptions | undefined) {
-            return jwt.verify(token, (config.accessTokenSecret as string), options)
-        }
-    });
+    Container.set('jwt', jwt);
 
     Container.set('fetch', axios);
 }
