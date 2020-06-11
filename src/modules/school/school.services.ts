@@ -1,5 +1,5 @@
 import { Service, Inject, Container } from 'typedi';
-import { Model, Document, Types } from 'mongoose';
+import { Model, Document, Types, MongooseFilterQuery } from 'mongoose';
 import { refreshSchoolDatabase } from '../../jobs/school.jobs';
 
 @Service()
@@ -19,6 +19,29 @@ export default class SchoolService {
         .skip(options?.skip || 0)
         .limit(options?.limit || 20)
 
+        return schools;
+    }
+
+    async findSchoolsByCoordinates({ coordinates, maxDistance, limit }: {
+        coordinates: number[],
+        maxDistance?: number,
+        limit?: number,
+        query?: MongooseFilterQuery<{_id: Types.ObjectId}>
+    }) {
+        const schools = await this.School.aggregate([
+            {
+                $geoNear: {
+                    near: { 
+                        type: "Point", 
+                        coordinates 
+                    },
+                    distanceField: "distance.calculated",
+                    key: "location.geoJSON"
+                }
+            },
+            { $limit: 5 }
+        ])
+        
         return schools;
     }
 

@@ -1,5 +1,18 @@
 import mongoose from 'mongoose';
 
+const geoJsonSchema = new mongoose.Schema({
+    type: {
+        type: String,
+        enum: ['Point'],
+        required: true,
+        default: 'Point'
+    },
+    coordinates: {
+        type: [Number],
+        required: true
+    }
+})
+
 const locationSchema = new mongoose.Schema({
     country: {
         type: String,
@@ -27,7 +40,13 @@ const locationSchema = new mongoose.Schema({
     longitude: {
         type: Number,
         required: [true, "School longitude required"]
+    },
+    geoJSON: {
+        type: geoJsonSchema,
+        required: true
     }
+}, {
+    _id: false
 });
 
 const demographicsSchema = new mongoose.Schema({
@@ -40,6 +59,8 @@ const demographicsSchema = new mongoose.Schema({
     url: {
         type: String
     }
+}, {
+    _id: false
 });
 
 const contactSchema = new mongoose.Schema({
@@ -49,6 +70,8 @@ const contactSchema = new mongoose.Schema({
     website: {
         type: String
     }
+}, {
+    _id: false
 })
 
 const schoolSchema = new mongoose.Schema({
@@ -75,6 +98,10 @@ const schoolSchema = new mongoose.Schema({
             validator: (endGrade: number) => (endGrade === 12)
         }
     },
+    type: {
+        type: Number,
+        required: [true, "School type required"]
+    },
     location: {
         type: locationSchema,
         required: true
@@ -87,6 +114,12 @@ const schoolSchema = new mongoose.Schema({
         type: contactSchema,
         require: true
     }
+}, {
+    versionKey: false
+});
+
+locationSchema.index({
+    geoJSON: '2dsphere'
 });
 
 const School = mongoose.model('School', schoolSchema);

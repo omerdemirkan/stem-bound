@@ -47,6 +47,7 @@ export interface SchoolDataLocal {
     ncesid: string,
     districtId: string,
     startGrade: number,
+    type: number,
     endGrade: number,
     location: {
         country: string,
@@ -56,6 +57,10 @@ export interface SchoolDataLocal {
         county: string,
         latitude: number,
         longitude: number
+        geoJSON: {
+            type: 'Point',
+            coordinates: number[]
+        }
     },
     demographics: {
         enrollment: number,

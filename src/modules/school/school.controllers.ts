@@ -12,7 +12,15 @@ const errorParser = Container.get(ErrorParserService);
 
 export async function getSchools(req: Request, res: Response) {
     try {
-        const data = schoolService.findSchools();
+        const { lat, long, max_distance, limit, query } = req.query;
+        let data;
+        if (lat && long) {
+            data = await schoolService.findSchoolsByCoordinates({
+                coordinates: [+long, +lat]
+            })
+        } else {
+            data = await schoolService.findSchools();
+        }
 
         res.json({
             data
@@ -27,7 +35,7 @@ export async function getSchools(req: Request, res: Response) {
 export async function getSchoolById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id)
-        const data = schoolService.findOneById(id)
+        const data = await schoolService.findOneById(id)
 
         res.json({
             data

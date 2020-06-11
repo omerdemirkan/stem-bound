@@ -31,6 +31,7 @@ export async function mapSchoolData(schoolsData: SchoolDataOriginal[]) {
         districtId: schoolData.DISTRICTID,
         startGrade: +schoolData.ST_GRADE || -1,
         endGrade: +schoolData.END_GRADE,
+        type: +schoolData.TYPE,
         location: {
             country: schoolData.COUNTRY,
             state: schoolData.STATE,
@@ -38,7 +39,11 @@ export async function mapSchoolData(schoolsData: SchoolDataOriginal[]) {
             zip: schoolData.ZIP,
             county: schoolData.COUNTY,
             latitude: +schoolData.LATITUDE,
-            longitude: +schoolData.LONGITUDE
+            longitude: +schoolData.LONGITUDE,
+            geoJSON: {
+                type: 'Point',
+                coordinates: [+schoolData.LONGITUDE, +schoolData.LATITUDE] // In GeoJSON longitude comes first.
+            }
         },
         demographics: {
             enrollment: +schoolData.ENROLLMENT,
