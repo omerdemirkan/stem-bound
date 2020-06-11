@@ -1,6 +1,7 @@
 import { Service, Inject, Container } from 'typedi';
 import { Model, Document, Types, MongooseFilterQuery } from 'mongoose';
 import { refreshSchoolDatabase } from '../../jobs/school.jobs';
+import { SchoolDataLocal } from '../../config/types.config';
 
 @Service()
 export default class SchoolService {
@@ -9,11 +10,11 @@ export default class SchoolService {
     ) {}
 
     async findSchools(where: object = {}, options?: {
-        sort: object,
-        skip: number,
-        limit: number
+        sort?: object,
+        skip?: number,
+        limit?: number
     }) {
-        const schools = this.School
+        const schools = await this.School
         .find(where)
         .sort(options?.sort)
         .skip(options?.skip || 0)
@@ -21,33 +22,48 @@ export default class SchoolService {
 
         return schools;
     }
+    
 
-    async findSchoolsByCoordinates({ coordinates, maxDistance, limit }: {
+    async findSchoolsByCoordinates({ coordinates, maxDistance, limit, query, skip }: {
         coordinates: number[],
-        maxDistance?: number,
-        limit?: number,
-        query?: MongooseFilterQuery<{_id: Types.ObjectId}>
-    }) {
-        const schools = await this.School.aggregate([
-            {
-                $geoNear: {
-                    near: { 
-                        type: "Point", 
-                        coordinates 
-                    },
-                    distanceField: "distance.calculated",
-                    key: "location.geoJSON"
-                }
-            },
-            { $limit: 5 }
-        ])
+        maxDistance?: number | null,
+        limit?: number | null,
+        query?: MongooseFilterQuery<SchoolDataLocal> | null,
+        skip?: number | null
+    }): Promise<SchoolDataLocal[]> {
+        const aggregateOptions: any[] = [];
+        aggregateOptions.push({
+            $geoNear: {
+                near: { 
+                    type: "Point", 
+                    coordinates
+                },
+                distanceField: "distance.calculated",
+                key: "location.geoJSON"
+            }
+        })
+
+        if (query) {
+            aggregateOptions[0].query = query;
+        }
+
+        if (skip) {
+            aggregateOptions.push({ $skip: skip });
+        }
+
+        if (limit) {
+            aggregateOptions.push({ $limit: limit > 50 ? 50 : limit });
+        }
+        const schools = await this.School.aggregate(aggregateOptions)
         
         return schools;
     }
 
+
     findSchool(where: object) {
         return this.School.findOne(where);
     }
+
 
     findOneById(id: Types.ObjectId) {
         return this.School.findById(id);

@@ -3,6 +3,7 @@ import { Container } from 'typedi';
 import SchoolService from './school.services';
 import { ErrorParserService } from '../../services';
 import { Types } from 'mongoose';
+import { configureFindSchoolsQuery } from './school.helpers';
 
 
 const { ObjectId } = Types;
@@ -12,14 +13,16 @@ const errorParser = Container.get(ErrorParserService);
 
 export async function getSchools(req: Request, res: Response) {
     try {
-        const { lat, long, max_distance, limit, query } = req.query;
-        let data;
-        if (lat && long) {
+        const { coordinates, limit, skip, query } = configureFindSchoolsQuery(req.query);
+        let data
+        if (coordinates) {
             data = await schoolService.findSchoolsByCoordinates({
-                coordinates: [+long, +lat]
+                coordinates,
+                limit,
+                skip
             })
         } else {
-            data = await schoolService.findSchools();
+            data = await schoolService.findSchools(query)
         }
 
         res.json({

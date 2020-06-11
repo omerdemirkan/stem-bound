@@ -16,7 +16,10 @@ export async function getFilteredSchoolData(schoolsData: SchoolDataOriginal[]) {
 
     while (i--) {
         school = schoolsData[i]
-        if ( school.END_GRADE === '12' ) {
+        if ( 
+            school.END_GRADE === '12'
+            && school.STATUS !== '2'
+        ) {
             filteredSchoolData.push(school);
         }
     }
@@ -32,6 +35,7 @@ export async function mapSchoolData(schoolsData: SchoolDataOriginal[]) {
         startGrade: +schoolData.ST_GRADE || -1,
         endGrade: +schoolData.END_GRADE,
         type: +schoolData.TYPE,
+        status: +schoolData.STATUS,
         location: {
             country: schoolData.COUNTRY,
             state: schoolData.STATE,

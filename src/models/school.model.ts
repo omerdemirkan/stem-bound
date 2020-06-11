@@ -102,6 +102,11 @@ const schoolSchema = new mongoose.Schema({
         type: Number,
         required: [true, "School type required"]
     },
+    status: {
+        type: Number,
+        enum: [1, 2, 3, 4, 5, 6, 7, 8],
+        required: [true, "School status required"]
+    },
     location: {
         type: locationSchema,
         required: true
@@ -119,7 +124,7 @@ const schoolSchema = new mongoose.Schema({
 });
 
 locationSchema.index({
-    geoJSON: '2dsphere'
+    geoJSON: '2d'
 });
 
 const School = mongoose.model('School', schoolSchema);

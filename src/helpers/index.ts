@@ -1,3 +1,3 @@
 
 
-export * as schoolDatabaseHelpers from './school.helpers';
+export * as schoolDatabaseHelpers from './school.db.helpers';

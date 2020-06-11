@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 
 
 export class Subscriber {
@@ -43,12 +44,14 @@ export interface SchoolDataOriginal {
 }
 
 export interface SchoolDataLocal {
+    _id?: Types.ObjectId,
     name: string,
     ncesid: string,
     districtId: string,
     startGrade: number,
     type: number,
     endGrade: number,
+    status: number,
     location: {
         country: string,
         state: string,

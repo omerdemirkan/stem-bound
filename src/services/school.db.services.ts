@@ -8,7 +8,7 @@ import {
     schoolCsvColumns,
     SchoolDataLocal,
     SchoolDataOriginal
-} from '../helpers/school.helpers'
+} from '../helpers/school.db.helpers'
 import { AxiosInstance } from 'axios';
 
 @Service()
