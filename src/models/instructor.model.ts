@@ -1,5 +1,22 @@
 import mongoose, {Schema, Model} from 'mongoose';
 
+const metaSchema = new Schema({
+    courses: {
+        type: [Schema.Types.ObjectId],
+        required: true,
+        default: [],
+        unique: true
+    },
+    students: {
+        type: [Schema.Types.ObjectId],
+        required: true,
+        default: [],
+        unique: true
+    }
+}, {
+    _id: false
+});
+
 const instructorSchema: Schema = new Schema({
     firstName: {
         type: String,
@@ -40,6 +57,11 @@ const instructorSchema: Schema = new Schema({
             validator: (specialties: string[]) => (specialties.length <= 10 && specialties.length > 0),
             message: props => `1 to 10 specialties required.`
         }
+    },
+    meta: {
+        type: metaSchema,
+        required: true,
+        default: {}
     }
 });
 

@@ -57,7 +57,8 @@ export async function mapSchoolData(schoolsData: SchoolDataOriginal[]) {
         contact: {
             telephone: schoolData.TELEPHONE,
             website: schoolData.WEBSITE
-        }
+        },
+        meta: {}
     }))
 }
 

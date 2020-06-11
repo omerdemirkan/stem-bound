@@ -47,13 +47,10 @@ export default class SchoolService {
             aggregateOptions[0].query = query;
         }
 
-        if (skip) {
-            aggregateOptions.push({ $skip: skip });
-        }
+        aggregateOptions.push({ $skip: skip || 0 });
 
-        if (limit) {
-            aggregateOptions.push({ $limit: limit > 50 ? 50 : limit });
-        }
+        aggregateOptions.push(limit ? { $limit: limit > 50 ? 50 : limit } : { $limit: 20 });
+
         const schools = await this.School.aggregate(aggregateOptions)
         
         return schools;

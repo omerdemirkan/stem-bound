@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
-const geoJsonSchema = new mongoose.Schema({
+const geoJsonSchema = new Schema({
     type: {
         type: String,
         enum: ['Point'],
@@ -13,7 +13,7 @@ const geoJsonSchema = new mongoose.Schema({
     }
 })
 
-const locationSchema = new mongoose.Schema({
+const locationSchema = new Schema({
     country: {
         type: String,
         default: "USA"
@@ -49,7 +49,7 @@ const locationSchema = new mongoose.Schema({
     _id: false
 });
 
-const demographicsSchema = new mongoose.Schema({
+const demographicsSchema = new Schema({
     enrollment: {
         type: Number
     },
@@ -63,7 +63,7 @@ const demographicsSchema = new mongoose.Schema({
     _id: false
 });
 
-const contactSchema = new mongoose.Schema({
+const contactSchema = new Schema({
     telephone: {
         type: String
     },
@@ -74,7 +74,30 @@ const contactSchema = new mongoose.Schema({
     _id: false
 })
 
-const schoolSchema = new mongoose.Schema({
+const metaSchema = new Schema({
+    schoolOfficials: {
+        type: [Schema.Types.ObjectId],
+        required: true,
+        default: [],
+        unique: true
+    },
+    students: {
+        type: [Schema.Types.ObjectId],
+        required: true,
+        default: [],
+        unique: true
+    },
+    courses: {
+        type: [Schema.Types.ObjectId],
+        required: true,
+        default: [],
+        unique: true
+    }
+}, {
+    _id: false
+});
+
+const schoolSchema = new Schema({
     name: {
         type: String,
         required: [true, "School name required."],
@@ -118,6 +141,11 @@ const schoolSchema = new mongoose.Schema({
     contact: {
         type: contactSchema,
         require: true
+    },
+    meta: {
+        type: metaSchema,
+        required: true,
+        default: {}
     }
 }, {
     versionKey: false
