@@ -5,21 +5,12 @@ const metaSchema = new Schema({
     school: {
         type: Schema.Types.ObjectId,
         required: true
-    },
-    courses: {
-        type: [Schema.Types.ObjectId],
-        required: true,
-        default: [],
-        validate: {
-            validator: schemaValidators.uniqueArray,
-            message: 'all course ids added must be unique.'
-        }
     }
 }, {
     _id: false
 });
 
-const studentSchema = new Schema({
+const schoolOfficialSchema = new Schema({
     firstName: {
         type: String,
         minlength: 2,
@@ -51,33 +42,11 @@ const studentSchema = new Schema({
         required: true,
         trim: true
     },
-    interests: {
-        type: [
-            {
-                type: String,
-                unique: true,
-                minlength: [2, 'At least 2 characters required for interests'],
-                maxlength: [40, 'Maximum of 40 characters allowed for interests'],
-                trim: true
-            }
-        ],
-        validate: {
-            validator: schemaValidators.arrayLength({ min: 1, max: 10 }),
-            message: props => `1 to 10 interests required.`
-        }
-    },
-    shortDescription: {
+    position: {
         type: String,
+        maxlength: 200,
+        minlength: 8,
         required: true,
-        minlength: 4,
-        maxlength: 60,
-        default: "Hi! I'm a Stem-bound™ instructor.",
-        trim: true
-    },
-    longDescription: {
-        type: String,
-        minlength: 4,
-        maxlength: 2000,
         trim: true
     },
     meta: {
@@ -90,6 +59,6 @@ const studentSchema = new Schema({
     }
 });
 
-const Students = mongoose.model('Student', studentSchema);
+const SchoolOfficials = mongoose.model('SchoolOfficial', schoolOfficialSchema);
 
-export default Students;
+export default SchoolOfficials;

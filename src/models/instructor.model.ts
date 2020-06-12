@@ -86,6 +86,10 @@ const instructorSchema: Schema = new Schema({
         required: true,
         default: {}
     }
+}, {
+    timestamps: {
+        createdAt: true
+    }
 });
 
 const Instructors = mongoose.model('Instructor', instructorSchema);
