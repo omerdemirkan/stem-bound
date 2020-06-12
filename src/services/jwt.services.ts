@@ -19,7 +19,9 @@ export default class JwtService {
         const authHeader: string | undefined = req.headers.authorization;
         const token: string | null = authHeader ? authHeader.split(' ')[1] : null;
     
-        if (!token) return res.sendStatus(401);
+        if (!token) return res.status(401).json({ 
+            message: 'Valid token not found.' 
+        });
     
         try {
             (req as any).payload = this.verify(token);

@@ -1,17 +1,24 @@
 import mongoose, {Schema, Model} from 'mongoose';
+import { schemaValidators } from '../helpers/model.helpers';
 
 const metaSchema = new Schema({
     courses: {
         type: [Schema.Types.ObjectId],
         required: true,
         default: [],
-        unique: true
+        validate: {
+            validator: schemaValidators.uniqueArray,
+            message: 'all course ids added must be unique.'
+        }
     },
     students: {
         type: [Schema.Types.ObjectId],
         required: true,
         default: [],
-        unique: true
+        validate: {
+            validator: schemaValidators.uniqueArray,
+            message: 'all students ids added must be unique.'
+        }
     }
 }, {
     _id: false
@@ -38,9 +45,7 @@ const instructorSchema: Schema = new Schema({
         unique: true,
         trim: true,
         validate: {
-            validator: function (firstName: string) {
-                return /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/.test(firstName);
-            },
+            validator: schemaValidators.email,
             message: props => `${props.value} is not a valid email`
         }
     },
@@ -54,9 +59,21 @@ const instructorSchema: Schema = new Schema({
             }
         ],
         validate: {
-            validator: (specialties: string[]) => (specialties.length <= 10 && specialties.length > 0),
+            validator: schemaValidators.arrayLength({ min: 1, max: 10 }),
             message: props => `1 to 10 specialties required.`
         }
+    },
+    shortDescription: {
+        type: String,
+        required: true,
+        minlength: 4,
+        maxlength: 60,
+        default: "Hi! I'm a Stem-bound™ instructor."
+    },
+    longDescription: {
+        type: String,
+        minlength: 4,
+        maxlength: 2000
     },
     meta: {
         type: metaSchema,

@@ -43,3 +43,9 @@ export const schoolCsvColumns = [
     'FT_TEACHER',
     'SHELTER_ID'
 ]
+
+export const courseTypes = [
+    'IN_PERSON',
+    'REMOTE',
+    'HYBRID'
+]

@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import { schemaValidators } from '../helpers/model.helpers';
 
 const geoJsonSchema = new Schema({
     type: {
@@ -79,19 +80,28 @@ const metaSchema = new Schema({
         type: [Schema.Types.ObjectId],
         required: true,
         default: [],
-        unique: true
+        validate: {
+            validator: schemaValidators.uniqueArray,
+            message: 'all schoolOfficial ids added must be unique.'
+        }
     },
     students: {
         type: [Schema.Types.ObjectId],
         required: true,
         default: [],
-        unique: true
+        validate: {
+            validator: schemaValidators.uniqueArray,
+            message: 'all student ids added must be unique.'
+        }
     },
     courses: {
         type: [Schema.Types.ObjectId],
         required: true,
         default: [],
-        unique: true
+        validate: {
+            validator: schemaValidators.uniqueArray,
+            message: 'all courses ids added must be unique.'
+        }
     }
 }, {
     _id: false
