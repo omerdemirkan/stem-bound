@@ -28,7 +28,7 @@ const schoolOfficialSchema = new Schema({
     email: {
         type: String,
         required: [true, 'Email name required'],
-        unique: true,
+        unique: [true, "Email already in use"],
         trim: true,
         validate: {
             validator: schemaValidators.email,

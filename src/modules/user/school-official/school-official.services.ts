@@ -46,6 +46,10 @@ export default class SchoolOfficialService {
         return this.SchoolOfficials.findById(id);
     }
 
+    findSchoolOfficialByEmail(email: string) {
+        return this.SchoolOfficials.findOne({ email })
+    }
+
     updateSchoolOfficial(where: object, newSchoolOfficial: object) {
         return this.SchoolOfficials.findOneAndUpdate(where, newSchoolOfficial);
     }

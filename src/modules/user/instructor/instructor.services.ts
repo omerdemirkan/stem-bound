@@ -46,6 +46,10 @@ export default class InstructorService {
         return this.Instructors.findById(id);
     }
 
+    findInstructorByEmail(email: string) {
+        return this.Instructors.findOne({ email })
+    }
+
     updateInstructor(where: object, newInstructor: object) {
         return this.Instructors.findOneAndUpdate(where, newInstructor);
     }

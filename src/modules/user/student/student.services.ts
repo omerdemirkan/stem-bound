@@ -46,6 +46,10 @@ export default class StudentService {
         return this.Students.findById(id);
     }
 
+    findStudentByEmail(email: string) {
+        return this.Students.findOne({ email })
+    }
+
     updateStudent(where: object, newStudent: object) {
         return this.Students.findOneAndUpdate(where, newStudent);
     }

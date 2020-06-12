@@ -9,7 +9,9 @@ export default class ErrorParserService {
     
     json(error: Error) {
         return {
-            message: error.message
+            error: {
+                message: error.message
+            }
         }
     }
 }
