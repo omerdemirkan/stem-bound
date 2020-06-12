@@ -7,8 +7,8 @@ import { Subscriber } from '../config/types.config';
 export default new Subscriber(function() {
     const eventEmitter: EventEmitter = Container.get(EventEmitter);
 
-    eventEmitter.on(events.user.USER_SIGNUP, function() {
-        console.log('inside eventEmitter listening to user signup');
+    eventEmitter.on(events.user.USER_SIGNUP, function({ role, user }) {
+        console.log(`User of type ${role} signed up`);
     });
 });
 

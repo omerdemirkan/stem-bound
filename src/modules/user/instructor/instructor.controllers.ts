@@ -2,7 +2,7 @@ import { Container } from 'typedi';
 import { Request, Response } from 'express';
 import { Types } from 'mongoose';
 
-import { InstructorService } from './instructor.services';
+import InstructorService from './instructor.services';
 import { ErrorParserService } from '../../../services';
 
 const { ObjectId } = Types

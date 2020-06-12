@@ -14,11 +14,6 @@ studentRouter.get(
     studentControllers.getStudentById
 );
 
-studentRouter.post(
-    '/',
-    studentControllers.createStudent
-);
-
 // Because delete requests often don't use a request body.
 // Not a rest-ful approach but the most efficient in practice.
 

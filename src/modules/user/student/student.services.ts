@@ -2,6 +2,7 @@ import { Service, Inject } from 'typedi';
 import { Model, Document, Types } from 'mongoose';
 import { EventEmitter } from 'events';
 import { events } from '../../../config/constants.config';
+import { UserRolesEnum } from '../../../config/types.config';
 
 @Service()
 export default class StudentService {
@@ -10,24 +11,31 @@ export default class StudentService {
         private eventEmitter: EventEmitter
     ) { }
 
-    async createStudent(Student: object) {
-        const newStudent = await this.Students.create(Student);
-        this.eventEmitter.emit(events.user.USER_SIGNUP);
+    async createStudent(student: any) {
+        if (student.password) throw new Error("We don't store passwords around here fella!")
+
+        const newStudent = await this.Students.create(student);
+
+        this.eventEmitter.emit(events.user.USER_SIGNUP, { 
+            role: UserRolesEnum.INSTRUCTOR, 
+            user: newStudent
+        });
+
         return newStudent;
     }
 
     async findStudents(where: object = {}, options?: {
-        sort: object,
-        skip: number,
-        limit: number
+        sort?: object,
+        skip?: number,
+        limit?: number
     }) {
-        const users = await this.Students
+        const students = await this.Students
         .find(where)
         .sort(options?.sort)
         .skip(options?.skip || 0)
         .limit(options?.limit || 20)
 
-        return users;
+        return students;
     }
 
     findStudent(where: object) {

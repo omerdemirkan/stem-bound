@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 
 
 export class Subscriber {
+    private initialized = false;
     constructor(
         public initialize: () => void
     ) { }
@@ -79,4 +80,10 @@ export interface SchoolDataLocal {
         students: Types.ObjectId[],
         courses: Types.ObjectId[]
     }
+}
+
+export enum UserRolesEnum {
+    'SCHOOL_OFFICIAL',
+    'STUDENT',
+    'INSTRUCTOR'
 }
