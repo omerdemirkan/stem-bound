@@ -165,6 +165,6 @@ locationSchema.index({
     geoJSON: '2dsphere'
 });
 
-const School = mongoose.model('School', schoolSchema);
+const Schools = mongoose.model('School', schoolSchema);
 
-export default School;
+export default Schools;

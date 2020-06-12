@@ -7,11 +7,11 @@ import { events } from '../../../config/constants.config';
 export class InstructorService {
     constructor(
         private eventEmitter: EventEmitter,
-        @Inject('models.Instructor') private Instructor: Model<Document>
+        @Inject('models.Instructors') private Instructors: Model<Document>
     ) { }
 
     async createInstructor(instructor: object) {
-        const newInstructor = await this.Instructor.create(instructor);
+        const newInstructor = await this.Instructors.create(instructor);
         this.eventEmitter.emit(events.user.USER_SIGNUP);
         return newInstructor;
     }
@@ -21,7 +21,7 @@ export class InstructorService {
         skip: number,
         limit: number
     }) {
-        const users = await this.Instructor
+        const users = await this.Instructors
         .find(where)
         .sort(options?.sort)
         .skip(options?.skip || 0)
@@ -31,30 +31,30 @@ export class InstructorService {
     }
 
     findInstructor(where: object) {
-        return this.Instructor.findOne(where)
+        return this.Instructors.findOne(where)
     }
 
     findInstructorById(id: Types.ObjectId) {
-        return this.Instructor.findById(id);
+        return this.Instructors.findById(id);
     }
 
     updateInstructor(where: object, newInstructor: object) {
-        return this.Instructor.findOneAndUpdate(where, newInstructor);
+        return this.Instructors.findOneAndUpdate(where, newInstructor);
     }
 
     updateInstructorById(id: Types.ObjectId, newInstructor: object) {
-        return this.Instructor.findByIdAndUpdate(id, newInstructor);
+        return this.Instructors.findByIdAndUpdate(id, newInstructor);
     }
 
     deleteInstructors(where: object) {
-        return this.Instructor.deleteMany(where);
+        return this.Instructors.deleteMany(where);
     }
 
     deleteInstructorById(id: Types.ObjectId) {
-        return this.Instructor.findByIdAndDelete(id);
+        return this.Instructors.findByIdAndDelete(id);
     }
 
     deleteInstructorsByIds(ids: Types.ObjectId[]) {
-        return this.Instructor.deleteMany({_id: {$in: ids}});
+        return this.Instructors.deleteMany({_id: {$in: ids}});
     }
 }

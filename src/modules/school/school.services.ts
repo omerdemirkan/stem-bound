@@ -6,7 +6,7 @@ import { SchoolDataLocal } from '../../config/types.config';
 @Service()
 export default class SchoolService {
     constructor(
-        @Inject('models.School') private School: Model<Document>
+        @Inject('models.Schools') private Schools: Model<Document>
     ) {}
 
     async findSchools(where: object = {}, options?: {
@@ -14,7 +14,7 @@ export default class SchoolService {
         skip?: number,
         limit?: number
     }) {
-        const schools = await this.School
+        const schools = await this.Schools
         .find(where)
         .sort(options?.sort)
         .skip(options?.skip || 0)
@@ -51,19 +51,19 @@ export default class SchoolService {
 
         aggregateOptions.push(limit ? { $limit: limit > 50 ? 50 : limit } : { $limit: 20 });
 
-        const schools = await this.School.aggregate(aggregateOptions)
+        const schools = await this.Schools.aggregate(aggregateOptions)
         
         return schools;
     }
 
 
     findSchool(where: object) {
-        return this.School.findOne(where);
+        return this.Schools.findOne(where);
     }
 
 
     findOneById(id: Types.ObjectId) {
-        return this.School.findById(id);
+        return this.Schools.findById(id);
     }
 
     async refreshDatabase({ url } : { url?: string }) {

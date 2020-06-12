@@ -49,6 +49,12 @@ const instructorSchema: Schema = new Schema({
             message: props => `${props.value} is not a valid email`
         }
     },
+    hash: {
+        type: String,
+        maxlength: 200,
+        minlength: 8,
+        required: true
+    },
     specialties: {
         type: [
             {
@@ -82,6 +88,6 @@ const instructorSchema: Schema = new Schema({
     }
 });
 
-const Instructor = mongoose.model('Instructor', instructorSchema);
+const Instructors = mongoose.model('Instructor', instructorSchema);
 
-export default Instructor;
+export default Instructors;
