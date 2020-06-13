@@ -94,5 +94,6 @@ export interface SchoolDataLocal {
 export enum UserRolesEnum {
     SCHOOL_OFFICIAL = 'SCHOOL_OFFICIAL',
     STUDENT = 'STUDENT',
-    INSTRUCTOR='INSTRUCTOR'
+    INSTRUCTOR ='INSTRUCTOR',
+    ADMIN = 'ADMIN'
 }
