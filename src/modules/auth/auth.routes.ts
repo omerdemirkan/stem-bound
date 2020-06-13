@@ -18,4 +18,9 @@ authRouter.post(
     authControllers.signUp
 )
 
+authRouter.post(
+    '/log-in',
+    authControllers.logIn
+);
+
 export default authRouter;

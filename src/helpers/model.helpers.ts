@@ -21,6 +21,6 @@ export const schemaValidators = {
     },
 
     arrayLength({ min, max }: { min: number, max: number }) {
-        return (array: any[]) => (array.length <= max && array.length > min)
+        return (array: any[]) => (array.length <= max && array.length >= min)
     }
 }

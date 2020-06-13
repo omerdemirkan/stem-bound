@@ -15,7 +15,7 @@ export default class JwtService {
         return jwt.verify(token, (config.accessTokenSecret as string), options)
     }
 
-    async extractPayloadMiddleware(req: Request, res: Response, next: NextFunction) {
+    extractPayloadMiddleware = async (req: Request, res: Response, next: NextFunction) => {
         const authHeader: string | undefined = req.headers.authorization;
         const token: string | null = authHeader ? authHeader.split(' ')[1] : null;
     
@@ -24,9 +24,10 @@ export default class JwtService {
         });
     
         try {
-            (req as any).payload = this.verify(token);
+            (req as any).payload = await this.verify(token);
             next();
         } catch (e) {
+            console.log(e);
             res.sendStatus(403);
         }
     }
