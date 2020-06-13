@@ -81,7 +81,7 @@ const metaSchema = new Schema({
         required: true,
         default: [],
         validate: {
-            validator: schemaValidators.uniqueArray,
+            validator: schemaValidators.uniqueStringArray,
             message: 'all schoolOfficial ids added must be unique.'
         }
     },
@@ -90,7 +90,7 @@ const metaSchema = new Schema({
         required: true,
         default: [],
         validate: {
-            validator: schemaValidators.uniqueArray,
+            validator: schemaValidators.uniqueStringArray,
             message: 'all student ids added must be unique.'
         }
     },
@@ -99,7 +99,7 @@ const metaSchema = new Schema({
         required: true,
         default: [],
         validate: {
-            validator: schemaValidators.uniqueArray,
+            validator: schemaValidators.uniqueStringArray,
             message: 'all courses ids added must be unique.'
         }
     }

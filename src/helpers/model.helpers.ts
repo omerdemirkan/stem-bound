@@ -5,18 +5,13 @@
 
 export const schemaValidators = {
 
-    uniqueArray (values: any[]): boolean {
-        if (!values.length) return true;
+    uniqueStringArray (values: string[]): boolean {
+        let obj: any = {};
+
         let i = values.length;
-        let j;
         while (i--) {
-            j = i - 1;
-            while (j--) {
-                if (values[i] === values[j]) {
-                    return false;
-                    break;
-                }
-            }
+            if (obj[values[i]]) return false;
+            obj[values[i]] = true;
         }
         return true;
     },

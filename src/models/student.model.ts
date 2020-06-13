@@ -11,7 +11,7 @@ const metaSchema = new Schema({
         required: true,
         default: [],
         validate: {
-            validator: schemaValidators.uniqueArray,
+            validator: schemaValidators.uniqueStringArray,
             message: 'all course ids added must be unique.'
         }
     }

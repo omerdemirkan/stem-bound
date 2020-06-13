@@ -3,9 +3,18 @@ import { Types } from "mongoose";
 
 export class Subscriber {
     private initialized = false;
+    public initialize: () => void;
     constructor(
-        public initialize: () => void
-    ) { }
+        initialize: () => void
+    ) { 
+        // To ensure one initialization
+        this.initialize = function() {
+            if (!this.initialized) {
+                initialize.call(this)
+                this.initialized = true;
+            }
+        };
+    }
 }
 
 export interface SchoolDataOriginal {
