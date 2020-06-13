@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { ErrorParserService, JwtService } from '../../services';
 import Container from 'typedi';
 import AuthService from './auth.services';
-import { UserRolesEnum } from '../../config/types.config';
 
 const errorParser = Container.get(ErrorParserService);
 const authService = Container.get(AuthService);
