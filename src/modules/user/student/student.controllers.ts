@@ -79,20 +79,3 @@ export async function deleteStudentById(req: Request, res: Response) {
         .json(errorParser.json(e))
     }
 }
-
-export async function deleteStudentsByIds(req: Request, res: Response) {
-    try {
-        const ids: Types.ObjectId[] = req.body.ids
-        .map(
-            (id: string) => ObjectId(id)
-        );
-        const data = await studentService.deleteStudentsByIds(ids);
-        res.json({
-            data
-        });
-    } catch (e) {
-        res
-        .status(errorParser.status(e))
-        .json(errorParser.json(e))
-    }
-}

@@ -3,11 +3,13 @@ import { Model, Document, Types, MongooseFilterQuery } from 'mongoose';
 import { refreshSchoolDatabase } from '../../jobs/school.jobs';
 import { SchoolDataLocal } from '../../config/types.config';
 
+const { ObjectId } = Types
+
 @Service()
 export default class SchoolService {
     constructor(
         @Inject('models.Schools') private Schools: Model<Document>
-    ) {}
+    ) { }
 
     async findSchools(where: object = {}, options?: {
         sort?: object,
@@ -66,7 +68,44 @@ export default class SchoolService {
         return this.Schools.findById(id);
     }
 
+    async addStudentMetadata({ studentId, schoolId }: {
+        studentId: Types.ObjectId,
+        schoolId: Types.ObjectId
+    }) {
+        await this.Schools.updateOne({ _id: schoolId }, {
+            $push: { 'meta.students': studentId }
+        })
+    }
+
+    async removeStudentMetadata({ studentId, schoolId }: {
+        studentId: Types.ObjectId,
+        schoolId: Types.ObjectId
+    }) {
+        await this.Schools.updateOne({_id: schoolId}, {
+            $pull: { "meta.students": studentId }
+        });
+    }
+
+    async addSchoolOfficialMetadata({ schoolOfficialId, schoolId }: {
+        schoolOfficialId: Types.ObjectId,
+        schoolId: Types.ObjectId
+    }) {
+        await this.Schools.updateOne({ _id: schoolId }, {
+            $push: { 'meta.schoolOfficials': schoolOfficialId }
+        })
+    }
+
+    async removeSchoolOfficialMetadata({ schoolOfficialId, schoolId }: {
+        schoolOfficialId: Types.ObjectId,
+        schoolId: Types.ObjectId
+    }) {
+        await this.Schools.updateOne({_id: schoolId}, {
+            $pull: { "meta.schoolOfficials": schoolOfficialId }
+        });
+    }
+
     async refreshDatabase({ url } : { url?: string }) {
         return await refreshSchoolDatabase({ url });
     }
 }
+

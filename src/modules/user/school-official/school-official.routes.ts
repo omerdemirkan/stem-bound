@@ -27,16 +27,6 @@ schoolOfficialRouter.patch(
     schoolOfficialControllers.updateSchoolOfficialById
 );
 
-// Because delete requests often don't use a request body.
-// Not a rest-ful approach but the most efficient in practice.
-
-schoolOfficialRouter.post(
-    '/delete-many',
-    authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([UserRolesEnum.ADMIN]),
-    schoolOfficialControllers.deleteSchoolOfficialsByIds
-);
-
 schoolOfficialRouter.delete(
     '/:id',
     authMiddlewareService.extractTokenPayload,

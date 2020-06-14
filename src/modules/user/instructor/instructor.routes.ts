@@ -26,16 +26,6 @@ instructorRouter.patch(
     instructorControllers.updateInstructorById
 );
 
-// Because delete requests often don't use a request body.
-// Not a rest-ful approach but the most efficient in practice.
-
-instructorRouter.post(
-    '/delete-many',
-    authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ UserRolesEnum.ADMIN ]),
-    instructorControllers.deleteInstructorsByIds
-);
-
 instructorRouter.delete(
     '/:id',
     authMiddlewareService.extractTokenPayload,
