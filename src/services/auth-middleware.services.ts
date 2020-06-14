@@ -9,7 +9,7 @@ export default class AuthMiddlewareService {
         private jwtService: JwtService
     ) { }
 
-    extractPayloadMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+    extractTokenPayload = async (req: Request, res: Response, next: NextFunction) => {
         const authHeader: string | undefined = req.headers.authorization;
         const token: string | null = authHeader ? authHeader.split(' ')[1] : null;
     
@@ -27,25 +27,24 @@ export default class AuthMiddlewareService {
     }
 
     allowedRoles(allowedRoles: UserRolesEnum[]) {
-        return [
-            this.extractPayloadMiddleware,
-            async function(req: Request, res: Response, next: NextFunction) {
+        return async function(req: Request, res: Response, next: NextFunction) {
+            const { role } = (req as any).payload;
 
-                const { role } = (req as any).payload
-
-                if (allowedRoles.includes(role)) {
-                    next();
-                } else {
-                    res.sendStatus(403);
-                }
+            if (allowedRoles.includes(role)) {
+                next();
+            } else {
+                res.sendStatus(403);
             }
-        ]
+        }
     }
 
-    requireDocumentOwner(options?: {
-        paramKey: string,
-
-    }) {
-
+    matchParamIdToPayloadUserId(req: Request, res: Response, next: NextFunction) {
+        const id = req.params.id;
+        const payloadId = (req as any).payload.user._id || null;
+        if (id === payloadId || (req as any).payload.role === UserRolesEnum.ADMIN) {
+            next();
+        } else {
+            res.sendStatus(403);
+        }
     }
 }

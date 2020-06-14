@@ -6,7 +6,7 @@ import { UserRolesEnum } from '../../../config/types.config';
 import { AuthMiddlewareService } from '../../../services';
 
 const schoolOfficialRouter = Router();
-const authMiddlewareService: AuthMiddlewareService = Container.get(AuthMiddlewareService);
+const authMiddlewareService = Container.get(AuthMiddlewareService);
 
 
 schoolOfficialRouter.get(
@@ -21,7 +21,9 @@ schoolOfficialRouter.get(
 
 schoolOfficialRouter.patch(
     '/:id',
+    authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([UserRolesEnum.SCHOOL_OFFICIAL, UserRolesEnum.ADMIN]),
+    authMiddlewareService.matchParamIdToPayloadUserId,
     schoolOfficialControllers.updateSchoolOfficialById
 );
 
@@ -30,13 +32,16 @@ schoolOfficialRouter.patch(
 
 schoolOfficialRouter.post(
     '/delete-many',
+    authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([UserRolesEnum.ADMIN]),
     schoolOfficialControllers.deleteSchoolOfficialsByIds
 );
 
 schoolOfficialRouter.delete(
     '/:id',
-    authMiddlewareService.allowedRoles([UserRolesEnum.ADMIN]),
+    authMiddlewareService.extractTokenPayload,
+    authMiddlewareService.allowedRoles([UserRolesEnum.ADMIN, UserRolesEnum.SCHOOL_OFFICIAL]),
+    authMiddlewareService.matchParamIdToPayloadUserId,
     schoolOfficialControllers.deleteSchoolOfficialById
 );
 

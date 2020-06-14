@@ -1,7 +1,7 @@
 import { Container } from 'typedi';
 import { Router } from 'express';
 import * as authControllers from './auth.controllers';
-import { JwtService, AuthMiddlewareService } from '../../services';
+import { AuthMiddlewareService } from '../../services';
 
 const authMiddlewareService = Container.get(AuthMiddlewareService);
 
@@ -9,7 +9,7 @@ const authRouter = Router();
 
 authRouter.get(
     '/me',
-    authMiddlewareService.extractPayloadMiddleware,
+    authMiddlewareService.extractTokenPayload,
     authControllers.me
 );
 

@@ -5,7 +5,7 @@ import { UserRolesEnum } from '../../config/types.config';
 import { AuthMiddlewareService } from '../../services';
 
 const schoolRouter = Router();
-const authMiddlewareService: AuthMiddlewareService = Container.get(AuthMiddlewareService)
+const authMiddlewareService = Container.get(AuthMiddlewareService)
 
 schoolRouter.get(
     '/',
@@ -19,6 +19,7 @@ schoolRouter.get(
 
 schoolRouter.post(
     '/refresh-database',
+    authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([ UserRolesEnum.ADMIN ]),
     schoolController.refreshDatabase
 );

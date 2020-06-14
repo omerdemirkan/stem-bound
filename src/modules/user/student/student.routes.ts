@@ -21,7 +21,9 @@ studentRouter.get(
 
 studentRouter.patch(
     '/:id',
+    authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([ UserRolesEnum.STUDENT, UserRolesEnum.ADMIN ]),
+    authMiddlewareService.matchParamIdToPayloadUserId,
     studentControllers.updateStudentById
 );
 
@@ -30,13 +32,16 @@ studentRouter.patch(
 
 studentRouter.post(
     '/delete-many',
+    authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([ UserRolesEnum.ADMIN ]),
     studentControllers.deleteStudentsByIds
 );
 
 studentRouter.delete(
     '/:id',
+    authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([ UserRolesEnum.STUDENT, UserRolesEnum.ADMIN ]),
+    authMiddlewareService.matchParamIdToPayloadUserId,
     studentControllers.deleteStudentById
 );
 

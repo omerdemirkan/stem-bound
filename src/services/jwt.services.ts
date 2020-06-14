@@ -1,7 +1,6 @@
 import { Service } from 'typedi';
 import jwt from 'jsonwebtoken';
 import config from '../config';
-import { NextFunction, Request, Response } from 'express';
 import { TokenPayload } from '../config/types.config';
 
 @Service()
