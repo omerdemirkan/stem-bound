@@ -42,6 +42,20 @@ const schoolOfficialSchema = new Schema({
         required: true,
         trim: true
     },
+    shortDescription: {
+        type: String,
+        required: true,
+        minlength: 4,
+        maxlength: 60,
+        default: "Hi! I'm a Stem-bound™ school official.",
+        trim: true
+    },
+    longDescription: {
+        type: String,
+        minlength: 4,
+        maxlength: 2000,
+        trim: true
+    },
     position: {
         type: String,
         maxlength: 200,

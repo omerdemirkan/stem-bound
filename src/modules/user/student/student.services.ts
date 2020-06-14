@@ -22,7 +22,7 @@ export default class StudentService {
         ])
 
         school.meta.students.push(newStudent._id);
-        school.save();
+        school.save()
 
         this.eventEmitter.emit(events.user.USER_SIGNUP, { 
             role: UserRolesEnum.INSTRUCTOR, 
@@ -46,35 +46,49 @@ export default class StudentService {
         return students;
     }
 
-    findStudent(where: object) {
-        return this.Students.findOne(where)
+    async findStudent(where: object) {
+        return await this.Students.findOne(where)
     }
 
-    findStudentById(id: Types.ObjectId) {
-        return this.Students.findById(id);
+    async findStudentById(id: Types.ObjectId) {
+        return await this.Students.findById(id);
     }
 
-    findStudentByEmail(email: string) {
-        return this.Students.findOne({ email })
+    async findStudentByEmail(email: string) {
+        return await this.Students.findOne({ email })
     }
 
-    updateStudent(where: object, newStudent: object) {
-        return this.Students.findOneAndUpdate(where, newStudent);
+    async updateStudent(where: object, newStudent: object) {
+        return await this.Students.findOneAndUpdate(where, newStudent);
     }
 
-    updateStudentById(id: Types.ObjectId, newStudent: object) {
-        return this.Students.findByIdAndUpdate(id, newStudent);
+    async updateStudentById(id: Types.ObjectId, newStudent: object) {
+        return await this.Students.findByIdAndUpdate(id, newStudent);
     }
 
-    deleteStudents(where: object) {
-        return this.Students.deleteMany(where);
+    async deleteStudents(where: object) {
+        return await this.Students.deleteMany(where);
     }
 
-    deleteStudentById(id: Types.ObjectId) {
-        return this.Students.findByIdAndDelete(id);
+    async deleteStudent(where: object) {
+        const student: any = await this.Students.findOneAndDelete(where);
+
+        const schoolId: string = student.meta.school;
+        const school: any = await this.Schools.findById(schoolId);
+
+        school.meta.students = school.meta.students.filter(
+            (id: string) => id !== student._id
+        )
+        school.save();
+
+        return student;
     }
 
-    deleteStudentsByIds(ids: Types.ObjectId[]) {
-        return this.Students.deleteMany({_id: {$in: ids}});
+    async deleteStudentById(id: Types.ObjectId) {
+        return await this.deleteStudent({ _id: id })
+    }
+
+    async deleteStudentsByIds(ids: Types.ObjectId[]) {
+        return this.deleteStudents({_id: {$in: ids}});
     }
 }

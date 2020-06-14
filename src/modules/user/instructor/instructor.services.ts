@@ -38,35 +38,35 @@ export default class InstructorService {
         return users;
     }
 
-    findInstructor(where: object) {
-        return this.Instructors.findOne(where)
+    async findInstructor(where: object) {
+        return await this.Instructors.findOne(where)
     }
 
-    findInstructorById(id: Types.ObjectId) {
-        return this.Instructors.findById(id);
+    async findInstructorById(id: Types.ObjectId) {
+        return await this.Instructors.findById(id);
     }
 
-    findInstructorByEmail(email: string) {
-        return this.Instructors.findOne({ email })
+    async findInstructorByEmail(email: string) {
+        return await this.Instructors.findOne({ email })
     }
 
-    updateInstructor(where: object, newInstructor: object) {
-        return this.Instructors.findOneAndUpdate(where, newInstructor);
+    async updateInstructor(where: object, newInstructor: object) {
+        return await this.Instructors.findOneAndUpdate(where, newInstructor);
     }
 
-    updateInstructorById(id: Types.ObjectId, newInstructor: object) {
-        return this.Instructors.findByIdAndUpdate(id, newInstructor);
+    async updateInstructorById(id: Types.ObjectId, newInstructor: object) {
+        return await this.Instructors.findByIdAndUpdate(id, newInstructor);
     }
 
-    deleteInstructors(where: object) {
-        return this.Instructors.deleteMany(where);
+    async deleteInstructors(where: object) {
+        return await this.Instructors.deleteMany(where);
     }
 
-    deleteInstructorById(id: Types.ObjectId) {
-        return this.Instructors.findByIdAndDelete(id);
+    async deleteInstructorById(id: Types.ObjectId) {
+        return await this.Instructors.findByIdAndDelete(id);
     }
 
-    deleteInstructorsByIds(ids: Types.ObjectId[]) {
-        return this.Instructors.deleteMany({_id: {$in: ids}});
+    async deleteInstructorsByIds(ids: Types.ObjectId[]) {
+        return await this.Instructors.deleteMany({_id: {$in: ids}});
     }
 }

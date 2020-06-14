@@ -46,35 +46,49 @@ export default class SchoolOfficialService {
         return students;
     }
 
-    findSchoolOfficial(where: object) {
-        return this.SchoolOfficials.findOne(where)
+    async findSchoolOfficial(where: object) {
+        return await this.SchoolOfficials.findOne(where)
     }
 
-    findSchoolOfficialById(id: Types.ObjectId) {
-        return this.SchoolOfficials.findById(id);
+    async findSchoolOfficialById(id: Types.ObjectId) {
+        return await this.SchoolOfficials.findById(id);
     }
 
-    findSchoolOfficialByEmail(email: string) {
-        return this.SchoolOfficials.findOne({ email })
+    async findSchoolOfficialByEmail(email: string) {
+        return await this.SchoolOfficials.findOne({ email })
     }
 
-    updateSchoolOfficial(where: object, newSchoolOfficial: object) {
-        return this.SchoolOfficials.findOneAndUpdate(where, newSchoolOfficial);
+    async updateSchoolOfficial(where: object, newSchoolOfficial: object) {
+        return await this.SchoolOfficials.findOneAndUpdate(where, newSchoolOfficial);
     }
 
-    updateSchoolOfficialById(id: Types.ObjectId, newSchoolOfficial: object) {
-        return this.SchoolOfficials.findByIdAndUpdate(id, newSchoolOfficial);
+    async updateSchoolOfficialById(id: Types.ObjectId, newSchoolOfficial: object) {
+        return await this.SchoolOfficials.findByIdAndUpdate(id, newSchoolOfficial);
     }
 
-    deleteSchoolOfficials(where: object) {
-        return this.SchoolOfficials.deleteMany(where);
+    async deleteSchoolOfficials(where: object) {
+        return await this.SchoolOfficials.deleteMany(where);
     }
 
-    deleteSchoolOfficialById(id: Types.ObjectId) {
-        return this.SchoolOfficials.findByIdAndDelete(id);
+    async deleteSchoolOfficial(where: object) {
+        const schoolOfficial: any = await this.SchoolOfficials.findOneAndDelete(where);
+
+        const schoolId: string = schoolOfficial.meta.school;
+        const school: any = await this.Schools.findById(schoolId);
+
+        school.meta.schoolOfficials = school.meta.schoolOfficials.filter(
+            (id: string) => id !== school._id
+        )
+        school.save()
+
+        return schoolOfficial;
     }
 
-    deleteSchoolOfficialsByIds(ids: Types.ObjectId[]) {
-        return this.SchoolOfficials.deleteMany({_id: {$in: ids}});
+    async deleteSchoolOfficialById(id: Types.ObjectId) {
+        return await this.deleteSchoolOfficial({ _id: id })
+    }
+
+    async deleteSchoolOfficialsByIds(ids: Types.ObjectId[]) {
+        return this.deleteSchoolOfficials({_id: {$in: ids}});
     }
 }

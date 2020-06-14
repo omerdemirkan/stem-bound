@@ -71,7 +71,7 @@ const studentSchema = new Schema({
         required: true,
         minlength: 4,
         maxlength: 60,
-        default: "Hi! I'm a Stem-bound™ instructor.",
+        default: "Hi! I'm a Stem-bound™ student.",
         trim: true
     },
     longDescription: {
