@@ -2,19 +2,27 @@ import { Service, Inject } from 'typedi';
 import { Model, Document, Types } from 'mongoose';
 import { EventEmitter } from 'events';
 import { events } from '../../../config/constants.config';
-import { UserRolesEnum } from '../../../config/types.config';
+import { UserRolesEnum, SchoolDataLocal } from '../../../config/types.config';
 
 @Service()
 export default class StudentService {
     constructor(
         @Inject('models.Students') private Students: Model<Document>,
+        @Inject('models.Schools') private Schools: Model<Document>,
         private eventEmitter: EventEmitter
     ) { }
 
     async createStudent(student: any) {
         if (student.password) throw new Error("We don't store passwords around here fella!")
 
-        const newStudent = await this.Students.create(student);
+        const schoolId: string = student.meta.school;
+        const [ school, newStudent ]: any = await Promise.all([ 
+            await this.Schools.findById(schoolId),
+            await this.Students.create(student)
+        ])
+
+        school.meta.students.push(newStudent._id);
+        school.save();
 
         this.eventEmitter.emit(events.user.USER_SIGNUP, { 
             role: UserRolesEnum.INSTRUCTOR, 
