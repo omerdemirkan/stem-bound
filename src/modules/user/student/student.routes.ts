@@ -2,11 +2,11 @@ import { Container } from 'typedi';
 import { Router } from 'express';
 
 import * as studentControllers from './student.controllers';
-import RoleService from '../../../services/role.services';
 import { UserRolesEnum } from '../../../config/types.config';
+import { AuthMiddlewareService } from '../../../services';
 
 const studentRouter = Router();
-const roleService: RoleService = Container.get(RoleService);
+const authMiddlewareService: AuthMiddlewareService = Container.get(AuthMiddlewareService);
 
 
 studentRouter.get(
@@ -21,7 +21,7 @@ studentRouter.get(
 
 studentRouter.patch(
     '/:id',
-    roleService.allowedRolesMiddleware([ UserRolesEnum.STUDENT, UserRolesEnum.ADMIN ]),
+    authMiddlewareService.allowedRoles([ UserRolesEnum.STUDENT, UserRolesEnum.ADMIN ]),
     studentControllers.updateStudentById
 );
 
@@ -30,13 +30,13 @@ studentRouter.patch(
 
 studentRouter.post(
     '/delete-many',
-    roleService.allowedRolesMiddleware([ UserRolesEnum.ADMIN ]),
+    authMiddlewareService.allowedRoles([ UserRolesEnum.ADMIN ]),
     studentControllers.deleteStudentsByIds
 );
 
 studentRouter.delete(
     '/:id',
-    roleService.allowedRolesMiddleware([ UserRolesEnum.STUDENT, UserRolesEnum.ADMIN ]),
+    authMiddlewareService.allowedRoles([ UserRolesEnum.STUDENT, UserRolesEnum.ADMIN ]),
     studentControllers.deleteStudentById
 );
 

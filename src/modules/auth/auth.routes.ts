@@ -1,15 +1,15 @@
 import { Container } from 'typedi';
 import { Router } from 'express';
 import * as authControllers from './auth.controllers';
-import { JwtService } from '../../services';
+import { JwtService, AuthMiddlewareService } from '../../services';
 
-const jwtService = Container.get(JwtService);
+const authMiddlewareService = Container.get(AuthMiddlewareService);
 
 const authRouter = Router();
 
 authRouter.get(
     '/me',
-    jwtService.extractPayloadMiddleware,
+    authMiddlewareService.extractPayloadMiddleware,
     authControllers.me
 );
 

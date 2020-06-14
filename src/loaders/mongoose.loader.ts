@@ -6,7 +6,8 @@ export default async function() {
     const data = await mongoose.connect(config.localDbUrl, {
         useUnifiedTopology: true,
         useCreateIndex: true,
-        useNewUrlParser: true
+        useNewUrlParser: true,
+        useFindAndModify: true
     })
 
     console.log('MongoDB connected');

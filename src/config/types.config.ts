@@ -97,3 +97,8 @@ export enum UserRolesEnum {
     INSTRUCTOR ='INSTRUCTOR',
     ADMIN = 'ADMIN'
 }
+
+export interface TokenPayload {
+    role: UserRolesEnum,
+    user: any
+}
