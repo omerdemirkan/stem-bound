@@ -20,6 +20,7 @@ instructorRouter.get(
 
 instructorRouter.patch(
     '/:id',
+    authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([ UserRolesEnum.INSTRUCTOR, UserRolesEnum.ADMIN ]),
     authMiddlewareService.matchParamIdToPayloadUserId,

@@ -21,6 +21,7 @@ schoolOfficialRouter.get(
 
 schoolOfficialRouter.patch(
     '/:id',
+    authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([UserRolesEnum.SCHOOL_OFFICIAL, UserRolesEnum.ADMIN]),
     authMiddlewareService.matchParamIdToPayloadUserId,

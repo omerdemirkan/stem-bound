@@ -58,7 +58,6 @@ export async function getStudentById(req: Request, res: Response) {
 
 export async function updateStudentById(req: Request, res: Response) {
     try {
-        if (req.body.meta) throw new Error('metadata cannot be updated from this route');
         const id = ObjectId(req.params.id);
         const newStudent = req.body;
         const data = await studentService.updateStudentById(id, newStudent);

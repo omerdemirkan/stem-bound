@@ -21,6 +21,7 @@ studentRouter.get(
 
 studentRouter.patch(
     '/:id',
+    authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([ UserRolesEnum.STUDENT, UserRolesEnum.ADMIN ]),
     authMiddlewareService.matchParamIdToPayloadUserId,

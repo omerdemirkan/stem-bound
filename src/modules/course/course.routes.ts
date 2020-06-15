@@ -26,6 +26,7 @@ courseRouter.post(
 
 courseRouter.patch(
     '/:id',
+    authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([UserRolesEnum.INSTRUCTOR, UserRolesEnum.ADMIN]),
     courseControllers.updateCourseById

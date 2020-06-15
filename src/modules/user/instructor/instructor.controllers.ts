@@ -53,7 +53,6 @@ export async function getInstructorById(req: Request, res: Response) {
 
 export async function updateInstructorById(req: Request, res: Response) {
     try {
-        if (req.body.meta) throw new Error('metadata cannot be updated from this route');
         const id = ObjectId(req.params.id);
         const newInstructor = req.body;
         const data = await instructorService.updateInstructorById(id, newInstructor);
