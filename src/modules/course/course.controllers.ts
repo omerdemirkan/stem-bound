@@ -3,9 +3,11 @@ import { Request, Response } from "express";
 import { ErrorParserService } from '../../services';
 import CourseService from './course.services';
 import { Types } from 'mongoose';
+import InstructorService from '../user/instructor/instructor.services';
 
 const errorParser = Container.get(ErrorParserService);
 const courseService = Container.get(CourseService);
+const instructorService = Container.get(InstructorService)
 const { ObjectId } = Types;
 
 export async function createCourse(req: Request, res: Response) {

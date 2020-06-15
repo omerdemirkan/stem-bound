@@ -28,6 +28,10 @@ const metaSchema = new Schema({
         type: [Schema.Types.ObjectId],
         required: [true, "Course students are required."],
         default: []
+    },
+    school: {
+        type: Schema.Types.ObjectId,
+        required: [true, "Course school is required."]
     }
 }, {
     _id: false

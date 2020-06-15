@@ -104,6 +104,24 @@ export default class SchoolService {
         });
     }
 
+    async addCourseMetadata({ courseId, schoolId }: {
+        courseId: Types.ObjectId,
+        schoolId: Types.ObjectId
+    }) {
+        await this.Schools.updateOne({ _id: schoolId }, {
+            $push: { 'meta.courses': courseId }
+        })
+    }
+
+    async removeCourseMetadata({ courseId, schoolId }: {
+        courseId: Types.ObjectId,
+        schoolId: Types.ObjectId
+    }) {
+        await this.Schools.updateOne({ _id: schoolId }, {
+            $pull: { 'meta.courses': courseId }
+        })
+    }
+
     async refreshDatabase({ url } : { url?: string }) {
         return await refreshSchoolDatabase({ url });
     }

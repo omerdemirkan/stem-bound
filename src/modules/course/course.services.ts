@@ -43,4 +43,40 @@ export default class CourseService {
     async deleteCourseById(id: Types.ObjectId) {
         return await this.Courses.findByIdAndDelete(id)
     }
+
+    async addInstructorMetadata({ instructorId, courseId }: {
+        instructorId: Types.ObjectId,
+        courseId: Types.ObjectId
+    }) {
+        await this.Courses.updateOne({ _id: courseId }, {
+            $push: { 'meta.instructors': instructorId }
+        })
+    }
+
+    async removeInstructorMetadata({ instructorId, courseId }: {
+        instructorId: Types.ObjectId,
+        courseId: Types.ObjectId
+    }) {
+        await this.Courses.updateOne({ _id: courseId }, {
+            $pull: { 'meta.instructors': instructorId }
+        })
+    }
+
+    async addStudentMetadata({ studentId, courseId }: {
+        studentId: Types.ObjectId,
+        courseId: Types.ObjectId
+    }) {
+        await this.Courses.updateOne({ _id: courseId }, {
+            $push: { 'meta.students': studentId }
+        })
+    }
+
+    async removeStudentMetadata({ studentId, courseId }: {
+        studentId: Types.ObjectId,
+        courseId: Types.ObjectId
+    }) {
+        await this.Courses.updateOne({ _id: courseId }, {
+            $pull: { 'meta.students': studentId }
+        })
+    }
 }

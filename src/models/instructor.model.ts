@@ -10,15 +10,6 @@ const metaSchema = new Schema({
             validator: schemaValidators.uniqueStringArray,
             message: 'all course ids added must be unique.'
         }
-    },
-    students: {
-        type: [Schema.Types.ObjectId],
-        required: true,
-        default: [],
-        validate: {
-            validator: schemaValidators.uniqueStringArray,
-            message: 'all students ids added must be unique.'
-        }
     }
 }, {
     _id: false
