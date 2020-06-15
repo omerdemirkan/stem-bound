@@ -66,21 +66,31 @@ export default class StudentService {
         return await this.deleteStudent({ _id: id })
     }
 
-    async addCourseMetadata({ studentId, courseId }: {
-        studentId: Types.ObjectId,
+    async addCourseMetadata({ studentId, courseId, studentIds }: {
+        studentId?: Types.ObjectId,
+        studentIds?: Types.ObjectId[],
         courseId: Types.ObjectId
     }) {
-        await this.Students.updateOne({ _id: studentId }, {
-            $push: { 'meta.courses': courseId }
-        });
+        const update = { $push: { 'meta.courses': courseId } }
+
+        if (studentIds) {
+            await this.Students.updateMany({ _id: { $in: studentIds } }, update)
+        } else {
+            await this.Students.updateOne({ _id: studentId }, update);
+        }
     }
 
-    async removeCourseMetadata({ studentId, courseId }: {
-        studentId: Types.ObjectId,
+    async removeCourseMetadata({ studentId, courseId, studentIds }: {
+        studentId?: Types.ObjectId,
+        studentIds?: Types.ObjectId[],
         courseId: Types.ObjectId
     }) {
-        await this.Students.updateOne({ _id: studentId }, {
-            $pull: { 'meta.courses': courseId }
-        });
+        const update = { $pull: { 'meta.courses': courseId } }
+
+        if (studentIds) {
+            await this.Students.updateMany({ _id: { $in: studentIds } }, update);
+        } else {
+            await this.Students.updateOne({ _id: studentId }, update);
+        }
     }
 }

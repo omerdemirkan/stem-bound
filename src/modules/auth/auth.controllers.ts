@@ -10,6 +10,7 @@ const jwtService = Container.get(JwtService);
 export async function me(req: Request, res: Response) {
     try {
         res.json({
+            message: '',
             accessToken: jwtService.sign((req as any).payload),
             data: (req as any).payload
         })
@@ -28,6 +29,7 @@ export async function signUp(req: Request, res: Response) {
         })
 
         res.json({
+            message: '',
             data: { user, accessToken }
         })
     } catch (e) {
@@ -55,6 +57,7 @@ export async function logIn(req: Request, res: Response) {
         const { user, accessToken } = loginResult;
 
         res.json({
+            message: '',
             data: { user, accessToken }
         })
 

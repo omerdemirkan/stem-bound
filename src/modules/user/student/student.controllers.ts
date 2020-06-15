@@ -20,6 +20,7 @@ export async function createStudent(req: Request, res: Response) {
         })
         
         res.json({
+            message: '',
             data: { user }
         })
     } catch (e) {
@@ -33,6 +34,7 @@ export async function getStudents(req: Request, res: Response) {
     try {
         const data = await studentService.findStudents()
         res.json({
+            message: '',
             data
         });
     } catch (e) {
@@ -47,6 +49,7 @@ export async function getStudentById(req: Request, res: Response) {
         const id = ObjectId(req.params.id);
         const data = await studentService.findStudentById(id)
         res.json({
+            message: '',
             data
         });
     } catch (e) {
@@ -63,6 +66,7 @@ export async function updateStudentById(req: Request, res: Response) {
         const data = await studentService.updateStudentById(id, newStudent);
 
         res.json({
+            message: '',
             data
         })
     } catch (e) {
@@ -83,8 +87,8 @@ export async function deleteStudentById(req: Request, res: Response) {
         })
 
         res.json({
-            data: { user },
-            message: 'User successfully deleted'
+            message: 'User successfully deleted',
+            data: { user }
         });
     } catch (e) {
         res

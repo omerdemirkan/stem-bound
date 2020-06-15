@@ -20,6 +20,7 @@ export async function createSchoolOfficial(req: Request, res: Response) {
         })
 
         res.json({
+            message: '',
             data: { user }
         })
     } catch (e) {
@@ -47,6 +48,7 @@ export async function getSchoolOfficialById(req: Request, res: Response) {
         const id = ObjectId(req.params.id);
         const data = await schoolOfficialService.findSchoolOfficialById(id)
         res.json({
+            message: '',
             data
         });
     } catch (e) {
@@ -63,6 +65,7 @@ export async function updateSchoolOfficialById(req: Request, res: Response) {
         const data = await schoolOfficialService.updateSchoolOfficialById(id, newSchoolOfficial);
 
         res.json({
+            message: '',
             data
         })
     } catch (e) {
@@ -83,6 +86,7 @@ export async function deleteSchoolOfficialById(req: Request, res: Response) {
         })
 
         res.json({
+            message: '',
             data: { user }
         });
     } catch (e) {

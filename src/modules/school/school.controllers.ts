@@ -26,6 +26,7 @@ export async function getSchools(req: Request, res: Response) {
         }
 
         res.json({
+            message: '',
             data
         });
     } catch (e) {
@@ -41,6 +42,7 @@ export async function getSchoolById(req: Request, res: Response) {
         const data = await schoolService.findOneById(id)
 
         res.json({
+            message: '',
             data
         })
     } catch (e) {
@@ -56,6 +58,7 @@ export async function refreshDatabase(req: Request, res: Response) {
         const data = await schoolService.refreshDatabase({ url });
 
         res.json({
+            message: '',
             data
         })
     } catch (e) {
