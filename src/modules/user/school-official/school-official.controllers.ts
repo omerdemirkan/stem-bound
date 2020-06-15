@@ -3,18 +3,24 @@ import { Request, Response } from 'express';
 import SchoolOfficialService from './school-official.services';
 import { ErrorParserService } from '../../../services';
 import { Types } from 'mongoose';
+import SchoolService from '../../school/school.services';
 
 const schoolOfficialService: SchoolOfficialService = Container.get(SchoolOfficialService);
+const schoolService: SchoolService = Container.get(SchoolService)
 const errorParser = Container.get(ErrorParserService);
 const { ObjectId } = Types
 
 export async function createSchoolOfficial(req: Request, res: Response) {
     try {
         const newSchoolOfficial = req.body;
-        const data = await schoolOfficialService.createSchoolOfficial(newSchoolOfficial);
+        const user: any = await schoolOfficialService.createSchoolOfficial(newSchoolOfficial);
+        await schoolService.addStudentMetadata({
+            studentId: user._id,
+            schoolId: user.meta.school
+        })
 
         res.json({
-            data
+            data: { user }
         })
     } catch (e) {
         res
@@ -69,26 +75,15 @@ export async function updateSchoolOfficialById(req: Request, res: Response) {
 export async function deleteSchoolOfficialById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
-        const data = await schoolOfficialService.deleteSchoolOfficialById(id);
-        res.json({
-            data
-        });
-    } catch (e) {
-        res
-        .status(errorParser.status(e))
-        .json(errorParser.json(e))
-    }
-}
+        const user: any = await schoolOfficialService.deleteSchoolOfficialById(id);
+            
+        await schoolService.removeStudentMetadata({
+            studentId: id,
+            schoolId: user.meta.school
+        })
 
-export async function deleteSchoolOfficialsByIds(req: Request, res: Response) {
-    try {
-        const ids: Types.ObjectId[] = req.body.ids
-        .map(
-            (id: string) => ObjectId(id)
-        );
-        const data = await schoolOfficialService.deleteSchoolOfficialsByIds(ids);
         res.json({
-            data
+            data: { user }
         });
     } catch (e) {
         res

@@ -1,9 +1,12 @@
-import { Service } from 'typedi';
+import { Service, Container } from 'typedi';
 import InstructorService from '../user/instructor/instructor.services';
 import SchoolOfficialService from '../user/school-official/school-official.services';
 import StudentService from '../user/student/student.services';
 import { JwtService, BcryptService } from '../../services';
 import { UserRolesEnum } from '../../config/types.config';
+import SchoolService from '../school/school.services';
+
+const schoolService = Container.get(SchoolService);
 
 @Service()
 export default class AuthService {
@@ -22,16 +25,27 @@ export default class AuthService {
 
         await this.bcryptService.removePasswordAndInsertHash(userData);
 
-        let user;
+        let user: any;
         switch (role) {
             case UserRolesEnum.INSTRUCTOR:
+
                 user = await this.instructorService.createInstructor(userData);
                 break;
             case UserRolesEnum.SCHOOL_OFFICIAL:
+
                 user = await this.schoolOfficialService.createSchoolOfficial(userData);
+                await schoolService.addSchoolOfficialMetadata({
+                    schoolId: user.meta.school,
+                    schoolOfficialId: user._id
+                })
                 break;
             case UserRolesEnum.STUDENT:
+
                 user = await this.studentService.createStudent(userData);
+                await schoolService.addStudentMetadata({
+                    studentId: user._id,
+                    schoolId: user.meta.school
+                })
                 break;
             default:
                 throw new Error('Invalid role.')

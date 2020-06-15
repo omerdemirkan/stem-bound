@@ -38,6 +38,7 @@ export default class AuthMiddlewareService {
         }
     }
 
+    // To ensure that any changes to a user is made by the user or by an admin.
     matchParamIdToPayloadUserId(req: Request, res: Response, next: NextFunction) {
         const id = req.params.id;
         const payloadId = (req as any).payload.user._id || null;

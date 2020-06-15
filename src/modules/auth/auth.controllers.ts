@@ -22,7 +22,6 @@ export async function me(req: Request, res: Response) {
 
 export async function signUp(req: Request, res: Response) {
     try {
-
         const { user, accessToken } = await authService.userSignUp({
             role: (req.query.role as any),
             userData: req.body

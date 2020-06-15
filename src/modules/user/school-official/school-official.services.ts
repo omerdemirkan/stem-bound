@@ -18,13 +18,7 @@ export default class SchoolOfficialService {
     async createSchoolOfficial(schoolOfficial: any) {
         if (schoolOfficial.password) throw new Error("We don't store passwords around here fella!")
 
-        const schoolId: string = schoolOfficial.meta.school;
         const newSchoolOfficial = await this.SchoolOfficials.create(schoolOfficial)
-        
-        await this.schoolService.addSchoolOfficialMetadata({
-            schoolId: ObjectId(schoolId),
-            schoolOfficialId: newSchoolOfficial._id
-        })
 
         this.eventEmitter.emit(events.user.USER_SIGNUP, { 
             role: UserRolesEnum.INSTRUCTOR, 
@@ -68,27 +62,11 @@ export default class SchoolOfficialService {
         return await this.SchoolOfficials.findByIdAndUpdate(id, newSchoolOfficial);
     }
 
-    async deleteSchoolOfficials(where: object) {
-        return await this.SchoolOfficials.deleteMany(where);
-    }
-
     async deleteSchoolOfficial(where: object) {
-        const schoolOfficial: any = await this.SchoolOfficials.findOneAndDelete(where);
-
-        const schoolId: string = schoolOfficial.meta.school;
-        await this.schoolService.removeSchoolOfficialMetadata({
-            schoolId: ObjectId(schoolId),
-            schoolOfficialId: schoolOfficial._id
-        })
-
-        return schoolOfficial;
+        return await this.SchoolOfficials.findOneAndDelete(where)
     }
 
     async deleteSchoolOfficialById(id: Types.ObjectId) {
         return await this.deleteSchoolOfficial({ _id: id })
-    }
-
-    async deleteSchoolOfficialsByIds(ids: Types.ObjectId[]) {
-        return this.deleteSchoolOfficials({_id: {$in: ids}});
     }
 }

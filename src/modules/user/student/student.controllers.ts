@@ -3,18 +3,24 @@ import { Request, Response } from 'express';
 import StudentService from './student.services';
 import { ErrorParserService } from '../../../services';
 import { Types } from 'mongoose';
+import SchoolService from '../../school/school.services';
 
 const studentService: StudentService = Container.get(StudentService);
+const schoolService: SchoolService = Container.get(SchoolService)
 const errorParser = Container.get(ErrorParserService);
 const { ObjectId } = Types
 
 export async function createStudent(req: Request, res: Response) {
     try {
         const newStudent = req.body;
-        const data = await studentService.createStudent(newStudent);
-
+        const user: any = await studentService.createStudent(newStudent);
+        await schoolService.addStudentMetadata({
+            studentId: user._id,
+            schoolId: user.meta.school
+        })
+        
         res.json({
-            data
+            data: { user }
         })
     } catch (e) {
         res
@@ -69,9 +75,16 @@ export async function updateStudentById(req: Request, res: Response) {
 export async function deleteStudentById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
-        const data = await studentService.deleteStudentById(id);
+        const user: any = await studentService.deleteStudentById(id)
+            
+        await schoolService.removeStudentMetadata({
+            studentId: id,
+            schoolId: user.meta.school
+        })
+
         res.json({
-            data
+            data: { user },
+            message: 'User successfully deleted'
         });
     } catch (e) {
         res

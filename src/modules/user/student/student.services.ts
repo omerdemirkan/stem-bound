@@ -3,28 +3,18 @@ import { Model, Document, Types } from 'mongoose';
 import { EventEmitter } from 'events';
 import { events } from '../../../config/constants.config';
 import { UserRolesEnum } from '../../../config/types.config';
-import SchoolService from '../../school/school.services';
-
-const { ObjectId } = Types;
 
 @Service()
 export default class StudentService {
     constructor(
         @Inject('models.Students') private Students: Model<Document>,
-        private eventEmitter: EventEmitter,
-        private schoolService: SchoolService
+        private eventEmitter: EventEmitter
     ) { }
 
     async createStudent(student: any) {
         if (student.password) throw new Error("We don't store passwords around here fella!")
-
-        const schoolId: Types.ObjectId = ObjectId(student.meta.school);
         
         const newStudent = await this.Students.create(student);
-        await this.schoolService.addStudentMetadata({
-            studentId: newStudent._id,
-            schoolId
-        });
 
         this.eventEmitter.emit(events.user.USER_SIGNUP, { 
             role: UserRolesEnum.INSTRUCTOR, 
@@ -69,15 +59,7 @@ export default class StudentService {
     }
 
     async deleteStudent(where: object) {
-        const student: any = await this.Students.findOneAndDelete(where);
-
-        const schoolId: Types.ObjectId = ObjectId(student.meta.school);
-        await this.schoolService.removeStudentMetadata({
-            studentId: student._id,
-            schoolId
-        });
-
-        return student;
+        return await this.Students.findOneAndDelete(where);
     }
 
     async deleteStudentById(id: Types.ObjectId) {

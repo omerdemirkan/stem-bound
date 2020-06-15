@@ -1,4 +1,4 @@
-import mongoose, {Schema, Model} from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 import { schemaValidators } from '../helpers/model.helpers';
 
 const metaSchema = new Schema({

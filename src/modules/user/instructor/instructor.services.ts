@@ -58,15 +58,7 @@ export default class InstructorService {
         return await this.Instructors.findByIdAndUpdate(id, newInstructor);
     }
 
-    async deleteInstructors(where: object) {
-        return await this.Instructors.deleteMany(where);
-    }
-
     async deleteInstructorById(id: Types.ObjectId) {
         return await this.Instructors.findByIdAndDelete(id);
-    }
-
-    async deleteInstructorsByIds(ids: Types.ObjectId[]) {
-        return await this.Instructors.deleteMany({_id: {$in: ids}});
     }
 }

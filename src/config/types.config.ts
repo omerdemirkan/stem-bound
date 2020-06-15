@@ -91,6 +91,11 @@ export interface SchoolDataLocal {
     }
 }
 
+export enum ClassTypes {
+    IN_PERSON = 'IN_PERSON',
+    REMOTE = 'REMOTE'
+}
+
 export enum UserRolesEnum {
     SCHOOL_OFFICIAL = 'SCHOOL_OFFICIAL',
     STUDENT = 'STUDENT',
@@ -100,5 +105,14 @@ export enum UserRolesEnum {
 
 export interface TokenPayload {
     role: UserRolesEnum,
-    user: any
+    user: {
+        _id: Types.ObjectId,
+        firstName: string,
+        lastName: string,
+        email: string
+    }
 }
+
+// export interface Instructor {
+
+// }

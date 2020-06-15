@@ -49,3 +49,8 @@ export const courseTypes = [
     'REMOTE',
     'HYBRID'
 ]
+
+export const classTypes = [
+    'IN_PERSON',
+    'REMOTE'
+]

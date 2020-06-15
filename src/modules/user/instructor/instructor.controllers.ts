@@ -12,10 +12,10 @@ const errorParser: ErrorParserService = Container.get(ErrorParserService)
 export async function createInstructor(req: Request, res: Response) {
     try {
         const newInstructor = req.body;
-        const data = await instructorService.createInstructor(newInstructor);
+        const user = await instructorService.createInstructor(newInstructor);
 
         res.json({
-            data
+            data: { user }
         })
     } catch (e) {
         res
@@ -71,23 +71,6 @@ export async function deleteInstructorById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const data = await instructorService.deleteInstructorById(id);
-        res.json({
-            data
-        });
-    } catch (e) {
-        res
-        .status(errorParser.status(e))
-        .json(errorParser.json(e))
-    }
-}
-
-export async function deleteInstructorsByIds(req: Request, res: Response) {
-    try {
-        const ids: Types.ObjectId[] = req.body.ids
-        .map(
-            (id: string) => ObjectId(id)
-        );
-        const data = await instructorService.deleteInstructorsByIds(ids);
         res.json({
             data
         });
