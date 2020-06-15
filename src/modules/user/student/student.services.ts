@@ -66,31 +66,29 @@ export default class StudentService {
         return await this.deleteStudent({ _id: id })
     }
 
-    async addCourseMetadata({ studentId, courseId, studentIds }: {
-        studentId?: Types.ObjectId,
-        studentIds?: Types.ObjectId[],
+    async addCourseMetadata({ studentIdData, courseId }: {
+        studentIdData: Types.ObjectId | Types.ObjectId[],
         courseId: Types.ObjectId
     }) {
         const update = { $push: { 'meta.courses': courseId } }
 
-        if (studentIds) {
-            await this.Students.updateMany({ _id: { $in: studentIds } }, update)
+        if (typeof studentIdData === 'string') {
+            await this.Students.updateOne({ _id: studentIdData }, update);
         } else {
-            await this.Students.updateOne({ _id: studentId }, update);
+            await this.Students.updateMany({ _id: { $in: studentIdData } }, update)
         }
     }
 
-    async removeCourseMetadata({ studentId, courseId, studentIds }: {
-        studentId?: Types.ObjectId,
-        studentIds?: Types.ObjectId[],
+    async removeCourseMetadata({ studentIdData, courseId }: {
+        studentIdData: Types.ObjectId | Types.ObjectId[],
         courseId: Types.ObjectId
     }) {
         const update = { $pull: { 'meta.courses': courseId } }
 
-        if (studentIds) {
-            await this.Students.updateMany({ _id: { $in: studentIds } }, update);
+        if (typeof studentIdData === 'string') {
+            await this.Students.updateOne({ _id: studentIdData }, update);
         } else {
-            await this.Students.updateOne({ _id: studentId }, update);
+            await this.Students.updateMany({ _id: { $in: studentIdData } }, update)
         }
     }
 }

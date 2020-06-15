@@ -18,9 +18,23 @@ courseRouter.get(
 )
 
 courseRouter.post(
+    '/:id/enroll',
+    authMiddlewareService.extractTokenPayload,
+    authMiddlewareService.allowedRoles([ UserRolesEnum.STUDENT ]),
+    courseControllers.enrollInCourseById
+)
+
+courseRouter.post(
+    '/:id/drop',
+    authMiddlewareService.extractTokenPayload,
+    authMiddlewareService.allowedRoles([ UserRolesEnum.STUDENT ]),
+    courseControllers.dropCourseById
+)
+
+courseRouter.post(
     '/',
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([UserRolesEnum.INSTRUCTOR, UserRolesEnum.ADMIN]),
+    authMiddlewareService.allowedRoles([ UserRolesEnum.INSTRUCTOR, UserRolesEnum.ADMIN ]),
     courseControllers.createCourse
 )
 
@@ -28,14 +42,14 @@ courseRouter.patch(
     '/:id',
     authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([UserRolesEnum.INSTRUCTOR, UserRolesEnum.ADMIN]),
+    authMiddlewareService.allowedRoles([ UserRolesEnum.INSTRUCTOR, UserRolesEnum.ADMIN ]),
     courseControllers.updateCourseById
 )
 
 courseRouter.delete(
     '/:id',
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([UserRolesEnum.INSTRUCTOR, UserRolesEnum.ADMIN]),
+    authMiddlewareService.allowedRoles([ UserRolesEnum.INSTRUCTOR, UserRolesEnum.ADMIN ]),
     courseControllers.deleteCourseById
 )
 
