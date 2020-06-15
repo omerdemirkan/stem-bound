@@ -5,10 +5,12 @@ import CourseService from './course.services';
 import { Types } from 'mongoose';
 import InstructorService from '../user/instructor/instructor.services';
 import StudentService from '../user/student/student.services';
+import SchoolService from '../school/school.services';
 
 const errorParser = Container.get(ErrorParserService);
 const courseService = Container.get(CourseService);
 const instructorService = Container.get(InstructorService);
+const schoolService = Container.get(SchoolService)
 const studentService = Container.get(StudentService);
 const { ObjectId } = Types;
 
@@ -23,11 +25,19 @@ export async function createCourse(req: Request, res: Response) {
         }
 
         const newCourse = await courseService.createCourse(courseData);
+        const schoolId = newCourse.meta.school;
+        const courseId = newCourse._id
 
-        await instructorService.addCourseMetadata({
-            instructorId,
-            courseId: newCourse._id
-        })
+        await Promise.all([
+            instructorService.addCourseMetadata({
+                instructorId,
+                courseId
+            }),
+            schoolService.addCourseMetadata({
+                schoolId,
+                courseId
+            })
+        ])
 
         res.json({
             message: 'Course successfully created',
@@ -47,14 +57,14 @@ export async function enrollInCourseById(req: Request, res: Response) {
         const studentId = ObjectId((req as any).payload.user._id);
         const courseId = ObjectId(req.params.id);
         
-        // Not using promise.all because I dont want to update the student metadata if the school id is invalid.
+        // Not using promise.all because I dont want to update the student metadata if the course id is invalid.
         await courseService.addStudentMetadata({
             studentId,
             courseId
         })
         await studentService.addCourseMetadata({
             courseId,
-            studentIdData: studentId
+            studentId
         })
 
         res.json({
@@ -73,14 +83,14 @@ export async function dropCourseById(req: Request, res: Response) {
         const studentId = ObjectId((req as any).payload.user._id);
         const courseId = ObjectId(req.params.id);
         
-        // Not using promise.all because I dont want to update the student metadata if the school id is invalid.
+        // Not using promise.all because I dont want to update the student metadata if the course id is invalid.
         await courseService.removeStudentMetadata({
             studentId,
             courseId
         })
         await studentService.removeCourseMetadata({
             courseId,
-            studentIdData: studentId
+            studentId
         })
 
         res.json({
@@ -145,19 +155,26 @@ export async function updateCourseById(req: Request, res: Response) {
 
 export async function deleteCourseById(req: Request, res: Response) {
     try {
-        const id = ObjectId(req.params.id);
-        const instructorId = (req as any).payload.user._id;
+        const courseId = ObjectId(req.params.id);
 
-        const deletedCourse: any = await courseService.deleteCourseById(id);
+        const deletedCourse: any = await courseService.deleteCourseById(courseId);
+        
+        const instructorId = (req as any).payload.user._id;
+        const studentIds = deletedCourse.meta.students
+        const schoolId = deletedCourse.meta.school;
 
         await Promise.all([
             instructorService.removeCourseMetadata({
-                courseId: deletedCourse._id,
-                instructorId: instructorId
+                courseId,
+                instructorId
             }),
             studentService.removeCourseMetadata({
-                studentIdData: deletedCourse.meta.students,
-                courseId: deletedCourse._id
+                studentIds: studentIds,
+                courseId
+            }),
+            schoolService.removeCourseMetadata({
+                schoolId,
+                courseId
             })
         ]);
         
