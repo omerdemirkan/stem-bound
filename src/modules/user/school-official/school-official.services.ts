@@ -3,7 +3,6 @@ import { Model, Document, Types } from 'mongoose';
 import { EventEmitter } from 'events';
 import { events } from '../../../config/constants.config';
 import { UserRolesEnum } from '../../../config/types.config';
-import SchoolService from '../../school/school.services';
 
 const { ObjectId } = Types;
 
@@ -11,8 +10,7 @@ const { ObjectId } = Types;
 export default class SchoolOfficialService {
     constructor(
         @Inject('models.SchoolOfficials') private SchoolOfficials: Model<Document>,
-        private eventEmitter: EventEmitter,
-        private schoolService: SchoolService
+        private eventEmitter: EventEmitter
     ) { }
 
     async createSchoolOfficial(schoolOfficial: any) {

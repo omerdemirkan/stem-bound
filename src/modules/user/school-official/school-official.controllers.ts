@@ -58,6 +58,7 @@ export async function getSchoolOfficialById(req: Request, res: Response) {
 
 export async function updateSchoolOfficialById(req: Request, res: Response) {
     try {
+        if (req.body.meta) throw new Error('metadata cannot be updated from this route');
         const id = ObjectId(req.params.id);
         const newSchoolOfficial = req.body;
         const data = await schoolOfficialService.updateSchoolOfficialById(id, newSchoolOfficial);
