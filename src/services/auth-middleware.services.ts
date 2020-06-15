@@ -48,4 +48,23 @@ export default class AuthMiddlewareService {
             res.sendStatus(403);
         }
     }
+
+    matchParamIdToPayloadValue({ key }: { key: string }) {
+        const keys = key.split('.');
+        return function (req: Request, res: Response, next: NextFunction) {
+
+            const paramId = req.params.id;
+            
+            let payloadId = (req as any).payload;
+            keys.forEach(key => {
+                payloadId = payloadId[key]
+            })
+
+            if (paramId === payloadId || (req as any).payload.role === UserRolesEnum.ADMIN) {
+                next();
+            } else {
+                res.sendStatus(403);
+            }
+        }
+    }
 }

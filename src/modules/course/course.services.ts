@@ -1,0 +1,46 @@
+import { Service, Inject } from 'typedi';
+import { Model, Document, Types } from 'mongoose';
+import { EventEmitter } from 'events';
+import { events } from '../../config/constants.config'
+
+@Service() 
+export default class CourseService {
+    constructor(
+        @Inject('models.Courses') private Courses: Model<Document>,
+        private eventEmitter: EventEmitter
+    ) { }
+
+    async createCourse(courseData: object = {}) {
+        const course: any = await this.Courses.create(courseData);
+        this.eventEmitter.emit(events.course.COURSE_CREATED, course)
+        return course;
+    }
+
+    async findCourses(where: object) {
+        return await this.Courses.find(where);
+    }
+
+    async findCourse(where: object) {
+        return await this.Courses.findOne(where);
+    }
+
+    async findCourseById(id: Types.ObjectId) {
+        return await this.Courses.findById(id);
+    }
+
+    async updateCourse(where: object, newCourse: object) {
+        return await this.Courses.findOneAndUpdate(where, newCourse);
+    }
+
+    async updateCourseById(id: Types.ObjectId, newCourse: object) {
+        return await this.Courses.findByIdAndUpdate(id, newCourse);
+    }
+
+    async deleteCourse(where: object) {
+        return await this.Courses.findOneAndDelete(where);
+    }
+
+    async deleteCourseById(id: Types.ObjectId) {
+        return await this.Courses.findByIdAndDelete(id)
+    }
+}
