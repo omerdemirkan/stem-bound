@@ -1,9 +1,6 @@
 import express, { Application } from 'express';
 import config from './config';
 import loaders from './loaders';
-import { EventEmitter } from 'events';
-
-const eventEmitter = new EventEmitter;
 
 const app: Application = express();
 
@@ -13,9 +10,7 @@ const app: Application = express();
     await app.listen(config.port);
     console.log('Server running on port ' + config.port);
     
-    eventEmitter.emit('SERVER_RUNNING')
+    app.emit("APP_STARTED");
 })()
 
-export default new Promise(function(resolve) {
-    eventEmitter.on('SERVER_RUNNING', () => resolve(app))
-});
+export default app;
