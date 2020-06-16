@@ -1,8 +1,16 @@
+import app from "../../src/app";
+const request = require("supertest");
+
 describe("/api/user", () => {
+  // beforeEach((done) => {
+  //   app.on("serverInitialized", done);
+  // });
+
   const userTests = (userRole: string) => {
     describe(`GET - ${userRole}`, () => {
-      it(`should get all ${userRole}s`, () => {
-        // TODO
+      it(`should get all ${userRole}s`, async () => {
+        const res = await request(app).get(`api/user/${userRole}`);
+        expect(res).toBeDefined();
       });
 
       it(`should get ${userRole} by id`, () => {
