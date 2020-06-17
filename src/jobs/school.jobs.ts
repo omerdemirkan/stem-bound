@@ -6,8 +6,8 @@ import {
     getFilteredAndMappedSchoolData,
     parseCsvAsync,
     schoolCsvColumns,
-    SchoolDataLocal,
-    SchoolDataOriginal
+    ISchoolDataLocal,
+    ISchoolDataOriginal
 } from '../helpers/school-db.helpers'
 import { AxiosInstance } from 'axios';
 
@@ -26,7 +26,7 @@ export async function refreshSchoolDatabase({ url }: { url?: string }):
 {
     const { data: csvData } = await fetch.get(url || defaultUrl);
 
-    const fetchedSchoolsData: SchoolDataOriginal[] = await parseCsvAsync(csvData, {
+    const fetchedSchoolsData: ISchoolDataOriginal[] = await parseCsvAsync(csvData, {
         trim: true,
         skip_empty_lines: true,
         columns: schoolCsvColumns

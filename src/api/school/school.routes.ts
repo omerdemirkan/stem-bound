@@ -1,7 +1,7 @@
 import { Container } from 'typedi';
 import { Router } from 'express';
 import * as schoolController from './school.controllers';
-import { UserRolesEnum } from '../../config/types.config';
+import { EUserRoles } from '../../types';
 import { AuthMiddlewareService } from '../../services';
 
 const schoolRouter = Router();
@@ -20,7 +20,7 @@ schoolRouter.get(
 schoolRouter.post(
     '/refresh-database',
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ UserRolesEnum.ADMIN ]),
+    authMiddlewareService.allowedRoles([ EUserRoles.ADMIN ]),
     schoolController.refreshDatabase
 );
 

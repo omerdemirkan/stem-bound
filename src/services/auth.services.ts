@@ -3,7 +3,7 @@ import InstructorService from './instructor.services';
 import SchoolOfficialService from './school-official.services';
 import StudentService from './student.services';
 import { JwtService, BcryptService } from '.';
-import { UserRolesEnum } from '../config/types.config';
+import { EUserRoles } from '../types';
 import SchoolService from './school.services';
 
 const schoolService = Container.get(SchoolService);
@@ -19,7 +19,7 @@ export default class AuthService {
     ) { }
 
     async userSignUp({ role, userData }: {
-        role: UserRolesEnum,
+        role: EUserRoles,
         userData: object
     }): Promise<{ accessToken: string, user: any }> {
 
@@ -27,11 +27,11 @@ export default class AuthService {
 
         let user: any;
         switch (role) {
-            case UserRolesEnum.INSTRUCTOR:
+            case EUserRoles.INSTRUCTOR:
 
                 user = await this.instructorService.createInstructor(userData);
                 break;
-            case UserRolesEnum.SCHOOL_OFFICIAL:
+            case EUserRoles.SCHOOL_OFFICIAL:
 
                 user = await this.schoolOfficialService.createSchoolOfficial(userData);
                 await schoolService.addSchoolOfficialMetadata({
@@ -39,7 +39,7 @@ export default class AuthService {
                     schoolOfficialId: user._id
                 })
                 break;
-            case UserRolesEnum.STUDENT:
+            case EUserRoles.STUDENT:
 
                 user = await this.studentService.createStudent(userData);
                 await schoolService.addStudentMetadata({
@@ -63,19 +63,19 @@ export default class AuthService {
     }
 
     async userLogin({ role, email, password }: {
-        role: UserRolesEnum,
+        role: EUserRoles,
         email: string,
         password: string
     }): Promise<{ accessToken: string, user: any } | undefined> {
         let user: any;
         switch (role) {
-            case UserRolesEnum.INSTRUCTOR:
+            case EUserRoles.INSTRUCTOR:
                 user = await this.instructorService.findInstructorByEmail(email);
                 break;
-            case UserRolesEnum.SCHOOL_OFFICIAL:
+            case EUserRoles.SCHOOL_OFFICIAL:
                 user = await this.schoolOfficialService.findSchoolOfficialByEmail(email);
                 break;
-            case UserRolesEnum.STUDENT:
+            case EUserRoles.STUDENT:
                 user = await this.studentService.findStudentByEmail(email);
                 break;
             default:

@@ -1,7 +1,7 @@
 import { Container } from 'typedi';
 import { Router } from 'express';
 import * as schoolOfficialControllers from './school-official.controllers';
-import { UserRolesEnum } from '../../../config/types.config';
+import { EUserRoles } from '../../../types';
 import { AuthMiddlewareService } from '../../../services';
 
 const schoolOfficialRouter = Router();
@@ -22,7 +22,7 @@ schoolOfficialRouter.patch(
     '/:id',
     authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([UserRolesEnum.SCHOOL_OFFICIAL, UserRolesEnum.ADMIN]),
+    authMiddlewareService.allowedRoles([EUserRoles.SCHOOL_OFFICIAL, EUserRoles.ADMIN]),
     authMiddlewareService.matchParamIdToPayloadUserId,
     schoolOfficialControllers.updateSchoolOfficialById
 );
@@ -30,7 +30,7 @@ schoolOfficialRouter.patch(
 schoolOfficialRouter.delete(
     '/:id',
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([UserRolesEnum.ADMIN, UserRolesEnum.SCHOOL_OFFICIAL]),
+    authMiddlewareService.allowedRoles([EUserRoles.ADMIN, EUserRoles.SCHOOL_OFFICIAL]),
     authMiddlewareService.matchParamIdToPayloadUserId,
     schoolOfficialControllers.deleteSchoolOfficialById
 );

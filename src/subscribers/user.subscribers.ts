@@ -2,7 +2,7 @@ import { Container } from 'typedi';
 
 import { events } from '../config/constants.config';
 import { EventEmitter } from 'events';
-import { Subscriber } from '../config/types.config';
+import { Subscriber } from '../types';
 
 export default new Subscriber(function() {
     const eventEmitter: EventEmitter = Container.get(EventEmitter);

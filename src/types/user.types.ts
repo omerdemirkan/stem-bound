@@ -1,0 +1,8 @@
+
+
+export enum EUserRoles {
+    SCHOOL_OFFICIAL = 'SCHOOL_OFFICIAL',
+    STUDENT = 'STUDENT',
+    INSTRUCTOR ='INSTRUCTOR',
+    ADMIN = 'ADMIN'
+}

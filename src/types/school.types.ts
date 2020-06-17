@@ -1,23 +1,6 @@
-import { Types } from "mongoose";
+import { Types } from 'mongoose';
 
-
-export class Subscriber {
-    private initialized = false;
-    public initialize: () => void;
-    constructor(
-        initialize: () => void
-    ) { 
-        // To ensure one initialization
-        this.initialize = function() {
-            if (!this.initialized) {
-                initialize.call(this)
-                this.initialized = true;
-            }
-        };
-    }
-}
-
-export interface SchoolDataOriginal {
+export interface ISchoolDataOriginal {
     X: string,
     Y: string,
     FID: string,
@@ -53,7 +36,7 @@ export interface SchoolDataOriginal {
     SHELTER_ID: string
 }
 
-export interface SchoolDataLocal {
+export interface ISchoolDataLocal {
     _id?: Types.ObjectId,
     name: string,
     ncesid: string,
@@ -90,29 +73,3 @@ export interface SchoolDataLocal {
         courses: Types.ObjectId[]
     }
 }
-
-export enum ClassTypes {
-    IN_PERSON = 'IN_PERSON',
-    REMOTE = 'REMOTE'
-}
-
-export enum UserRolesEnum {
-    SCHOOL_OFFICIAL = 'SCHOOL_OFFICIAL',
-    STUDENT = 'STUDENT',
-    INSTRUCTOR ='INSTRUCTOR',
-    ADMIN = 'ADMIN'
-}
-
-export interface TokenPayload {
-    role: UserRolesEnum,
-    user: {
-        _id: Types.ObjectId,
-        firstName: string,
-        lastName: string,
-        email: string
-    }
-}
-
-// export interface Instructor {
-
-// }

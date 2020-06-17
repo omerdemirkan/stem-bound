@@ -1,11 +1,11 @@
-import { SchoolDataOriginal } from "../config/types.config";
+import { ISchoolDataOriginal } from "../types";
 import csvParser from 'csv-parse';
 
 // Note: These helpers will be working with data on the hundreds of thousands.
 // Performance is a huge priority, if you are contibuting please keep that in mind.
 // Also, I'm trying to make as many things asynchonous and non-blocking as possible.
 
-export async function getFilteredSchoolData(schoolsData: SchoolDataOriginal[]) {
+export async function getFilteredSchoolData(schoolsData: ISchoolDataOriginal[]) {
     // Note: I'm avoiding creating a new array on each deletion.
     // If this looks weird thats why.
 
@@ -27,8 +27,8 @@ export async function getFilteredSchoolData(schoolsData: SchoolDataOriginal[]) {
     return filteredSchoolData;
 }
 
-export async function mapSchoolData(schoolsData: SchoolDataOriginal[]) {
-    return schoolsData.map((schoolData: SchoolDataOriginal) => ({
+export async function mapSchoolData(schoolsData: ISchoolDataOriginal[]) {
+    return schoolsData.map((schoolData: ISchoolDataOriginal) => ({
         name: schoolData.NAME,
         ncesid: schoolData.NCESID,
         districtId: schoolData.DISTRICTID,
@@ -62,7 +62,7 @@ export async function mapSchoolData(schoolsData: SchoolDataOriginal[]) {
     }))
 }
 
-export async function getFilteredAndMappedSchoolData(schoolsData: SchoolDataOriginal[]) {
+export async function getFilteredAndMappedSchoolData(schoolsData: ISchoolDataOriginal[]) {
     return await mapSchoolData(
         await getFilteredSchoolData(schoolsData)
     );
@@ -77,5 +77,5 @@ export function parseCsvAsync(csvString: string, options: csvParser.Options): Pr
     });
 }
 
-export { SchoolDataLocal, SchoolDataOriginal } from '../config/types.config';
+export { ISchoolDataLocal, ISchoolDataOriginal } from '../types';
 export { schoolCsvColumns } from '../config/constants.config'

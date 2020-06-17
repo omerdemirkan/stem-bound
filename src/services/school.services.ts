@@ -1,7 +1,7 @@
 import { Service, Inject, Container } from 'typedi';
 import { Model, Document, Types, MongooseFilterQuery } from 'mongoose';
 import { refreshSchoolDatabase } from '../jobs/school.jobs';
-import { SchoolDataLocal } from '../config/types.config';
+import { ISchoolDataLocal } from '../types';
 
 const { ObjectId } = Types
 
@@ -30,9 +30,9 @@ export default class SchoolService {
         coordinates: number[],
         maxDistance?: number | null,
         limit?: number | null,
-        query?: MongooseFilterQuery<SchoolDataLocal> | null,
+        query?: MongooseFilterQuery<ISchoolDataLocal> | null,
         skip?: number | null
-    }): Promise<SchoolDataLocal[]> {
+    }): Promise<ISchoolDataLocal[]> {
         const aggregateOptions: any[] = [];
         aggregateOptions.push({
             $geoNear: {

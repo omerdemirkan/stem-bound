@@ -1,4 +1,4 @@
-import { UserRolesEnum } from "../../src/config/types.config";
+import { UserRolesEnum } from "../../src/types";
 
 describe("/api/auth", () => {
   const roleTests = (role: UserRolesEnum) => {

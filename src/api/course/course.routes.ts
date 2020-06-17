@@ -1,7 +1,7 @@
 import { Container } from 'typedi';
 import { Router } from 'express';
 import * as courseControllers from './course.controllers';
-import { UserRolesEnum } from '../../config/types.config';
+import { EUserRoles } from '../../types';
 import { AuthMiddlewareService } from '../../services';
 
 const courseRouter = Router();
@@ -20,21 +20,21 @@ courseRouter.get(
 courseRouter.post(
     '/:id/enroll',
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ UserRolesEnum.STUDENT ]),
+    authMiddlewareService.allowedRoles([ EUserRoles.STUDENT ]),
     courseControllers.enrollInCourseById
 )
 
 courseRouter.post(
     '/:id/drop',
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ UserRolesEnum.STUDENT ]),
+    authMiddlewareService.allowedRoles([ EUserRoles.STUDENT ]),
     courseControllers.dropCourseById
 )
 
 courseRouter.post(
     '/',
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ UserRolesEnum.INSTRUCTOR, UserRolesEnum.ADMIN ]),
+    authMiddlewareService.allowedRoles([ EUserRoles.INSTRUCTOR, EUserRoles.ADMIN ]),
     courseControllers.createCourse
 )
 
@@ -42,14 +42,14 @@ courseRouter.patch(
     '/:id',
     authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ UserRolesEnum.INSTRUCTOR, UserRolesEnum.ADMIN ]),
+    authMiddlewareService.allowedRoles([ EUserRoles.INSTRUCTOR, EUserRoles.ADMIN ]),
     courseControllers.updateCourseById
 )
 
 courseRouter.delete(
     '/:id',
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ UserRolesEnum.INSTRUCTOR, UserRolesEnum.ADMIN ]),
+    authMiddlewareService.allowedRoles([ EUserRoles.INSTRUCTOR, EUserRoles.ADMIN ]),
     courseControllers.deleteCourseById
 )
 

@@ -1,7 +1,7 @@
 import { Container } from 'typedi';
 import { Router } from 'express';
 import * as studentControllers from './student.controllers';
-import { UserRolesEnum } from '../../../config/types.config';
+import { EUserRoles } from '../../../types';
 import { AuthMiddlewareService } from '../../../services';
 
 const studentRouter = Router();
@@ -22,7 +22,7 @@ studentRouter.patch(
     '/:id',
     authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ UserRolesEnum.STUDENT, UserRolesEnum.ADMIN ]),
+    authMiddlewareService.allowedRoles([ EUserRoles.STUDENT, EUserRoles.ADMIN ]),
     authMiddlewareService.matchParamIdToPayloadUserId,
     studentControllers.updateStudentById
 );
@@ -30,7 +30,7 @@ studentRouter.patch(
 studentRouter.delete(
     '/:id',
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ UserRolesEnum.STUDENT, UserRolesEnum.ADMIN ]),
+    authMiddlewareService.allowedRoles([ EUserRoles.STUDENT, EUserRoles.ADMIN ]),
     authMiddlewareService.matchParamIdToPayloadUserId,
     studentControllers.deleteStudentById
 );

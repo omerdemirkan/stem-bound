@@ -2,7 +2,7 @@ import { Service, Inject } from 'typedi';
 import { Model, Document, Types } from 'mongoose';
 import { EventEmitter } from 'events';
 import { events } from '../config/constants.config';
-import { UserRolesEnum } from '../config/types.config';
+import { EUserRoles } from '../types';
 
 const { ObjectId } = Types;
 
@@ -19,7 +19,7 @@ export default class SchoolOfficialService {
         const newSchoolOfficial = await this.SchoolOfficials.create(schoolOfficial)
 
         this.eventEmitter.emit(events.user.USER_SIGNUP, { 
-            role: UserRolesEnum.INSTRUCTOR, 
+            role: EUserRoles.INSTRUCTOR, 
             user: newSchoolOfficial
         });
 
