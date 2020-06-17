@@ -1,24 +1,26 @@
 import { Container } from 'typedi';
 import { Request, Response } from 'express';
-import StudentService from './student.services';
-import { ErrorParserService } from '../../../services';
 import { Types } from 'mongoose';
-import SchoolService from '../../school/school.services';
+import { 
+    ErrorParserService, 
+    SchoolService, 
+    SchoolOfficialService 
+} from '../../../services';
 
-const studentService: StudentService = Container.get(StudentService);
+const schoolOfficialService: SchoolOfficialService = Container.get(SchoolOfficialService);
 const schoolService: SchoolService = Container.get(SchoolService)
 const errorParser = Container.get(ErrorParserService);
 const { ObjectId } = Types
 
-export async function createStudent(req: Request, res: Response) {
+export async function createSchoolOfficial(req: Request, res: Response) {
     try {
-        const newStudent = req.body;
-        const user: any = await studentService.createStudent(newStudent);
+        const newSchoolOfficial = req.body;
+        const user: any = await schoolOfficialService.createSchoolOfficial(newSchoolOfficial);
         await schoolService.addStudentMetadata({
             studentId: user._id,
             schoolId: user.meta.school
         })
-        
+
         res.json({
             message: '',
             data: { user }
@@ -30,9 +32,23 @@ export async function createStudent(req: Request, res: Response) {
     }
 }
 
-export async function getStudents(req: Request, res: Response) {
+export async function getSchoolOfficials(req: Request, res: Response) {
     try {
-        const data = await studentService.findStudents()
+        const data = await schoolOfficialService.findSchoolOfficials()
+        res.json({
+            data
+        });
+    } catch (e) {
+        res
+        .status(errorParser.status(e))
+        .json(errorParser.json(e))
+    }
+}
+
+export async function getSchoolOfficialById(req: Request, res: Response) {
+    try {
+        const id = ObjectId(req.params.id);
+        const data = await schoolOfficialService.findSchoolOfficialById(id)
         res.json({
             message: '',
             data
@@ -44,26 +60,11 @@ export async function getStudents(req: Request, res: Response) {
     }
 }
 
-export async function getStudentById(req: Request, res: Response) {
+export async function updateSchoolOfficialById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
-        const data = await studentService.findStudentById(id)
-        res.json({
-            message: '',
-            data
-        });
-    } catch (e) {
-        res
-        .status(errorParser.status(e))
-        .json(errorParser.json(e))
-    }
-}
-
-export async function updateStudentById(req: Request, res: Response) {
-    try {
-        const id = ObjectId(req.params.id);
-        const newStudent = req.body;
-        const data = await studentService.updateStudentById(id, newStudent);
+        const newSchoolOfficial = req.body;
+        const data = await schoolOfficialService.updateSchoolOfficialById(id, newSchoolOfficial);
 
         res.json({
             message: '',
@@ -76,10 +77,10 @@ export async function updateStudentById(req: Request, res: Response) {
     }
 }
 
-export async function deleteStudentById(req: Request, res: Response) {
+export async function deleteSchoolOfficialById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
-        const user: any = await studentService.deleteStudentById(id)
+        const user: any = await schoolOfficialService.deleteSchoolOfficialById(id);
             
         await schoolService.removeStudentMetadata({
             studentId: id,
@@ -87,7 +88,7 @@ export async function deleteStudentById(req: Request, res: Response) {
         })
 
         res.json({
-            message: 'User successfully deleted',
+            message: '',
             data: { user }
         });
     } catch (e) {

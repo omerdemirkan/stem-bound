@@ -1,8 +1,8 @@
 import { Service, Inject } from 'typedi';
 import { Model, Document, Types } from 'mongoose';
 import { EventEmitter } from 'events';
-import { events } from '../../../config/constants.config';
-import { UserRolesEnum } from '../../../config/types.config';
+import { events } from '../config/constants.config';
+import { UserRolesEnum } from '../config/types.config';
 
 const { ObjectId } = Types;
 

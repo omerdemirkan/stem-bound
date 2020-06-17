@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as modulesMiddlewares from './modules.middlewares';
+import * as modulesMiddlewares from './api.middlewares';
 
 import userRouter from './user/user.routes';
 import schoolRouter from './school/school.routes';

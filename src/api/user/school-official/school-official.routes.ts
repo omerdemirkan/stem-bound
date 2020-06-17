@@ -1,6 +1,5 @@
 import { Container } from 'typedi';
 import { Router } from 'express';
-
 import * as schoolOfficialControllers from './school-official.controllers';
 import { UserRolesEnum } from '../../../config/types.config';
 import { AuthMiddlewareService } from '../../../services';

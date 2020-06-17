@@ -1,4 +1,4 @@
-import routes from '../modules/modules.routes';
+import routes from '../api/api.routes';
 import { Application } from 'express';
 
 export default function(app: Application) {

@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
 import { Container } from 'typedi';
-import SchoolService from './school.services';
-import { ErrorParserService } from '../../services';
 import { Types } from 'mongoose';
 import { configureFindSchoolsQuery } from './school.helpers';
+import { ErrorParserService, SchoolService } from '../../services';
 
 
 const { ObjectId } = Types;

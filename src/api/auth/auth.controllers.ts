@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { ErrorParserService, JwtService } from '../../services';
+import { ErrorParserService, JwtService, AuthService } from '../../services';
 import Container from 'typedi';
-import AuthService from './auth.services';
 
 const errorParser = Container.get(ErrorParserService);
 const authService = Container.get(AuthService);

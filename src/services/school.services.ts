@@ -1,7 +1,7 @@
 import { Service, Inject, Container } from 'typedi';
 import { Model, Document, Types, MongooseFilterQuery } from 'mongoose';
-import { refreshSchoolDatabase } from '../../jobs/school.jobs';
-import { SchoolDataLocal } from '../../config/types.config';
+import { refreshSchoolDatabase } from '../jobs/school.jobs';
+import { SchoolDataLocal } from '../config/types.config';
 
 const { ObjectId } = Types
 

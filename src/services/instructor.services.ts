@@ -1,8 +1,8 @@
 import { Service, Inject } from 'typedi'
 import { EventEmitter } from 'events';
 import { Model, Document, Types } from 'mongoose';
-import { events } from '../../../config/constants.config';
-import { UserRolesEnum } from '../../../config/types.config';
+import { events } from '../config/constants.config';
+import { UserRolesEnum } from '../config/types.config';
 
 @Service()
 export default class InstructorService {

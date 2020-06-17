@@ -1,10 +1,10 @@
 import { Service, Container } from 'typedi';
-import InstructorService from '../user/instructor/instructor.services';
-import SchoolOfficialService from '../user/school-official/school-official.services';
-import StudentService from '../user/student/student.services';
-import { JwtService, BcryptService } from '../../services';
-import { UserRolesEnum } from '../../config/types.config';
-import SchoolService from '../school/school.services';
+import InstructorService from './instructor.services';
+import SchoolOfficialService from './school-official.services';
+import StudentService from './student.services';
+import { JwtService, BcryptService } from '.';
+import { UserRolesEnum } from '../config/types.config';
+import SchoolService from './school.services';
 
 const schoolService = Container.get(SchoolService);
 

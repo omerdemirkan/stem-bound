@@ -1,11 +1,13 @@
 import { Container } from 'typedi';
 import { Request, Response } from "express";
-import { ErrorParserService } from '../../services';
-import CourseService from './course.services';
 import { Types } from 'mongoose';
-import InstructorService from '../user/instructor/instructor.services';
-import StudentService from '../user/student/student.services';
-import SchoolService from '../school/school.services';
+import { 
+    ErrorParserService, 
+    InstructorService, 
+    StudentService, 
+    SchoolService, 
+    CourseService 
+} from '../../services';
 
 const errorParser = Container.get(ErrorParserService);
 const courseService = Container.get(CourseService);
