@@ -1,11 +1,11 @@
-import { Container } from 'typedi';
 import { Request, Response } from 'express';
 import { Types } from 'mongoose';
-import { ErrorParserService, InstructorService } from '../../../services';
+import { 
+    errorParser, 
+    instructorService 
+} from '../../../services';
 
 const { ObjectId } = Types
-const instructorService = Container.get(InstructorService);
-const errorParser: ErrorParserService = Container.get(ErrorParserService)
 
 export async function createInstructor(req: Request, res: Response) {
     try {

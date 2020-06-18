@@ -1,19 +1,13 @@
-import { Container } from 'typedi';
 import { Request, Response } from "express";
 import { Types } from 'mongoose';
 import { 
-    ErrorParserService, 
-    InstructorService, 
-    StudentService, 
-    SchoolService, 
-    CourseService 
+    courseService,
+    instructorService,
+    schoolService,
+    errorParser,
+    studentService
 } from '../../services';
 
-const errorParser = Container.get(ErrorParserService);
-const courseService = Container.get(CourseService);
-const instructorService = Container.get(InstructorService);
-const schoolService = Container.get(SchoolService)
-const studentService = Container.get(StudentService);
 const { ObjectId } = Types;
 
 export async function createCourse(req: Request, res: Response) {

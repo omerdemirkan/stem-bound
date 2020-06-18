@@ -1,14 +1,13 @@
 import { Request, Response } from 'express';
-import { Container } from 'typedi';
 import { Types } from 'mongoose';
 import { configureFindSchoolsQuery } from './school.helpers';
-import { ErrorParserService, SchoolService } from '../../services';
+import { 
+    schoolService, 
+    errorParser 
+} from '../../services';
 
 
 const { ObjectId } = Types;
-
-const schoolService = Container.get(SchoolService);
-const errorParser = Container.get(ErrorParserService);
 
 export async function getSchools(req: Request, res: Response) {
     try {

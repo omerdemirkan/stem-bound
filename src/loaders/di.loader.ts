@@ -1,23 +1,56 @@
-import { Container } from 'typedi';
-import config from '../config'
 
+import * as services from '../services/index';
+import * as dependencies from '../config/dependency.config';
 import * as models from '../models';
-import rateLimiter from 'express-rate-limit';
-import jwt from 'jsonwebtoken';
-import axios from 'axios';
+import { EventEmitter } from 'events';
 
-// Dependency Injection Loader,
-// for dependencies that might be changed, things that need one global instance, and things that will be injected into services.
+// Dependency Injection Loader
 
-export default function() {
-    Object.keys(models).forEach(modelName => {
-        Container.set(`models.${modelName}`, (models as any)[modelName]);
-    });
+export const eventEmitter: EventEmitter = new EventEmitter();
 
-    Container.set('models', models);
-    
-    Container.set('rateLimiter', rateLimiter);
-    Container.set('jwt', jwt);
+export const errorParser = new services.ErrorParserService();
 
-    Container.set('fetch', axios);
-}
+export const jwtService = new services.JwtService(
+    dependencies.jwt
+);
+
+export const bcryptService = new services.BcryptService(
+    dependencies.bcrypt
+);
+
+export const authMiddlewareService = new services.AuthMiddlewareService(
+    jwtService
+);
+
+export const courseService = new services.CourseService(
+    models.Courses, 
+    eventEmitter
+);
+
+export const schoolService = new services.SchoolService(
+    models.Schools
+);
+
+export const studentService = new services.StudentService(
+    models.Students, 
+    eventEmitter
+);
+
+export const schoolOfficialService = new services.SchoolOfficialService(
+    models.SchoolOfficials, 
+    eventEmitter
+);
+
+export const instructorService = new services.InstructorService(
+    models.Instructors, 
+    eventEmitter
+);
+
+export const authService = new services.AuthService(
+    jwtService,
+    bcryptService,
+    studentService,
+    instructorService,
+    schoolOfficialService,
+    schoolService
+)

@@ -1,21 +1,21 @@
-import { Service, Container } from 'typedi';
-import InstructorService from './instructor.services';
-import SchoolOfficialService from './school-official.services';
-import StudentService from './student.services';
-import { JwtService, BcryptService } from '.';
 import { EUserRoles } from '../types';
-import SchoolService from './school.services';
+import { 
+    JwtService, 
+    BcryptService, 
+    SchoolService ,
+    SchoolOfficialService,
+    StudentService,
+    InstructorService
+} from '.';
 
-const schoolService = Container.get(SchoolService);
-
-@Service()
 export default class AuthService {
     constructor(
         private jwtService: JwtService,
         private bcryptService: BcryptService,
         private studentService: StudentService,
         private instructorService: InstructorService,
-        private schoolOfficialService: SchoolOfficialService
+        private schoolOfficialService: SchoolOfficialService,
+        private schoolService: SchoolService
     ) { }
 
     async userSignUp({ role, userData }: {
@@ -34,7 +34,7 @@ export default class AuthService {
             case EUserRoles.SCHOOL_OFFICIAL:
 
                 user = await this.schoolOfficialService.createSchoolOfficial(userData);
-                await schoolService.addSchoolOfficialMetadata({
+                await this.schoolService.addSchoolOfficialMetadata({
                     schoolId: user.meta.school,
                     schoolOfficialId: user._id
                 })
@@ -42,7 +42,7 @@ export default class AuthService {
             case EUserRoles.STUDENT:
 
                 user = await this.studentService.createStudent(userData);
-                await schoolService.addStudentMetadata({
+                await this.schoolService.addStudentMetadata({
                     studentId: user._id,
                     schoolId: user.meta.school
                 })

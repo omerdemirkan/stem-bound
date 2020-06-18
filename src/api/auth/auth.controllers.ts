@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { ErrorParserService, JwtService, AuthService } from '../../services';
-import Container from 'typedi';
+import { 
+    jwtService, 
+    errorParser, 
+    authService 
+} from '../../services';
 
-const errorParser = Container.get(ErrorParserService);
-const authService = Container.get(AuthService);
-const jwtService = Container.get(JwtService);
 
 export async function me(req: Request, res: Response) {
     try {

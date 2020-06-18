@@ -1,9 +1,7 @@
-import { Service } from 'typedi';
 import { JwtService } from '.';
 import { Request, Response, NextFunction } from 'express';
 import { EUserRoles } from '../types';
 
-@Service()
 export default class AuthMiddlewareService {
     constructor (
         private jwtService: JwtService

@@ -1,15 +1,12 @@
-import { Service, Inject } from 'typedi';
 import { Model, Document, Types } from 'mongoose';
 import { EventEmitter } from 'events';
-import { events } from '../config/constants.config';
-import { EUserRoles } from '../types';
+import { EUserRoles, EUserEvents } from '../types';
 
 const { ObjectId } = Types;
 
-@Service()
 export default class SchoolOfficialService {
     constructor(
-        @Inject('models.SchoolOfficials') private SchoolOfficials: Model<Document>,
+        private SchoolOfficials: Model<Document>,
         private eventEmitter: EventEmitter
     ) { }
 
@@ -18,7 +15,7 @@ export default class SchoolOfficialService {
 
         const newSchoolOfficial = await this.SchoolOfficials.create(schoolOfficial)
 
-        this.eventEmitter.emit(events.user.USER_SIGNUP, { 
+        this.eventEmitter.emit(EUserEvents.USER_SIGNUP, { 
             role: EUserRoles.INSTRUCTOR, 
             user: newSchoolOfficial
         });

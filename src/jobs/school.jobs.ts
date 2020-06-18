@@ -1,6 +1,3 @@
-import { Container } from 'typedi';
-// import fs from 'fs'
-
 import { Model, Document } from 'mongoose';
 import {
     getFilteredAndMappedSchoolData,
@@ -11,11 +8,11 @@ import {
 } from '../helpers/school-db.helpers'
 import { AxiosInstance } from 'axios';
 
+import Schools from '../models/school.model';
+import { fetch } from '../config/dependency.config'
+
 
 const defaultUrl = 'https://opendata.arcgis.com/datasets/87376bdb0cb3490cbda39935626f6604_0.csv?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D';
-
-const Schools: Model<Document> = Container.get('models.Schools');
-const fetch: AxiosInstance = Container.get('fetch');
 
 
 export async function refreshSchoolDatabase({ url }: { url?: string }): 

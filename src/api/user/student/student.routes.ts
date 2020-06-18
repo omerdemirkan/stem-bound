@@ -1,11 +1,9 @@
-import { Container } from 'typedi';
 import { Router } from 'express';
 import * as studentControllers from './student.controllers';
 import { EUserRoles } from '../../../types';
-import { AuthMiddlewareService } from '../../../services';
+import { AuthMiddlewareService, authMiddlewareService } from '../../../services';
 
 const studentRouter = Router();
-const authMiddlewareService: AuthMiddlewareService = Container.get(AuthMiddlewareService);
 
 
 studentRouter.get(

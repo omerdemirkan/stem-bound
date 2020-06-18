@@ -1,14 +1,12 @@
-import { Service, Inject, Container } from 'typedi';
 import { Model, Document, Types, MongooseFilterQuery } from 'mongoose';
 import { refreshSchoolDatabase } from '../jobs/school.jobs';
 import { ISchoolDataLocal } from '../types';
 
 const { ObjectId } = Types
 
-@Service()
 export default class SchoolService {
     constructor(
-        @Inject('models.Schools') private Schools: Model<Document>
+        private Schools: Model<Document>
     ) { }
 
     async findSchools(where: object = {}, options?: {

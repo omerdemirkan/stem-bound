@@ -1,7 +1,5 @@
-import { Service } from 'typedi';
 import config from '../config';
 
-@Service()
 export default class BcryptService {
     constructor(
         private bcrypt: any

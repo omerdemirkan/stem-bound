@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { Application } from "express";
 
-import diLoader from './di.loader';
+import './di.loader';
 import expressLoader from './express.loader';
 import mongooseLoader from './mongoose.loader';
 import eventsLoader from './events.loader';
@@ -10,7 +10,6 @@ export default async function ({ app }: {
     app: Application
 }) {
     expressLoader(app);
-    diLoader();
     eventsLoader();
 
     await mongooseLoader();

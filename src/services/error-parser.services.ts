@@ -1,6 +1,5 @@
-import { Service } from 'typedi';
 
-@Service()
+
 export default class ErrorParserService {
     status(error: Error) {
         console.log(error);

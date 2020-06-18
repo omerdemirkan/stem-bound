@@ -1,9 +1,7 @@
-import { Service } from 'typedi';
 import { SignOptions, VerifyOptions } from 'jsonwebtoken';
 import config from '../config';
 import { ITokenPayload } from '../types';
 
-@Service()
 export default class JwtService {
     constructor(
         private jwt: any

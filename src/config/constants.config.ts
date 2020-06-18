@@ -1,14 +1,4 @@
 
-
-export const events = Object.freeze({
-    user: {
-        USER_SIGNUP: 'USER_SIGNUP'
-    },
-    course: {
-        COURSE_CREATED: 'COURSE_CREATED'
-    }
-})
-
 // SCHOOL
 
 export const schoolCsvColumns = [
