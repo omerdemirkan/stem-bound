@@ -8,10 +8,14 @@ import {
 
 export async function me(req: Request, res: Response) {
     try {
+        const userData = req.params.all ?
+        await authService.getUserById((req as any).payload.user._id)
+        : (req as any).payload;
+
         res.json({
             message: '',
             accessToken: jwtService.sign((req as any).payload),
-            data: (req as any).payload
+            data: userData
         })
     } catch (e) {
         res

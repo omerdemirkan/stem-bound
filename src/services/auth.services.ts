@@ -7,6 +7,9 @@ import {
     StudentService,
     InstructorService
 } from '.';
+import { Types } from 'mongoose';
+
+const { ObjectId } = Types;
 
 export default class AuthService {
     constructor(
@@ -67,7 +70,50 @@ export default class AuthService {
         email: string,
         password: string
     }): Promise<{ accessToken: string, user: any } | undefined> {
-        let user: any;
+
+        let user: any = await this.getUserByEmail({ email, role });
+
+        if (await this.bcryptService.compare(password, user.hash)) {
+            const accessToken = this.jwtService.sign({
+                role,
+                user
+            })
+    
+            return {
+                accessToken,
+                user
+            }
+        }
+    }
+
+    async getUserById({ id, role }: {
+        id: Types.ObjectId,
+        role: EUserRoles
+    }) {
+        let user;
+
+        switch (role) {
+            case EUserRoles.INSTRUCTOR:
+                user = await this.instructorService.findInstructorById(id);
+                break;
+            case EUserRoles.SCHOOL_OFFICIAL:
+                user = await this.schoolOfficialService.findSchoolOfficialById(id);
+                break;
+            case EUserRoles.STUDENT:
+                user = await this.studentService.findStudentById(id);
+                break;
+            default:
+                throw new Error('Invalid role.')
+        }
+        return user;
+    }
+
+    async getUserByEmail({ email, role }: {
+        email: string,
+        role: EUserRoles
+    }) {
+        let user;
+
         switch (role) {
             case EUserRoles.INSTRUCTOR:
                 user = await this.instructorService.findInstructorByEmail(email);
@@ -81,17 +127,6 @@ export default class AuthService {
             default:
                 throw new Error('Invalid role.')
         }
-
-        if (await this.bcryptService.compare(password, user.hash)) {
-            const accessToken = this.jwtService.sign({
-                role,
-                user
-            })
-    
-            return {
-                accessToken,
-                user
-            }
-        }
+        return user;
     }
 }
