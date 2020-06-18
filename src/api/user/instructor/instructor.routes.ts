@@ -18,6 +18,11 @@ instructorRouter.get(
     instructorControllers.getInstructorById
 );
 
+instructorRouter.get(
+    '/:id/courses',
+    instructorControllers.getInstructorClassesById
+);
+
 instructorRouter.patch(
     '/:id',
     authMiddlewareService.blockRequestBodyMetadata,

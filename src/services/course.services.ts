@@ -18,6 +18,10 @@ export default class CourseService {
         return await this.Courses.find(where);
     }
 
+    async findCoursesByIds(ids: Types.ObjectId[]) {
+        return await this.Courses.find({ _id: { $in: ids } });
+    }
+
     async findCourse(where: object) {
         return await this.Courses.findOne(where);
     }

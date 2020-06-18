@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import * as modulesMiddlewares from './api.middlewares';
 
 import userRouter from './user/user.routes';
@@ -14,5 +14,9 @@ router.use('/user', userRouter);
 router.use('/school', schoolRouter);
 router.use('/auth', authRouter);
 router.use('/course', courseRouter)
+
+router.all('*', function(req: Request, res: Response) {
+    res.send('Invalid route.')
+})
 
 export default router;

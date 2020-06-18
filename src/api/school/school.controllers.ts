@@ -37,7 +37,7 @@ export async function getSchools(req: Request, res: Response) {
 export async function getSchoolById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id)
-        const data = await schoolService.findOneById(id)
+        const data = await schoolService.findSchoolById(id)
 
         res.json({
             message: '',

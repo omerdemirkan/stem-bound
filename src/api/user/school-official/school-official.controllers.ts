@@ -93,3 +93,22 @@ export async function deleteSchoolOfficialById(req: Request, res: Response) {
         .json(errorParser.json(e))
     }
 }
+
+export async function getSchoolOfficialSchoolById(req: Request, res: Response) {
+    try {
+        const id = ObjectId(req.params.id);
+        const schoolOfficial: any = await schoolOfficialService.findSchoolOfficialById(id);
+            
+        const schoolId = schoolOfficial.meta.school;
+        const school = await schoolService.findSchoolById(schoolId);
+
+        res.json({
+            message: '',
+            data: school
+        });
+    } catch (e) {
+        res
+        .status(errorParser.status(e))
+        .json(errorParser.json(e))
+    }
+}

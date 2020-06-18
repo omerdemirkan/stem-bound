@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import { Types } from 'mongoose';
 import { 
     errorParser, 
-    instructorService 
+    instructorService, 
+    courseService
 } from '../../../services';
 
 const { ObjectId } = Types
@@ -76,6 +77,25 @@ export async function deleteInstructorById(req: Request, res: Response) {
         res.json({
             message: '',
             data
+        });
+    } catch (e) {
+        res
+        .status(errorParser.status(e))
+        .json(errorParser.json(e))
+    }
+}
+
+export async function getInstructorClassesById(req: Request, res: Response) {
+    try {
+        const id = ObjectId(req.params.id);
+        const instructor: any = await instructorService.findInstructorById(id);
+
+        const courseIds = instructor.meta.courses;
+        const courses = await courseService.findCoursesByIds(courseIds)
+
+        res.json({
+            message: "Instructor classes successfully fetched",
+            data: courses
         });
     } catch (e) {
         res

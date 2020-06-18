@@ -62,7 +62,7 @@ export default class SchoolService {
     }
 
 
-    findOneById(id: Types.ObjectId) {
+    findSchoolById(id: Types.ObjectId) {
         return this.Schools.findById(id);
     }
 
