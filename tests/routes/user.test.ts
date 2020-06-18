@@ -1,5 +1,5 @@
 import app from "../../src/app";
-const request = require("supertest");
+import request from 'supertest';
 
 beforeAll((done: () => void) => {
   app.on('APP_STARTED', done)

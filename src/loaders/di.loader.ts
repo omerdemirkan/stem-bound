@@ -6,6 +6,7 @@ import { EventEmitter } from 'events';
 
 // Dependency Injection Loader
 
+// In order to ensure a single eventEmitter instance globally, please dont tack it onto global.
 export const eventEmitter: EventEmitter = new EventEmitter();
 
 export const errorParser = new services.ErrorParserService();

@@ -1,7 +1,7 @@
-import { UserRolesEnum } from "../../src/types";
+import { EUserRoles } from "../../src/types";
 
 describe("/api/auth", () => {
-  const roleTests = (role: UserRolesEnum) => {
+  const roleTests = (role: EUserRoles) => {
     describe(`POST - ${role}`, () => {
       it("should sign up if params are valid", () => {
         // TODO
@@ -35,7 +35,7 @@ describe("/api/auth", () => {
     });
   });
 
-  for (let [key, value] of Object.entries(UserRolesEnum)) {
+  for (let [key, value] of Object.entries(EUserRoles)) {
     roleTests(value);
   }
 });
