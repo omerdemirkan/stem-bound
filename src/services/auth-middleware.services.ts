@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { JwtService } from '.';
 import { Request, Response, NextFunction } from 'express';
-import {EUserRoles } from '../types';
+import { EUserRoles } from '../types';
 
 @Service()
 export default class AuthMiddlewareService {
@@ -26,7 +26,7 @@ export default class AuthMiddlewareService {
         }
     }
 
-    allowedRoles(allowedRoles:EUserRoles[]) {
+    allowedRoles(allowedRoles: EUserRoles[]) {
         return async function(req: Request, res: Response, next: NextFunction) {
             const { role } = (req as any).payload;
 
@@ -42,7 +42,7 @@ export default class AuthMiddlewareService {
     matchParamIdToPayloadUserId(req: Request, res: Response, next: NextFunction) {
         const id = req.params.id;
         const payloadId = (req as any).payload.user._id || null;
-        if (id === payloadId || (req as any).payload.role ===EUserRoles.ADMIN) {
+        if (id === payloadId || (req as any).payload.role === EUserRoles.ADMIN) {
             next();
         } else {
             res.sendStatus(403);

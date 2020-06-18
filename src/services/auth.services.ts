@@ -11,11 +11,11 @@ const schoolService = Container.get(SchoolService);
 @Service()
 export default class AuthService {
     constructor(
+        private jwtService: JwtService,
+        private bcryptService: BcryptService,
         private studentService: StudentService,
         private instructorService: InstructorService,
-        private schoolOfficialService: SchoolOfficialService,
-        private jwtService: JwtService,
-        private bcryptService: BcryptService
+        private schoolOfficialService: SchoolOfficialService
     ) { }
 
     async userSignUp({ role, userData }: {

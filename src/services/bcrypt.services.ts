@@ -1,18 +1,18 @@
 import { Service } from 'typedi';
 import config from '../config';
 
-import bcrypt from 'bcryptjs';
-
 @Service()
 export default class BcryptService {
-    constructor() { }
+    constructor(
+        private bcrypt: any
+    ) { }
     
     async hash(s: string): Promise<string> {
-        return await bcrypt.hash(s, config.saltRounds)
+        return await this.bcrypt.hash(s, config.saltRounds)
     }
 
     async compare(s: string, hash: string) {
-        return await bcrypt.compare(s, hash)
+        return await this.bcrypt.compare(s, hash)
     }
 
     async removePasswordAndInsertHash(obj: any): Promise<any> {

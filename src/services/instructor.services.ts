@@ -7,8 +7,8 @@ import { EUserRoles } from '../types';
 @Service()
 export default class InstructorService {
     constructor(
-        private eventEmitter: EventEmitter,
-        @Inject('models.Instructors') private Instructors: Model<Document>
+        @Inject('models.Instructors') private Instructors: Model<Document>,
+        private eventEmitter: EventEmitter
     ) { }
 
     async createInstructor(instructor: any) {
