@@ -8,9 +8,12 @@ import {
 
 export async function me(req: Request, res: Response) {
     try {
-        const userData = req.params.all ?
-        await authService.getUserById((req as any).payload.user._id)
-        : (req as any).payload;
+        const userData = req.query.all ?
+            await authService.getUserById({ 
+                id: (req as any).payload.user._id, 
+                role: (req as any).payload.role
+            })
+        :   (req as any).payload;
 
         res.json({
             message: '',

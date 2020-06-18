@@ -83,3 +83,12 @@ export async function deleteInstructorById(req: Request, res: Response) {
         .json(errorParser.json(e))
     }
 }
+
+// export async function getInstructorClassesById(req: Request, res: Response) {
+//     try {
+//         const id = req.params
+//         const instructor = await instructorService.findInstructorById()
+//     } catch (e) {
+
+//     }
+// }
