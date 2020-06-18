@@ -1,19 +1,22 @@
-import app from "../../src/app";
-import request from 'supertest';
+import { Server } from "http";
+import request from "supertest";
+import initServer from "../../src/server";
 
-beforeAll((done: () => void) => {
-  app.on('APP_STARTED', done)
-});
+let server: Server;
 
 describe("/api/user", () => {
-  // beforeEach((done) => {
-  //   app.on("serverInitialized", done);
-  // });
+  beforeEach(async () => {
+    server = await (await initServer()).listen();
+  });
+
+  afterEach((done: () => void) => {
+    server.close(done);
+  });
 
   const userTests = (userRole: string) => {
     describe(`GET - ${userRole}`, () => {
       it(`should get all ${userRole}s`, async () => {
-        const res = await request(app).get(`api/user/${userRole}`);
+        const res = await request(server).get(`/api/user/${userRole}`);
         expect(res).toBeDefined();
       });
 
