@@ -3,7 +3,8 @@ import { Types } from 'mongoose';
 import { 
     studentService,
     errorParser,
-    schoolService
+    schoolService,
+    courseService
 } from '../../../services';
 
 const { ObjectId } = Types
@@ -88,6 +89,46 @@ export async function deleteStudentById(req: Request, res: Response) {
             message: 'User successfully deleted',
             data: { user }
         });
+    } catch (e) {
+        res
+        .status(errorParser.status(e))
+        .json(errorParser.json(e))
+    }
+}
+
+export async function getStudentCoursesById(req: Request, res: Response) {
+    try {
+        const id = ObjectId(req.params.id);
+        const student: any = await studentService.findStudentById(id);
+
+        const courseIds = student.meta.courses;
+
+        const courses = await courseService.findCoursesByIds(courseIds);
+
+        res.json({
+            message: 'Student courses successfully fetched',
+            data: courses
+        })
+    } catch (e) {
+        res
+        .status(errorParser.status(e))
+        .json(errorParser.json(e))
+    }
+}
+
+export async function getStudentSchoolById(req: Request, res: Response) {
+    try {
+        const id = ObjectId(req.params.id);
+        const student: any = await studentService.findStudentById(id);
+
+        const schoolId = student.meta.school;
+
+        const school = await schoolService.findSchoolById(schoolId);
+
+        res.json({
+            message: 'Student school successfully fetched',
+            data: school
+        })
     } catch (e) {
         res
         .status(errorParser.status(e))

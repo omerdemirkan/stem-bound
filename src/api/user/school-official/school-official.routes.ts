@@ -18,6 +18,11 @@ schoolOfficialRouter.get(
     schoolOfficialControllers.getSchoolOfficialById
 );
 
+schoolOfficialRouter.get(
+    '/:id/school',
+    schoolOfficialControllers.getSchoolOfficialSchoolById
+);
+
 schoolOfficialRouter.patch(
     '/:id',
     authMiddlewareService.blockRequestBodyMetadata,

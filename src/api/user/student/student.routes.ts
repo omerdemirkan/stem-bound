@@ -16,6 +16,16 @@ studentRouter.get(
     studentControllers.getStudentById
 );
 
+studentRouter.get(
+    '/:id/courses',
+    studentControllers.getStudentCoursesById
+)
+
+studentRouter.get(
+    '/:id/school',
+    studentControllers.getStudentSchoolById
+)
+
 studentRouter.patch(
     '/:id',
     authMiddlewareService.blockRequestBodyMetadata,
