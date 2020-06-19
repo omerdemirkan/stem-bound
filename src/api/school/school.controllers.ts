@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import { configureFindSchoolsQuery } from "./school.helpers";
+import { configureFindSchoolsQuery } from "../../helpers/school.helpers";
 import { schoolService, errorParser } from "../../services";
 
 const { ObjectId } = Types;

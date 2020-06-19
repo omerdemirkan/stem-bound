@@ -1,7 +1,9 @@
-import mongoose, { Schema } from "mongoose";
+import { Schema } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
+import Users from "./user.model";
+import { EUserRoles } from "../types";
 
-const metaSchema = new Schema(
+const studentMetaSchema = new Schema(
     {
         school: {
             type: Schema.Types.ObjectId,
@@ -22,39 +24,9 @@ const metaSchema = new Schema(
     }
 );
 
-const studentSchema = new Schema(
-    {
-        firstName: {
-            type: String,
-            minlength: 2,
-            maxlength: 20,
-            required: [true, "First name required"],
-            trim: true,
-        },
-        lastName: {
-            type: String,
-            minlength: 2,
-            maxlength: 20,
-            required: [true, "Last name required"],
-            trim: true,
-        },
-        email: {
-            type: String,
-            required: [true, "Email name required"],
-            unique: [true, "Email already in use"],
-            trim: true,
-            validate: {
-                validator: schemaValidators.email,
-                message: (props) => `${props.value} is not a valid email`,
-            },
-        },
-        hash: {
-            type: String,
-            maxlength: 200,
-            minlength: 8,
-            required: true,
-            trim: true,
-        },
+const Students = Users.discriminator(
+    EUserRoles.STUDENT,
+    new Schema({
         interests: {
             type: [
                 {
@@ -75,32 +47,12 @@ const studentSchema = new Schema(
                 message: (props) => `1 to 10 interests required.`,
             },
         },
-        shortDescription: {
-            type: String,
-            required: true,
-            minlength: 4,
-            maxlength: 60,
-            default: "Hi! I'm a Stem-bound™ student.",
-            trim: true,
-        },
-        longDescription: {
-            type: String,
-            minlength: 4,
-            maxlength: 2000,
-            trim: true,
-        },
         meta: {
-            type: metaSchema,
+            type: studentMetaSchema,
             required: true,
+            default: {},
         },
-    },
-    {
-        timestamps: {
-            createdAt: true,
-        },
-    }
+    })
 );
-
-const Students = mongoose.model("Student", studentSchema);
 
 export default Students;

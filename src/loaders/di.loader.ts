@@ -2,6 +2,9 @@ import * as services from "../services/index";
 import * as dependencies from "../config/dependency.config";
 import * as models from "../models";
 import { eventEmitter } from "../config";
+import { EUserRoles } from "../types";
+import { Model, Document } from "mongoose";
+// import { getUserModel } from "../helpers/model.helpers";
 
 // Dependency Injection Loader
 
@@ -22,26 +25,24 @@ export const courseService = new services.CourseService(
 
 export const schoolService = new services.SchoolService(models.Schools);
 
-export const studentService = new services.StudentService(
-    models.Students,
-    eventEmitter
-);
-
-export const schoolOfficialService = new services.SchoolOfficialService(
-    models.SchoolOfficials,
-    eventEmitter
-);
-
-export const instructorService = new services.InstructorService(
-    models.Instructors,
-    eventEmitter
-);
-
 export const authService = new services.AuthService(
     jwtService,
     bcryptService,
-    studentService,
-    instructorService,
-    schoolOfficialService,
     schoolService
+);
+
+// Moved out of models.helpers.ts to avoid circular dependency
+const userModels = {
+    [EUserRoles.STUDENT]: models.Students,
+    [EUserRoles.INSTRUCTOR]: models.Instructors,
+    [EUserRoles.SCHOOL_OFFICIAL]: models.SchoolOfficials,
+};
+
+export function getUserModelByRole(role: EUserRoles): Model<Document> {
+    return (userModels as any)[role];
+}
+
+export const userService = new services.UserService(
+    getUserModelByRole,
+    models.Users
 );

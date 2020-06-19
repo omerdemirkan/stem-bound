@@ -1,12 +1,25 @@
 import { Router } from "express";
-import instructorRouter from "./instructor/instructor.routes";
-import studentRouter from "./student/student.routes";
-import schoolOfficialRouter from "./school-official/school-official.routes";
+import * as userControllers from "./user.controllers";
+import { authMiddlewareService } from "../../services";
 
-const userRouter: Router = Router();
+const userRouter = Router();
 
-userRouter.use("/instructor", instructorRouter);
-userRouter.use("/student", studentRouter);
-userRouter.use("/school-official", schoolOfficialRouter);
+userRouter.get("/", userControllers.getUsers);
+
+userRouter.get("/:id", userControllers.getUserById);
+
+userRouter.patch(
+    "/:id",
+    authMiddlewareService.extractTokenPayload,
+    authMiddlewareService.matchParamIdToPayloadUserId,
+    userControllers.updateUserById
+);
+
+userRouter.delete(
+    "/id",
+    authMiddlewareService.extractTokenPayload,
+    authMiddlewareService.matchParamIdToPayloadUserId,
+    userControllers.deleteUserById
+);
 
 export default userRouter;

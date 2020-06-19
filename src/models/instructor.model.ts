@@ -1,7 +1,9 @@
-import mongoose, { Schema } from "mongoose";
+import { Schema } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
+import Users from "./user.model";
+import { EUserRoles } from "../types";
 
-const metaSchema = new Schema(
+const instructorMetaSchema = new Schema(
     {
         courses: {
             type: [Schema.Types.ObjectId],
@@ -18,43 +20,13 @@ const metaSchema = new Schema(
     }
 );
 
-const instructorSchema: Schema = new Schema(
-    {
-        firstName: {
-            type: String,
-            minlength: 2,
-            maxlength: 20,
-            required: [true, "First name required"],
-            trim: true,
-        },
-        lastName: {
-            type: String,
-            minlength: 2,
-            maxlength: 20,
-            required: [true, "Last name required"],
-            trim: true,
-        },
-        email: {
-            type: String,
-            required: [true, "Email name required"],
-            unique: [true, "Email already in use"],
-            trim: true,
-            validate: {
-                validator: schemaValidators.email,
-                message: (props) => `${props.value} is not a valid email`,
-            },
-        },
-        hash: {
-            type: String,
-            maxlength: 200,
-            minlength: 8,
-            required: true,
-        },
+const Instructors = Users.discriminator(
+    EUserRoles.INSTRUCTOR,
+    new Schema({
         specialties: {
             type: [
                 {
                     type: String,
-                    unique: true,
                     minlength: [
                         2,
                         "At least 2 characters required for specialties",
@@ -70,31 +42,12 @@ const instructorSchema: Schema = new Schema(
                 message: (props) => `1 to 10 specialties required.`,
             },
         },
-        shortDescription: {
-            type: String,
-            required: true,
-            minlength: 4,
-            maxlength: 60,
-            default: "Hi! I'm a Stem-bound™ instructor.",
-        },
-        longDescription: {
-            type: String,
-            minlength: 4,
-            maxlength: 2000,
-        },
         meta: {
-            type: metaSchema,
+            type: instructorMetaSchema,
             required: true,
             default: {},
         },
-    },
-    {
-        timestamps: {
-            createdAt: true,
-        },
-    }
+    })
 );
-
-const Instructors = mongoose.model("Instructor", instructorSchema);
 
 export default Instructors;

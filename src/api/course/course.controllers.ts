@@ -1,12 +1,6 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import {
-    courseService,
-    instructorService,
-    schoolService,
-    errorParser,
-    studentService,
-} from "../../services";
+import { courseService, schoolService, errorParser } from "../../services";
 
 const { ObjectId } = Types;
 
@@ -25,17 +19,6 @@ export async function createCourse(req: Request, res: Response) {
         const newCourse = await courseService.createCourse(courseData);
         const schoolId = newCourse.meta.school;
         const courseId = newCourse._id;
-
-        await Promise.all([
-            instructorService.addCourseMetadata({
-                instructorId,
-                courseId,
-            }),
-            schoolService.addCourseMetadata({
-                schoolId,
-                courseId,
-            }),
-        ]);
 
         res.json({
             message: "Course successfully created",
@@ -58,10 +41,6 @@ export async function enrollInCourseById(req: Request, res: Response) {
             studentId,
             courseId,
         });
-        await studentService.addCourseMetadata({
-            courseId,
-            studentId,
-        });
 
         res.json({
             message: "Successfully enrolled in course.",
@@ -81,10 +60,6 @@ export async function dropCourseById(req: Request, res: Response) {
         await courseService.removeStudentMetadata({
             studentId,
             courseId,
-        });
-        await studentService.removeCourseMetadata({
-            courseId,
-            studentId,
         });
 
         res.json({
@@ -152,14 +127,6 @@ export async function deleteCourseById(req: Request, res: Response) {
         const schoolId = deletedCourse.meta.school;
 
         await Promise.all([
-            instructorService.removeCourseMetadata({
-                courseId,
-                instructorId,
-            }),
-            studentService.removeCourseMetadata({
-                studentIds: studentIds,
-                courseId,
-            }),
             schoolService.removeCourseMetadata({
                 schoolId,
                 courseId,
