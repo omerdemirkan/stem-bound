@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as studentControllers from './student.controllers';
 import { EUserRoles } from '../../../types';
-import { AuthMiddlewareService, authMiddlewareService } from '../../../services';
+import { authMiddlewareService } from '../../../services';
 
 const studentRouter = Router();
 

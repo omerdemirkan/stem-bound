@@ -47,8 +47,6 @@ export async function refreshSchoolDatabase({ url }: { url?: string }):
         };
     }
 
-    console.log(updatedSchoolsData, numUpdatedSchools, numExistingSchools);
-
     const deletionData = await Schools.deleteMany({});
     const insertionData = await Schools.insertMany(updatedSchoolsData);
 
@@ -61,7 +59,7 @@ export async function refreshSchoolDatabase({ url }: { url?: string }):
     //     const file = fs.createWriteStream('data/schools.csv');
     //     file.write(csvData);
     // } catch (e) {
-    //     console.log(`Error in writing csv file: ${e}`);
+    //     logger.info(`Error in writing csv file: ${e}`);
     // }
 
     return {

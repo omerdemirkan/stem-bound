@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import config from '../config'
+import config, { logger } from '../config'
 
 export default async function() {
     if (!config.localDbUrl) throw new Error('!!! No connection url !!!');
@@ -10,5 +10,5 @@ export default async function() {
         useFindAndModify: true
     })
 
-    console.log('MongoDB connected');
+    logger.info('MongoDB connected');
 }

@@ -55,7 +55,6 @@ const studentSchema = new Schema({
         type: [
             {
                 type: String,
-                unique: true,
                 minlength: [2, 'At least 2 characters required for interests'],
                 maxlength: [40, 'Maximum of 40 characters allowed for interests'],
                 trim: true

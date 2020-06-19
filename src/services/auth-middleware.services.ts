@@ -1,6 +1,7 @@
 import { JwtService } from '.';
 import { Request, Response, NextFunction } from 'express';
 import { EUserRoles } from '../types';
+import { logger } from '../config';
 
 export default class AuthMiddlewareService {
     constructor (
@@ -19,7 +20,7 @@ export default class AuthMiddlewareService {
             (req as any).payload = await this.jwtService.verify(token);
             next();
         } catch (e) {
-            console.log(e);
+            logger.info(e);
             res.sendStatus(403);
         }
     }

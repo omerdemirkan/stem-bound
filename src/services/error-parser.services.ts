@@ -1,8 +1,9 @@
+import { logger } from "../config";
 
 
 export default class ErrorParserService {
     status(error: Error) {
-        console.log(error);
+        logger.error(error);
         return 400;
     }
     

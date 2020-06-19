@@ -1,16 +1,13 @@
-import { EventEmitter } from 'events';
 import { 
     Subscriber, 
     EUserEvents 
 } from '../types';
-import { 
-    eventEmitter 
-} from '../services'
+import { eventEmitter, logger } from '../config';
 
 export default new Subscriber(function() {
     
     eventEmitter.on(EUserEvents.USER_SIGNUP, function({ role, user }) {
-        console.log(`User of type ${role} signed up\n${user}`); 
+        logger.info(`User of type ${role} signed up\n${user}`); 
     });
 });
 
