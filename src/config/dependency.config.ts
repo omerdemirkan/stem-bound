@@ -1,12 +1,12 @@
-import jsonwebtoken from 'jsonwebtoken';
-import bcryptjs from 'bcryptjs';
-import axios from 'axios';
-import expressRateLimit from 'express-rate-limit';
+import jsonwebtoken from "jsonwebtoken";
+import bcryptjs from "bcryptjs";
+import axios from "axios";
+import expressRateLimit from "express-rate-limit";
 
 export const jwt = Object.freeze({
     sign: jsonwebtoken.sign,
     verify: jsonwebtoken.verify,
-    decode: jsonwebtoken.decode
+    decode: jsonwebtoken.decode,
 });
 
 export const bcrypt = Object.freeze({
@@ -14,7 +14,7 @@ export const bcrypt = Object.freeze({
     compareSync: bcryptjs.compareSync,
     hash: bcryptjs.hash,
     hashSync: bcryptjs.hashSync,
-    generateSalt: bcryptjs.genSalt
+    generateSalt: bcryptjs.genSalt,
 });
 
 export const fetch = Object.freeze({
@@ -22,7 +22,7 @@ export const fetch = Object.freeze({
     post: axios.post,
     put: axios.put,
     patch: axios.patch,
-    delete: axios.delete
+    delete: axios.delete,
 });
 
 const rateLimit = (

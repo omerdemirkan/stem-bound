@@ -1,3 +1,1 @@
-
-
-export { default as userSubscribers } from './user.subscribers'
+export { default as userSubscribers } from "./user.subscribers";

@@ -1,9 +1,9 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 const envFound = dotenv.config();
 
 if (envFound.error) {
-    throw new Error('!!! env file not found !!!')
+    throw new Error("!!! env file not found !!!");
 }
 
 export default Object.freeze({

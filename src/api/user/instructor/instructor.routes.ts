@@ -1,41 +1,38 @@
-import { Router } from 'express';
-import * as instructorControllers from './instructor.controllers';
-import { EUserRoles } from '../../../types';
-import { 
-    authMiddlewareService 
-} from '../../../services';
+import { Router } from "express";
+import * as instructorControllers from "./instructor.controllers";
+import { EUserRoles } from "../../../types";
+import { authMiddlewareService } from "../../../services";
 
 const instructorRouter: Router = Router();
 
+instructorRouter.get("/", instructorControllers.getInstructors);
+
+instructorRouter.get("/:id", instructorControllers.getInstructorById);
 
 instructorRouter.get(
-    '/',
-    instructorControllers.getInstructors
-);
-
-instructorRouter.get(
-    '/:id',
-    instructorControllers.getInstructorById
-);
-
-instructorRouter.get(
-    '/:id/courses',
+    "/:id/courses",
     instructorControllers.getInstructorClassesById
 );
 
 instructorRouter.patch(
-    '/:id',
+    "/:id",
     authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ EUserRoles.INSTRUCTOR, EUserRoles.ADMIN ]),
+    authMiddlewareService.allowedRoles([
+        EUserRoles.INSTRUCTOR,
+        EUserRoles.ADMIN,
+    ]),
     authMiddlewareService.matchParamIdToPayloadUserId,
     instructorControllers.updateInstructorById
 );
 
 instructorRouter.delete(
-    '/:id',
+    "/:id",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ EUserRoles.INSTRUCTOR, EUserRoles.ADMIN ]),
+    authMiddlewareService.allowedRoles([
+        EUserRoles.INSTRUCTOR,
+        EUserRoles.ADMIN,
+    ]),
     authMiddlewareService.matchParamIdToPayloadUserId,
     instructorControllers.deleteInstructorById
 );

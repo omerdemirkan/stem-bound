@@ -1,4 +1,3 @@
-
 import * as services from '../services/index';
 import * as dependencies from '../config/dependency.config';
 import * as models from '../models';
@@ -8,39 +7,33 @@ import { eventEmitter } from '../config';
 
 export const errorParser = new services.ErrorParserService();
 
-export const jwtService = new services.JwtService(
-    dependencies.jwt
-);
+export const jwtService = new services.JwtService(dependencies.jwt);
 
-export const bcryptService = new services.BcryptService(
-    dependencies.bcrypt
-);
+export const bcryptService = new services.BcryptService(dependencies.bcrypt);
 
 export const authMiddlewareService = new services.AuthMiddlewareService(
     jwtService
 );
 
 export const courseService = new services.CourseService(
-    models.Courses, 
+    models.Courses,
     eventEmitter
 );
 
-export const schoolService = new services.SchoolService(
-    models.Schools
-);
+export const schoolService = new services.SchoolService(models.Schools);
 
 export const studentService = new services.StudentService(
-    models.Students, 
+    models.Students,
     eventEmitter
 );
 
 export const schoolOfficialService = new services.SchoolOfficialService(
-    models.SchoolOfficials, 
+    models.SchoolOfficials,
     eventEmitter
 );
 
 export const instructorService = new services.InstructorService(
-    models.Instructors, 
+    models.Instructors,
     eventEmitter
 );
 
@@ -51,4 +44,4 @@ export const authService = new services.AuthService(
     instructorService,
     schoolOfficialService,
     schoolService
-)
+);

@@ -10,4 +10,3 @@ export default new Subscriber(function() {
         logger.info(`User of type ${role} signed up\n${user}`); 
     });
 });
-

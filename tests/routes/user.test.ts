@@ -1,53 +1,55 @@
 import { Server } from "http";
 import request from "supertest";
+import { Types } from "mongoose";
 import initServer from "../../src/server";
+import { studentService } from "../../src/loaders/di.loader";
+import { Students } from "../../src/models";
 
+const { ObjectId } = Types;
 let server: Server;
 
 describe("/api/user", () => {
-  beforeEach(async () => {
-    server = await (await initServer()).listen();
-  });
-
-  afterEach((done: () => void) => {
-    server.close(done);
-  });
-
-  const userTests = (userRole: string) => {
-    describe(`GET - ${userRole}`, () => {
-      it(`should get all ${userRole}s`, async () => {
-        const res = await request(server).get(`/api/user/${userRole}`);
-        expect(res).toBeDefined();
-      });
-
-      it(`should get ${userRole} by id`, () => {
-        // TODO
-      });
+    beforeEach(async () => {
+        const app = await initServer();
+        server = app.listen();
     });
 
-    const methodTests = (method: "PATCH" | "DELETE") => {
-      it(`should ${method} ${userRole} if authorized and id matches access-token`, () => {
-        // TODO
-      });
-
-      it("should fail if not authorized", () => {
-        // TODO
-      });
-
-      it("should fail if id doesn't match access-token", () => {
-        // TODO
-      });
-    };
-
-    describe(`PATCH - ${userRole}`, () => {
-      methodTests("PATCH");
+    afterEach(async (done: () => void) => {
+        await Students.deleteMany({});
+        server.close(done);
     });
 
-    describe(`DELETE - ${userRole}`, () => {
-      methodTests("DELETE");
-    });
-  };
+    describe("/student/", () => {
+        it(`should get all students`, async () => {
+            const student1 = {
+                firstName: "John",
+                lastName: "Doe",
+                email: "jdoe@email.com",
+                hash: "12345678",
+                interests: ["interest"],
+                meta: {
+                    school: ObjectId(),
+                },
+            };
+            const student2 = {
+                ...student1,
+                firstName: "Jane",
+                email: "janed@email.com",
+                interests: ["interest"],
+            };
+            const student3 = {
+                ...student1,
+                firstName: "Jack",
+                email: "jackd@email.com",
+                interests: ["interest"],
+            };
 
-  const userRoleEnpoints = ["student", "instructor", "school-official"];
-  userRoleEnpoints.map(userTests);
+            await studentService.createStudent(student1);
+            await studentService.createStudent(student2);
+            await studentService.createStudent(student3);
+
+            const res = await request(server).get(`/api/user/student`);
+            expect(res.body.data).toHaveLength(3);
+        });
+    });
 });

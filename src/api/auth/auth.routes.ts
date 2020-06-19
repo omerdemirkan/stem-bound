@@ -1,25 +1,17 @@
-import { Router } from 'express';
-import * as authControllers from './auth.controllers';
-import { 
-    authMiddlewareService 
-} from '../../services';
+import { Router } from "express";
+import * as authControllers from "./auth.controllers";
+import { authMiddlewareService } from "../../services";
 
 const authRouter = Router();
 
 authRouter.get(
-    '/me',
+    "/me",
     authMiddlewareService.extractTokenPayload,
     authControllers.me
 );
 
-authRouter.post(
-    '/sign-up',
-    authControllers.signUp
-)
+authRouter.post("/sign-up", authControllers.signUp);
 
-authRouter.post(
-    '/log-in',
-    authControllers.logIn
-);
+authRouter.post("/log-in", authControllers.logIn);
 
 export default authRouter;
