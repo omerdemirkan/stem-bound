@@ -1,44 +1,34 @@
-import { Router } from 'express';
-import * as studentControllers from './student.controllers';
-import { EUserRoles } from '../../../types';
-import { AuthMiddlewareService, authMiddlewareService } from '../../../services';
+import { Router } from "express";
+import * as studentControllers from "./student.controllers";
+import { EUserRoles } from "../../../types";
+import {
+    AuthMiddlewareService,
+    authMiddlewareService,
+} from "../../../services";
 
 const studentRouter = Router();
 
+studentRouter.get("/", studentControllers.getStudents);
 
-studentRouter.get(
-    '/',
-    studentControllers.getStudents
-);
+studentRouter.get("/:id", studentControllers.getStudentById);
 
-studentRouter.get(
-    '/:id',
-    studentControllers.getStudentById
-);
+studentRouter.get("/:id/courses", studentControllers.getStudentCoursesById);
 
-studentRouter.get(
-    '/:id/courses',
-    studentControllers.getStudentCoursesById
-)
-
-studentRouter.get(
-    '/:id/school',
-    studentControllers.getStudentSchoolById
-)
+studentRouter.get("/:id/school", studentControllers.getStudentSchoolById);
 
 studentRouter.patch(
-    '/:id',
+    "/:id",
     authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ EUserRoles.STUDENT, EUserRoles.ADMIN ]),
+    authMiddlewareService.allowedRoles([EUserRoles.STUDENT, EUserRoles.ADMIN]),
     authMiddlewareService.matchParamIdToPayloadUserId,
     studentControllers.updateStudentById
 );
 
 studentRouter.delete(
-    '/:id',
+    "/:id",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ EUserRoles.STUDENT, EUserRoles.ADMIN ]),
+    authMiddlewareService.allowedRoles([EUserRoles.STUDENT, EUserRoles.ADMIN]),
     authMiddlewareService.matchParamIdToPayloadUserId,
     studentControllers.deleteStudentById
 );

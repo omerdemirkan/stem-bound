@@ -1,6 +1,6 @@
-import { Model, Document, Types } from 'mongoose';
-import { EventEmitter } from 'events';
-import { EUserRoles, EUserEvents } from '../types';
+import { Model, Document, Types } from "mongoose";
+import { EventEmitter } from "events";
+import { EUserRoles, EUserEvents } from "../types";
 
 const { ObjectId } = Types;
 
@@ -8,37 +8,42 @@ export default class SchoolOfficialService {
     constructor(
         private SchoolOfficials: Model<Document>,
         private eventEmitter: EventEmitter
-    ) { }
+    ) {}
 
     async createSchoolOfficial(schoolOfficial: any) {
-        if (schoolOfficial.password) throw new Error("We don't store passwords around here fella!")
+        if (schoolOfficial.password)
+            throw new Error("We don't store passwords around here fella!");
 
-        const newSchoolOfficial = await this.SchoolOfficials.create(schoolOfficial)
+        const newSchoolOfficial = await this.SchoolOfficials.create(
+            schoolOfficial
+        );
 
-        this.eventEmitter.emit(EUserEvents.USER_SIGNUP, { 
-            role: EUserRoles.INSTRUCTOR, 
-            user: newSchoolOfficial
+        this.eventEmitter.emit(EUserEvents.USER_SIGNUP, {
+            role: EUserRoles.INSTRUCTOR,
+            user: newSchoolOfficial,
         });
 
         return newSchoolOfficial;
     }
 
-    async findSchoolOfficials(where: object = {}, options?: {
-        sort?: object,
-        skip?: number,
-        limit?: number
-    }) {
-        const students = await this.SchoolOfficials
-        .find(where)
-        .sort(options?.sort)
-        .skip(options?.skip || 0)
-        .limit(options?.limit || 20)
+    async findSchoolOfficials(
+        where: object = {},
+        options?: {
+            sort?: object;
+            skip?: number;
+            limit?: number;
+        }
+    ) {
+        const students = await this.SchoolOfficials.find(where)
+            .sort(options?.sort)
+            .skip(options?.skip || 0)
+            .limit(options?.limit || 20);
 
         return students;
     }
 
     async findSchoolOfficial(where: object) {
-        return await this.SchoolOfficials.findOne(where)
+        return await this.SchoolOfficials.findOne(where);
     }
 
     async findSchoolOfficialById(id: Types.ObjectId) {
@@ -46,22 +51,31 @@ export default class SchoolOfficialService {
     }
 
     async findSchoolOfficialByEmail(email: string) {
-        return await this.SchoolOfficials.findOne({ email })
+        return await this.SchoolOfficials.findOne({ email });
     }
 
     async updateSchoolOfficial(where: object, newSchoolOfficial: object) {
-        return await this.SchoolOfficials.findOneAndUpdate(where, newSchoolOfficial);
+        return await this.SchoolOfficials.findOneAndUpdate(
+            where,
+            newSchoolOfficial
+        );
     }
 
-    async updateSchoolOfficialById(id: Types.ObjectId, newSchoolOfficial: object) {
-        return await this.SchoolOfficials.findByIdAndUpdate(id, newSchoolOfficial);
+    async updateSchoolOfficialById(
+        id: Types.ObjectId,
+        newSchoolOfficial: object
+    ) {
+        return await this.SchoolOfficials.findByIdAndUpdate(
+            id,
+            newSchoolOfficial
+        );
     }
 
     async deleteSchoolOfficial(where: object) {
-        return await this.SchoolOfficials.findOneAndDelete(where)
+        return await this.SchoolOfficials.findOneAndDelete(where);
     }
 
     async deleteSchoolOfficialById(id: Types.ObjectId) {
-        return await this.deleteSchoolOfficial({ _id: id })
+        return await this.deleteSchoolOfficial({ _id: id });
     }
 }

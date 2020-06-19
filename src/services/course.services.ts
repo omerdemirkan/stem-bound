@@ -1,16 +1,16 @@
-import { Model, Document, Types } from 'mongoose';
-import { EventEmitter } from 'events';
-import { ECourseEvents } from '../types';
+import { Model, Document, Types } from "mongoose";
+import { EventEmitter } from "events";
+import { ECourseEvents } from "../types";
 
 export default class CourseService {
     constructor(
         private Courses: Model<Document>,
         private eventEmitter: EventEmitter
-    ) { }
+    ) {}
 
     async createCourse(courseData: object = {}) {
         const course: any = await this.Courses.create(courseData);
-        this.eventEmitter.emit(ECourseEvents.COURSE_CREATED, course)
+        this.eventEmitter.emit(ECourseEvents.COURSE_CREATED, course);
         return course;
     }
 
@@ -43,42 +43,66 @@ export default class CourseService {
     }
 
     async deleteCourseById(id: Types.ObjectId) {
-        return await this.Courses.findByIdAndDelete(id)
+        return await this.Courses.findByIdAndDelete(id);
     }
 
-    async addInstructorMetadata({ instructorId, courseId }: {
-        instructorId: Types.ObjectId,
-        courseId: Types.ObjectId
+    async addInstructorMetadata({
+        instructorId,
+        courseId,
+    }: {
+        instructorId: Types.ObjectId;
+        courseId: Types.ObjectId;
     }) {
-        await this.Courses.updateOne({ _id: courseId }, {
-            $push: { 'meta.instructors': instructorId }
-        })
+        await this.Courses.updateOne(
+            { _id: courseId },
+            {
+                $push: { "meta.instructors": instructorId },
+            }
+        );
     }
 
-    async removeInstructorMetadata({ instructorId, courseId }: {
-        instructorId: Types.ObjectId,
-        courseId: Types.ObjectId
+    async removeInstructorMetadata({
+        instructorId,
+        courseId,
+    }: {
+        instructorId: Types.ObjectId;
+        courseId: Types.ObjectId;
     }) {
-        await this.Courses.updateOne({ _id: courseId }, {
-            $pull: { 'meta.instructors': instructorId }
-        })
+        await this.Courses.updateOne(
+            { _id: courseId },
+            {
+                $pull: { "meta.instructors": instructorId },
+            }
+        );
     }
 
-    async addStudentMetadata({ studentId, courseId }: {
-        studentId: Types.ObjectId,
-        courseId: Types.ObjectId
+    async addStudentMetadata({
+        studentId,
+        courseId,
+    }: {
+        studentId: Types.ObjectId;
+        courseId: Types.ObjectId;
     }) {
-        await this.Courses.updateOne({ _id: courseId }, {
-            $push: { 'meta.students': studentId }
-        })
+        await this.Courses.updateOne(
+            { _id: courseId },
+            {
+                $push: { "meta.students": studentId },
+            }
+        );
     }
 
-    async removeStudentMetadata({ studentId, courseId }: {
-        studentId: Types.ObjectId,
-        courseId: Types.ObjectId
+    async removeStudentMetadata({
+        studentId,
+        courseId,
+    }: {
+        studentId: Types.ObjectId;
+        courseId: Types.ObjectId;
     }) {
-        await this.Courses.updateOne({ _id: courseId }, {
-            $pull: { 'meta.students': studentId }
-        })
+        await this.Courses.updateOne(
+            { _id: courseId },
+            {
+                $pull: { "meta.students": studentId },
+            }
+        );
     }
 }

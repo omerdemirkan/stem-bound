@@ -1,3 +1,1 @@
-
-
-export * as schoolJobs from './school.jobs';
+export * as schoolJobs from "./school.jobs";

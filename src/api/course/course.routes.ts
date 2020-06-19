@@ -1,54 +1,57 @@
-import { Router } from 'express';
-import * as courseControllers from './course.controllers';
-import { EUserRoles } from '../../types';
-import { authMiddlewareService } from '../../services';
+import { Router } from "express";
+import * as courseControllers from "./course.controllers";
+import { EUserRoles } from "../../types";
+import { authMiddlewareService } from "../../services";
 
 const courseRouter = Router();
 
-courseRouter.get(
-    '/',
-    courseControllers.getCourses
-)
+courseRouter.get("/", courseControllers.getCourses);
 
-courseRouter.get(
-    '/:id',
-    courseControllers.getCourseById
-)
+courseRouter.get("/:id", courseControllers.getCourseById);
 
 courseRouter.post(
-    '/:id/enroll',
+    "/:id/enroll",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ EUserRoles.STUDENT ]),
+    authMiddlewareService.allowedRoles([EUserRoles.STUDENT]),
     courseControllers.enrollInCourseById
-)
+);
 
 courseRouter.post(
-    '/:id/drop',
+    "/:id/drop",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ EUserRoles.STUDENT ]),
+    authMiddlewareService.allowedRoles([EUserRoles.STUDENT]),
     courseControllers.dropCourseById
-)
+);
 
 courseRouter.post(
-    '/',
+    "/",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ EUserRoles.INSTRUCTOR, EUserRoles.ADMIN ]),
+    authMiddlewareService.allowedRoles([
+        EUserRoles.INSTRUCTOR,
+        EUserRoles.ADMIN,
+    ]),
     courseControllers.createCourse
-)
+);
 
 courseRouter.patch(
-    '/:id',
+    "/:id",
     authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ EUserRoles.INSTRUCTOR, EUserRoles.ADMIN ]),
+    authMiddlewareService.allowedRoles([
+        EUserRoles.INSTRUCTOR,
+        EUserRoles.ADMIN,
+    ]),
     courseControllers.updateCourseById
-)
+);
 
 courseRouter.delete(
-    '/:id',
+    "/:id",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([ EUserRoles.INSTRUCTOR, EUserRoles.ADMIN ]),
+    authMiddlewareService.allowedRoles([
+        EUserRoles.INSTRUCTOR,
+        EUserRoles.ADMIN,
+    ]),
     courseControllers.deleteCourseById
-)
+);
 
 export default courseRouter;
