@@ -1,7 +1,7 @@
-import * as services from '../services/index';
-import * as dependencies from '../config/dependency.config';
-import * as models from '../models';
-import { eventEmitter } from '../config';
+import * as services from "../services/index";
+import * as dependencies from "../config/dependency.config";
+import * as models from "../models";
+import { eventEmitter } from "../config";
 
 // Dependency Injection Loader
 

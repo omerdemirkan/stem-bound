@@ -10,9 +10,9 @@ export default Object.freeze({
     port: process.env.PORT,
     localDbUrl: process.env.LOCAL_DB_URL,
     accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
-    saltRounds: Number(process.env.SALT_ROUNDS)
-})
+    saltRounds: Number(process.env.SALT_ROUNDS),
+});
 
-export * from './constants.config';
-export * from './dependency.config';
-export * from './global.config';
+export * from "./constants.config";
+export * from "./dependency.config";
+export * from "./global.config";

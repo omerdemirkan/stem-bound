@@ -29,4 +29,4 @@ const rateLimit = (
     options?: expressRateLimit.Options | undefined
 ): expressRateLimit.RateLimit => expressRateLimit(options);
 
-export const rateLimiter = rateLimit
+export const rateLimiter = rateLimit;

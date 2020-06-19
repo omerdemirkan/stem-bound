@@ -59,7 +59,6 @@ const studentSchema = new Schema(
             type: [
                 {
                     type: String,
-                    unique: true,
                     minlength: [
                         2,
                         "At least 2 characters required for interests",
@@ -97,10 +96,10 @@ const studentSchema = new Schema(
     },
     {
         timestamps: {
-            createdAt: true
-        }
+            createdAt: true,
+        },
     }
-)
+);
 
 const Students = mongoose.model("Student", studentSchema);
 

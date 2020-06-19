@@ -1,7 +1,7 @@
-import { JwtService } from '.';
-import { Request, Response, NextFunction } from 'express';
-import { EUserRoles } from '../types';
-import { logger } from '../config';
+import { JwtService } from ".";
+import { Request, Response, NextFunction } from "express";
+import { EUserRoles } from "../types";
+import { logger } from "../config";
 
 export default class AuthMiddlewareService {
     constructor(private jwtService: JwtService) {}
