@@ -9,6 +9,15 @@ courseRouter.get("/", courseControllers.getCourses);
 
 courseRouter.get("/:id", courseControllers.getCourseById);
 
+courseRouter.get(
+    "/:id/instructors",
+    courseControllers.getCourseInstructorsById
+);
+
+courseRouter.get("/:id/students", courseControllers.getCourseStudentsById);
+
+courseRouter.get("/:id/school", courseControllers.getCourseSchoolById);
+
 courseRouter.post(
     "/:id/enroll",
     authMiddlewareService.extractTokenPayload,

@@ -1,6 +1,12 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import { courseService, errorParser, metadataService } from "../../services";
+import {
+    courseService,
+    errorParser,
+    metadataService,
+    userService,
+    schoolService,
+} from "../../services";
 
 const { ObjectId } = Types;
 
@@ -125,6 +131,60 @@ export async function deleteCourseById(req: Request, res: Response) {
             data: {
                 course: deletedCourse,
             },
+        });
+    } catch (e) {
+        res.status(errorParser.status(e)).json(errorParser.json(e));
+    }
+}
+
+export async function getCourseInstructorsById(req: Request, res: Response) {
+    try {
+        const course: any = await courseService.findCourseById(
+            ObjectId(req.params.id)
+        );
+        const instructorIds = course.meta.instructors.map((id: string) =>
+            ObjectId(id)
+        );
+
+        const instructors = await userService.findUsersByIds(instructorIds);
+
+        res.json({
+            message: "Course instructors successfully fetched",
+            data: instructors,
+        });
+    } catch (e) {
+        res.status(errorParser.status(e)).json(errorParser.json(e));
+    }
+}
+
+export async function getCourseStudentsById(req: Request, res: Response) {
+    try {
+        const course: any = await courseService.findCourseById(
+            ObjectId(req.params.id)
+        );
+        const studentIds = course.meta.students.map((id: string) =>
+            ObjectId(id)
+        );
+        const students = await userService.findUsersByIds(studentIds);
+        res.json({
+            message: "Course students successfully fetched",
+            data: students,
+        });
+    } catch (e) {
+        res.status(errorParser.status(e)).json(errorParser.json(e));
+    }
+}
+
+export async function getCourseSchoolById(req: Request, res: Response) {
+    try {
+        const course: any = await courseService.findCourseById(
+            ObjectId(req.params.id)
+        );
+        const schoolId = ObjectId(course.meta.school);
+        const school = await schoolService.findSchoolById(schoolId);
+        res.json({
+            message: "Course school successfully fetched",
+            data: school,
         });
     } catch (e) {
         res.status(errorParser.status(e)).json(errorParser.json(e));

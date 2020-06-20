@@ -16,6 +16,8 @@ export default class UserService {
         role: EUserRoles;
         userData: object;
     }) {
+        if ((userData as any).password)
+            throw new Error("We don't store passwords around here kiddo");
         return this.getUserModelByRole(role).create(userData);
     }
 
