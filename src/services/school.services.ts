@@ -15,7 +15,8 @@ export default class SchoolService {
             limit?: number;
         }
     ) {
-        const schools = await this.Schools.find(where)
+        console.log(where);
+        const schools = await this.Schools.find(where || {})
             .sort(options?.sort)
             .skip(options?.skip || 0)
             .limit(options?.limit ? Math.min(options?.limit, 20) : 20);
@@ -48,7 +49,7 @@ export default class SchoolService {
             },
         });
 
-        if (where) {
+        if (where && Object.keys(where).length) {
             aggregateOptions[0].query = where;
         }
 
