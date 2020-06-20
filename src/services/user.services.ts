@@ -19,26 +19,28 @@ export default class UserService {
         return this.getUserModelByRole(role).create(userData);
     }
 
-    async findUsers({
-        role,
-        where,
-        limit,
-        skip,
-        sort,
-    }: {
-        role?: EUserRoles;
-        where?: object;
-        limit?: number;
-        skip?: number;
-        sort?: object;
-    }) {
-        let model = role ? this.getUserModelByRole(role) : this.Users;
+    async findUsers(
+        where: object,
+        options: {
+            role?: EUserRoles;
+            limit?: number;
+            skip?: number;
+            sort?: object;
+        }
+    ) {
+        let model = options.role
+            ? this.getUserModelByRole(options.role)
+            : this.Users;
 
         return await model
             .find(where || {})
-            .sort(sort)
-            .skip(skip || 0)
-            .limit(typeof limit === "number" && limit < 20 ? limit : 20);
+            .sort(options.sort)
+            .skip(options.skip || 0)
+            .limit(
+                typeof options.limit === "number" && options.limit < 20
+                    ? options.limit
+                    : 20
+            );
     }
 
     async findUser(where: object) {

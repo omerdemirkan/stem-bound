@@ -14,8 +14,18 @@ export default class CourseService {
         return course;
     }
 
-    async findCourses(where: object) {
-        return await this.Courses.find(where);
+    async findCourses(
+        where: object = {},
+        options?: {
+            sort?: object;
+            skip?: number;
+            limit?: number;
+        }
+    ) {
+        return await this.Courses.find(where)
+            .sort(options?.sort)
+            .skip(options?.skip || 0)
+            .limit(options?.limit ? Math.min(options?.limit, 20) : 20);
     }
 
     async findCoursesByIds(ids: Types.ObjectId[]) {

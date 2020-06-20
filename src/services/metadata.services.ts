@@ -26,7 +26,7 @@ export default class MetadataService {
         }
     }
 
-    async handleDeletedUserMetadataChange(deletedUser: any) {
+    async handleDeletedUserMetadataUpdate(deletedUser: any) {
         const { courses: courseIds, school: schoolId } = deletedUser.meta as {
             courses: Types.ObjectId[];
             school: Types.ObjectId;
@@ -77,7 +77,6 @@ export default class MetadataService {
             school: Types.ObjectId;
             students: Types.ObjectId[];
         };
-        console.log([...instructorIds, ...studentIds]);
         await Promise.all([
             this.userService.addCourseMetadata({
                 userIds: [...instructorIds, ...studentIds],

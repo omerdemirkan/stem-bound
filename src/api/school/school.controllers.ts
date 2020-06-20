@@ -7,7 +7,7 @@ const { ObjectId } = Types;
 
 export async function getSchools(req: Request, res: Response) {
     try {
-        const { coordinates, limit, skip, query } = configureFindSchoolsQuery(
+        const { coordinates, limit, skip, where } = configureFindSchoolsQuery(
             req.query
         );
         let data;
@@ -16,9 +16,10 @@ export async function getSchools(req: Request, res: Response) {
                 coordinates,
                 limit,
                 skip,
+                where,
             });
         } else {
-            data = await schoolService.findSchools(query);
+            data = await schoolService.findSchools(where);
         }
 
         res.json({

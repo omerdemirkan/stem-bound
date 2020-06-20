@@ -1,16 +1,21 @@
 import { Request, Response } from "express";
 import { errorParser, userService, metadataService } from "../../services";
-import { EUserRoles } from "../../types";
-import { configureUsersQuery, toUserRole } from "../../helpers/user.helpers";
+import { configureUsersQuery } from "../../helpers/user.helpers";
 import { Types } from "mongoose";
 
 const { ObjectId } = Types;
 
 export async function getUsers(req: Request, res: Response) {
     try {
-        const users = await userService.findUsers(
-            configureUsersQuery(req.query) as any
-        );
+        const { limit, skip, sort, role, where } = configureUsersQuery(
+            req.query
+        ) as any;
+        const users = await userService.findUsers(where, {
+            limit,
+            skip,
+            sort,
+            role,
+        });
         res.json({
             message: "Users successfully found",
             data: users,
@@ -56,7 +61,7 @@ export async function deleteUserById(req: Request, res: Response) {
         const id = ObjectId(req.params.id);
         const user = await userService.deleteUserById(id);
 
-        await metadataService.handleDeletedUserMetadataChange(user);
+        await metadataService.handleDeletedUserMetadataUpdate(user);
         res.json({
             message: "User successfully deleted",
             data: user,

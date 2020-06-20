@@ -18,7 +18,7 @@ export default class SchoolService {
         const schools = await this.Schools.find(where)
             .sort(options?.sort)
             .skip(options?.skip || 0)
-            .limit(options?.limit || 20);
+            .limit(options?.limit ? Math.min(options?.limit, 20) : 20);
 
         return schools;
     }
@@ -27,13 +27,13 @@ export default class SchoolService {
         coordinates,
         maxDistance,
         limit,
-        query,
+        where,
         skip,
     }: {
         coordinates: number[];
         maxDistance?: number | null;
         limit?: number | null;
-        query?: MongooseFilterQuery<ISchoolDataLocal> | null;
+        where?: MongooseFilterQuery<ISchoolDataLocal> | null;
         skip?: number | null;
     }): Promise<ISchoolDataLocal[]> {
         const aggregateOptions: any[] = [];
@@ -48,8 +48,8 @@ export default class SchoolService {
             },
         });
 
-        if (query) {
-            aggregateOptions[0].query = query;
+        if (where) {
+            aggregateOptions[0].query = where;
         }
 
         aggregateOptions.push({ $skip: skip || 0 });

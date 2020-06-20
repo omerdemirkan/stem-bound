@@ -17,6 +17,6 @@ export function configureFindSchoolsQuery({
         coordinates: long && lat ? [+long, +lat] : null,
         limit: Math.floor(+limit) || null,
         skip: Math.floor(+skip) || null,
-        query,
+        where: query,
     };
 }
