@@ -25,12 +25,6 @@ export const courseService = new services.CourseService(
 
 export const schoolService = new services.SchoolService(models.Schools);
 
-export const authService = new services.AuthService(
-    jwtService,
-    bcryptService,
-    schoolService
-);
-
 // Moved out of models.helpers.ts to avoid circular dependency
 const userModels = {
     [EUserRoles.STUDENT]: models.Students,
@@ -45,4 +39,17 @@ export function getUserModelByRole(role: EUserRoles): Model<Document> {
 export const userService = new services.UserService(
     getUserModelByRole,
     models.Users
+);
+
+export const metadataService = new services.MetadataService(
+    schoolService,
+    courseService,
+    userService
+);
+
+export const authService = new services.AuthService(
+    jwtService,
+    bcryptService,
+    userService,
+    metadataService
 );

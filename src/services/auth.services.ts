@@ -1,5 +1,5 @@
-import { EUserRoles } from "../types";
-import { JwtService, BcryptService, SchoolService } from ".";
+import { EUserRoles, ITokenPayload } from "../types";
+import { JwtService, BcryptService, UserService, MetadataService } from ".";
 import { Types } from "mongoose";
 
 const { ObjectId } = Types;
@@ -8,7 +8,8 @@ export default class AuthService {
     constructor(
         private jwtService: JwtService,
         private bcryptService: BcryptService,
-        private schoolService: SchoolService
+        private userService: UserService,
+        private metadataService: MetadataService
     ) {}
 
     async userSignUp({
@@ -17,31 +18,55 @@ export default class AuthService {
     }: {
         role: EUserRoles;
         userData: object;
-    }) {
-        return { user: "adsf", accessToken: "asdf" };
+    }): Promise<{ user: any; accessToken: string }> {
+        await this.bcryptService.removePasswordAndInsertHash(userData);
+
+        const newUser: any = await this.userService.createUser({
+            role,
+            userData,
+        });
+
+        await this.metadataService.handleNewUserMetadataUpdate(newUser);
+
+        const payload: ITokenPayload = {
+            role: newUser.role,
+            user: {
+                _id: newUser._id,
+                firstName: newUser.firstName,
+                lastName: newUser.lastName,
+                email: newUser.email,
+            },
+        };
+
+        const accessToken = await this.jwtService.sign(payload);
+
+        return { user: newUser, accessToken };
     }
 
     async userLogin({
-        role,
         email,
         password,
     }: {
-        role: EUserRoles;
         email: string;
         password: string;
-    }) {
-        return { user: "adsf", accessToken: "adsf" };
-    }
+    }): Promise<{ user: any; accessToken: string } | null> {
+        const user: any = await this.userService.findUserByEmail(email);
 
-    async getUserById({ id, role }: { id: Types.ObjectId; role: EUserRoles }) {
-        let user;
+        if (await this.bcryptService.compare(password, user.hash)) {
+            const payload: ITokenPayload = {
+                role: user.role,
+                user: {
+                    _id: user._id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                },
+            };
 
-        return user;
-    }
+            const accessToken = await this.jwtService.sign(payload);
+            return { user, accessToken };
+        }
 
-    async getUserByEmail({ email, role }: { email: string; role: EUserRoles }) {
-        let user;
-
-        return user;
+        return null;
     }
 }

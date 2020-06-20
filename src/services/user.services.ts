@@ -47,6 +47,10 @@ export default class UserService {
         return await this.Users.findById(id);
     }
 
+    async findUserByEmail(email: string) {
+        return await this.findUser({ email });
+    }
+
     async updateUser({ where, userData }: { where: object; userData: object }) {
         return await this.Users.findOneAndUpdate(where, userData);
     }

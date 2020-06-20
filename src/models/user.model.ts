@@ -38,7 +38,7 @@ const userSchema = new Schema(
             required: true,
             minlength: 4,
             maxlength: 60,
-            default: "Hi! I'm a Stem-bound™ instructor.",
+            default: "Hi! I'm a Stem-bound™ user!",
         },
         longDescription: {
             type: String,

@@ -1,13 +1,20 @@
 import { Request, Response } from "express";
-import { jwtService, errorParser, authService } from "../../services";
+import {
+    jwtService,
+    errorParser,
+    authService,
+    userService,
+} from "../../services";
+import { Types } from "mongoose";
+
+const { ObjectId } = Types;
 
 export async function me(req: Request, res: Response) {
     try {
         const userData = req.query.all
-            ? await authService.getUserById({
-                  id: (req as any).payload.user._id,
-                  role: (req as any).payload.role,
-              })
+            ? await userService.findUserById(
+                  ObjectId((req as any).payload.user._id)
+              )
             : (req as any).payload;
 
         res.json({
@@ -23,7 +30,7 @@ export async function me(req: Request, res: Response) {
 export async function signUp(req: Request, res: Response) {
     try {
         const { user, accessToken } = await authService.userSignUp({
-            role: req.query.role as any,
+            role: req.query.role || req.body.role,
             userData: req.body,
         });
 
@@ -40,7 +47,6 @@ export async function logIn(req: Request, res: Response) {
     try {
         const { email, password } = req.body;
         const loginResult = await authService.userLogin({
-            role: req.query.role as any,
             email,
             password,
         });

@@ -14,9 +14,13 @@ export function configureUsersQuery(
         limit?: number;
         skip?: number;
         sort?: object;
-        role: EUserRoles;
+        role?: EUserRoles;
         where?: object;
-    } = { role: toUserRole(role) };
+    } = {};
+
+    if (isValidUserRole(role)) {
+        query.role = role.toUpperCase();
+    }
 
     if (sort_field && sort_direction && typeof +sort_direction === "number") {
         query.sort = { [sort_field]: +sort_direction };
@@ -38,7 +42,8 @@ export function isValidUserRole(s: any) {
 }
 
 export function toUserRole(s: any): EUserRoles {
-    if (!isValidUserRole(s.toUpperCase())) throw new Error("Invalid user role");
+    if (typeof s !== "string" || !isValidUserRole(s.toUpperCase()))
+        throw new Error("Invalid user role");
 
     return s.toUpperCase() as EUserRoles;
 }

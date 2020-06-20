@@ -6,5 +6,6 @@ export { default as AuthService } from "./auth.services";
 export { default as CourseService } from "./course.services";
 export { default as SchoolService } from "./school.services";
 export { default as UserService } from "./user.services";
+export { default as MetadataService } from "./metadata.services";
 
 export * from "../loaders/di.loader";

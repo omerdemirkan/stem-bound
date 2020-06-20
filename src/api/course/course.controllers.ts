@@ -57,7 +57,7 @@ export async function dropCourseById(req: Request, res: Response) {
         const courseId = ObjectId(req.params.id);
 
         // Not using promise.all because I dont want to update the student metadata if the course id is invalid.
-        await courseService.removeStudentMetadata({
+        await courseService.removeStudentMetadataFromOne({
             studentId,
             courseId,
         });

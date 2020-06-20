@@ -61,21 +61,6 @@ export default class CourseService {
         );
     }
 
-    async removeInstructorMetadata({
-        instructorId,
-        courseId,
-    }: {
-        instructorId: Types.ObjectId;
-        courseId: Types.ObjectId;
-    }) {
-        await this.Courses.updateOne(
-            { _id: courseId },
-            {
-                $pull: { "meta.instructors": instructorId },
-            }
-        );
-    }
-
     async addStudentMetadata({
         studentId,
         courseId,
@@ -91,7 +76,37 @@ export default class CourseService {
         );
     }
 
-    async removeStudentMetadata({
+    async removeInstructorMetadataFromOne({
+        instructorId,
+        courseId,
+    }: {
+        instructorId: Types.ObjectId;
+        courseId: Types.ObjectId;
+    }) {
+        await this.Courses.updateOne(
+            { _id: courseId },
+            {
+                $pull: { "meta.instructors": instructorId },
+            }
+        );
+    }
+
+    async removeInstructorMetadataFromMany({
+        instructorId,
+        courseIds,
+    }: {
+        instructorId: Types.ObjectId;
+        courseIds: Types.ObjectId[];
+    }) {
+        await this.Courses.updateMany(
+            { _id: { $in: courseIds } },
+            {
+                $pull: { "meta.instructors": instructorId },
+            }
+        );
+    }
+
+    async removeStudentMetadataFromOne({
         studentId,
         courseId,
     }: {
@@ -100,6 +115,21 @@ export default class CourseService {
     }) {
         await this.Courses.updateOne(
             { _id: courseId },
+            {
+                $pull: { "meta.students": studentId },
+            }
+        );
+    }
+
+    async removeStudentMetadataFromMany({
+        studentId,
+        courseIds,
+    }: {
+        studentId: Types.ObjectId;
+        courseIds: Types.ObjectId[];
+    }) {
+        await this.Courses.updateMany(
+            { _id: { $in: courseIds } },
             {
                 $pull: { "meta.students": studentId },
             }
