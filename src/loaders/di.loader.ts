@@ -51,5 +51,6 @@ export const authService = new services.AuthService(
     jwtService,
     bcryptService,
     userService,
-    metadataService
+    metadataService,
+    eventEmitter
 );

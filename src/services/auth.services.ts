@@ -1,6 +1,7 @@
-import { EUserRoles, ITokenPayload } from "../types";
+import { EUserRoles, ITokenPayload, EUserEvents } from "../types";
 import { JwtService, BcryptService, UserService, MetadataService } from ".";
 import { Types } from "mongoose";
+import { EventEmitter } from "events";
 
 const { ObjectId } = Types;
 
@@ -9,7 +10,8 @@ export default class AuthService {
         private jwtService: JwtService,
         private bcryptService: BcryptService,
         private userService: UserService,
-        private metadataService: MetadataService
+        private metadataService: MetadataService,
+        private eventEmitter: EventEmitter
     ) {}
 
     async userSignUp({
@@ -40,6 +42,10 @@ export default class AuthService {
 
         const accessToken = await this.jwtService.sign(payload);
 
+        this.eventEmitter.emit(EUserEvents.USER_SIGNUP, {
+            role: newUser.role,
+            user: newUser,
+        });
         return { user: newUser, accessToken };
     }
 

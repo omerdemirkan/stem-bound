@@ -1,6 +1,11 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import { courseService, schoolService, errorParser } from "../../services";
+import {
+    courseService,
+    schoolService,
+    errorParser,
+    metadataService,
+} from "../../services";
 
 const { ObjectId } = Types;
 
@@ -20,6 +25,12 @@ export async function createCourse(req: Request, res: Response) {
         const schoolId = newCourse.meta.school;
         const courseId = newCourse._id;
 
+        await metadataService.handleNewCourseMetadataUpdate({
+            userId: instructorId,
+            courseId,
+            schoolId,
+        });
+
         res.json({
             message: "Course successfully created",
             data: {
@@ -36,12 +47,6 @@ export async function enrollInCourseById(req: Request, res: Response) {
         const studentId = ObjectId((req as any).payload.user._id);
         const courseId = ObjectId(req.params.id);
 
-        // Not using promise.all because I dont want to update the student metadata if the course id is invalid.
-        await courseService.addStudentMetadata({
-            studentId,
-            courseId,
-        });
-
         res.json({
             message: "Successfully enrolled in course.",
             data: { status: true },
@@ -55,12 +60,6 @@ export async function dropCourseById(req: Request, res: Response) {
     try {
         const studentId = ObjectId((req as any).payload.user._id);
         const courseId = ObjectId(req.params.id);
-
-        // Not using promise.all because I dont want to update the student metadata if the course id is invalid.
-        await courseService.removeStudentMetadataFromOne({
-            studentId,
-            courseId,
-        });
 
         res.json({
             message: "Successfully dropped course.",
@@ -122,16 +121,7 @@ export async function deleteCourseById(req: Request, res: Response) {
             courseId
         );
 
-        const instructorId = (req as any).payload.user._id;
-        const studentIds = deletedCourse.meta.students;
-        const schoolId = deletedCourse.meta.school;
-
-        await Promise.all([
-            schoolService.removeCourseMetadata({
-                schoolId,
-                courseId,
-            }),
-        ]);
+        await metadataService.handleDeletedCourseMetadataUpdate(deletedCourse);
 
         res.json({
             message: "Course successfully deleted",

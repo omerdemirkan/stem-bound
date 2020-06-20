@@ -8,7 +8,7 @@ const { ObjectId } = Types;
 
 export async function getUsers(req: Request, res: Response) {
     try {
-        const users = await userService.findUser(
+        const users = await userService.findUsers(
             configureUsersQuery(req.query) as any
         );
         res.json({

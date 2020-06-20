@@ -13,48 +13,103 @@ export default class MetadataService {
         switch (newUser.role) {
             case EUserRoles.SCHOOL_OFFICIAL:
                 await this.schoolService.addSchoolOfficialMetadata({
-                    schoolOfficialId: newUser._id,
-                    schoolId: newUser.meta.school,
+                    schoolOfficialIds: [newUser._id],
+                    schoolIds: [newUser.meta.school],
                 });
                 break;
             case EUserRoles.STUDENT:
                 await this.schoolService.addStudentMetadata({
-                    studentId: newUser._id,
-                    schoolId: newUser.meta.school,
+                    studentIds: [newUser._id],
+                    schoolIds: [newUser.meta.school],
                 });
                 break;
         }
     }
 
     async handleDeletedUserMetadataChange(deletedUser: any) {
-        const { courses: courseIds, school: schoolId } = deletedUser.meta;
+        const { courses: courseIds, school: schoolId } = deletedUser.meta as {
+            courses: Types.ObjectId[];
+            school: Types.ObjectId;
+        };
+
         switch (deletedUser.role) {
             case EUserRoles.SCHOOL_OFFICIAL:
                 await this.schoolService.removeSchoolOfficialMetadata({
-                    schoolOfficialId: deletedUser._id,
-                    schoolId,
+                    schoolOfficialIds: [deletedUser._id],
+                    schoolIds: [schoolId],
                 });
                 break;
             case EUserRoles.STUDENT:
                 await this.schoolService.removeStudentMetadata({
-                    studentId: deletedUser._id,
-                    schoolId,
+                    studentIds: [deletedUser._id],
+                    schoolIds: [schoolId],
                 });
                 if (courseIds.length) {
-                    await this.courseService.removeStudentMetadataFromMany({
-                        studentId: deletedUser._id,
+                    await this.courseService.removeStudentMetadata({
+                        studentIds: [deletedUser._id],
                         courseIds,
                     });
                 }
                 break;
             case EUserRoles.INSTRUCTOR:
+                await this.schoolService.removeStudentMetadata({
+                    studentIds: [deletedUser._id],
+                    schoolIds: [schoolId],
+                });
                 if (courseIds.length) {
-                    await this.courseService.removeInstructorMetadataFromMany({
-                        instructorId: deletedUser._id,
+                    await this.courseService.removeInstructorMetadata({
+                        instructorIds: [deletedUser._id],
                         courseIds,
                     });
                 }
                 break;
         }
+    }
+
+    async handleNewCourseMetadataUpdate(newCourse: any) {
+        const courseId = newCourse._id;
+        const {
+            instructors: instructorIds,
+            school: schoolId,
+            students: studentIds,
+        } = newCourse.meta as {
+            instructors: Types.ObjectId[];
+            school: Types.ObjectId;
+            students: Types.ObjectId[];
+        };
+        await Promise.all([
+            this.userService.addCourseMetadata({
+                userIds: [...instructorIds, ...studentIds],
+                courseIds: [courseId],
+            }),
+            this.schoolService.addCourseMetadata({
+                courseIds: [courseId],
+                schoolIds: [schoolId],
+            }),
+        ]);
+    }
+
+    async handleDeletedCourseMetadataUpdate(deletedCourse: any) {
+        const courseId = deletedCourse._id;
+        const {
+            instructors: instructorIds,
+            school: schoolId,
+            students: studentIds,
+        } = deletedCourse.meta as {
+            instructors: Types.ObjectId[];
+            school: Types.ObjectId;
+            students: Types.ObjectId[];
+        };
+
+        await Promise.all([
+            this.userService.removeCourseMetadata({
+                userIds: [...instructorIds, ...studentIds],
+                courseIds: [courseId],
+            }),
+            this.schoolService.removeCourseMetadata({
+                courseIds: [courseId],
+                schoolIds: [schoolId],
+            }),
+        ]);
     }
 }

@@ -7,7 +7,7 @@ export default async function () {
         useUnifiedTopology: true,
         useCreateIndex: true,
         useNewUrlParser: true,
-        useFindAndModify: true,
+        useFindAndModify: false,
     });
 
     logger.info("MongoDB connected");

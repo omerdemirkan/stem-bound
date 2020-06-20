@@ -72,91 +72,91 @@ export default class SchoolService {
     }
 
     async addStudentMetadata({
-        studentId,
-        schoolId,
+        studentIds,
+        schoolIds,
     }: {
-        studentId: Types.ObjectId;
-        schoolId: Types.ObjectId;
+        studentIds: Types.ObjectId[];
+        schoolIds: Types.ObjectId[];
     }) {
-        await this.Schools.updateOne(
-            { _id: schoolId },
+        await this.Schools.updateMany(
+            { _id: { $in: schoolIds } },
             {
-                $push: { "meta.students": studentId },
+                $push: { "meta.students": { $each: studentIds } },
             }
         );
     }
 
     async removeStudentMetadata({
-        studentId,
-        schoolId,
+        studentIds,
+        schoolIds,
     }: {
-        studentId: Types.ObjectId;
-        schoolId: Types.ObjectId;
+        studentIds: Types.ObjectId[];
+        schoolIds: Types.ObjectId[];
     }) {
-        await this.Schools.updateOne(
-            { _id: schoolId },
+        await this.Schools.updateMany(
+            { _id: { $in: schoolIds } },
             {
-                $pull: { "meta.students": studentId },
+                $pull: { "meta.students": { $each: studentIds } },
             }
         );
     }
 
     async addSchoolOfficialMetadata({
-        schoolOfficialId,
-        schoolId,
+        schoolOfficialIds,
+        schoolIds,
     }: {
-        schoolOfficialId: Types.ObjectId;
-        schoolId: Types.ObjectId;
+        schoolOfficialIds: Types.ObjectId[];
+        schoolIds: Types.ObjectId[];
     }) {
-        await this.Schools.updateOne(
-            { _id: schoolId },
+        await this.Schools.updateMany(
+            { _id: { $in: schoolIds } },
             {
-                $push: { "meta.schoolOfficials": schoolOfficialId },
+                $push: { "meta.schoolOfficials": { $each: schoolOfficialIds } },
             }
         );
     }
 
     async removeSchoolOfficialMetadata({
-        schoolOfficialId,
-        schoolId,
+        schoolOfficialIds,
+        schoolIds,
     }: {
-        schoolOfficialId: Types.ObjectId;
-        schoolId: Types.ObjectId;
+        schoolOfficialIds: Types.ObjectId[];
+        schoolIds: Types.ObjectId[];
     }) {
-        await this.Schools.updateOne(
-            { _id: schoolId },
+        await this.Schools.updateMany(
+            { _id: { $in: schoolIds } },
             {
-                $pull: { "meta.schoolOfficials": schoolOfficialId },
+                $pull: { "meta.schoolOfficials": { $each: schoolOfficialIds } },
             }
         );
     }
 
     async addCourseMetadata({
-        courseId,
-        schoolId,
+        courseIds,
+        schoolIds,
     }: {
-        courseId: Types.ObjectId;
-        schoolId: Types.ObjectId;
+        courseIds: Types.ObjectId[];
+        schoolIds: Types.ObjectId[];
     }) {
-        await this.Schools.updateOne(
-            { _id: schoolId },
+        await this.Schools.updateMany(
+            { _id: { $in: schoolIds } },
             {
-                $push: { "meta.courses": courseId },
+                $push: { "meta.courses": { $each: courseIds } },
             }
         );
     }
 
     async removeCourseMetadata({
-        courseId,
-        schoolId,
+        courseIds,
+        schoolIds,
     }: {
-        courseId: Types.ObjectId;
-        schoolId: Types.ObjectId;
+        courseIds: Types.ObjectId[];
+        schoolIds: Types.ObjectId[];
     }) {
-        await this.Schools.updateOne(
-            { _id: schoolId },
+        await this.Schools.updateMany(
+            { _id: { $in: schoolIds } },
             {
-                $pull: { "meta.courses": courseId },
+                $pull: { "meta.courses": { $each: courseIds } },
             }
         );
     }

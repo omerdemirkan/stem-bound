@@ -72,4 +72,34 @@ export default class UserService {
     async deleteUserById(id: Types.ObjectId) {
         return await this.Users.findByIdAndDelete(id);
     }
+
+    async addCourseMetadata({
+        userIds,
+        courseIds,
+    }: {
+        userIds: Types.ObjectId[];
+        courseIds: Types.ObjectId[];
+    }) {
+        await this.Users.updateMany(
+            { _id: { $in: userIds } },
+            {
+                $push: { "meta.courses": { $each: courseIds } },
+            }
+        );
+    }
+
+    async removeCourseMetadata({
+        userIds,
+        courseIds,
+    }: {
+        userIds: Types.ObjectId[];
+        courseIds: Types.ObjectId[];
+    }) {
+        await this.Users.updateMany(
+            { _id: { $in: userIds } },
+            {
+                $pull: { "meta.courses": { $each: courseIds } },
+            }
+        );
+    }
 }
