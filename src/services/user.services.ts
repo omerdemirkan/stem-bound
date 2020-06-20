@@ -1,6 +1,8 @@
 import { EUserRoles } from "../types";
 import { Model, Document, Types } from "mongoose";
 
+const { ObjectId } = Types;
+
 export default class UserService {
     constructor(
         private getUserModelByRole: (role: EUserRoles) => Model<Document>,
@@ -76,30 +78,51 @@ export default class UserService {
     async addCourseMetadata({
         userIds,
         courseIds,
+        roles,
     }: {
         userIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
+        roles: EUserRoles[];
     }) {
-        await this.Users.updateMany(
-            { _id: { $in: userIds } },
-            {
-                $push: { "meta.courses": { $each: courseIds } },
-            }
+        // Because User meta schemas are determined by the discriminator (roles).
+        // I decided against one metadata schema model with everything uptional because
+        // default values (empty arrays) have to be set before mongodb is able to push to it.
+        // I'm afraid setting default values for all user types will lead to a jumbled mess
+        // with metadata that doesn't make sense and shouldn't exist.
+        await Promise.all(
+            roles.map((role: EUserRoles) => {
+                return this.getUserModelByRole(role).updateMany(
+                    {
+                        _id: { $in: userIds },
+                    },
+                    {
+                        $push: { "meta.courses": { $each: courseIds } },
+                    }
+                );
+            })
         );
     }
 
     async removeCourseMetadata({
         userIds,
         courseIds,
+        roles,
     }: {
         userIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
+        roles: EUserRoles[];
     }) {
-        await this.Users.updateMany(
-            { _id: { $in: userIds } },
-            {
-                $pull: { "meta.courses": { $each: courseIds } },
-            }
+        await Promise.all(
+            roles.map((role: EUserRoles) => {
+                return this.getUserModelByRole(role).updateMany(
+                    {
+                        _id: { $in: userIds },
+                    },
+                    {
+                        $pullAll: { "meta.courses": courseIds },
+                    }
+                );
+            })
         );
     }
 }

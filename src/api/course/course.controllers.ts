@@ -1,11 +1,6 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import {
-    courseService,
-    schoolService,
-    errorParser,
-    metadataService,
-} from "../../services";
+import { courseService, errorParser, metadataService } from "../../services";
 
 const { ObjectId } = Types;
 
@@ -22,14 +17,8 @@ export async function createCourse(req: Request, res: Response) {
         }
 
         const newCourse = await courseService.createCourse(courseData);
-        const schoolId = newCourse.meta.school;
-        const courseId = newCourse._id;
 
-        await metadataService.handleNewCourseMetadataUpdate({
-            userId: instructorId,
-            courseId,
-            schoolId,
-        });
+        await metadataService.handleNewCourseMetadataUpdate(newCourse);
 
         res.json({
             message: "Course successfully created",
@@ -47,6 +36,10 @@ export async function enrollInCourseById(req: Request, res: Response) {
         const studentId = ObjectId((req as any).payload.user._id);
         const courseId = ObjectId(req.params.id);
 
+        await metadataService.handleCourseEnrollmentMetadataUpdate({
+            courseId,
+            studentId,
+        });
         res.json({
             message: "Successfully enrolled in course.",
             data: { status: true },
@@ -61,6 +54,10 @@ export async function dropCourseById(req: Request, res: Response) {
         const studentId = ObjectId((req as any).payload.user._id);
         const courseId = ObjectId(req.params.id);
 
+        await metadataService.handleCourseDropMetadataUpdate({
+            courseId,
+            studentId,
+        });
         res.json({
             message: "Successfully dropped course.",
             data: { status: true },

@@ -10,6 +10,7 @@ userRouter.get("/:id", userControllers.getUserById);
 
 userRouter.patch(
     "/:id",
+    authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.matchParamIdToPayloadUserId,
     userControllers.updateUserById

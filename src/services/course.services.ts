@@ -71,7 +71,7 @@ export default class CourseService {
         await this.Courses.updateMany(
             { _id: { $in: courseIds } },
             {
-                $pull: { "meta.instructors": { $each: instructorIds } },
+                $pullAll: { "meta.instructors": instructorIds },
             }
         );
     }
@@ -101,7 +101,7 @@ export default class CourseService {
         await this.Courses.updateMany(
             { _id: { $in: courseIds } },
             {
-                $pull: { "meta.students": { $each: studentIds } },
+                $pullAll: { "meta.students": studentIds },
             }
         );
     }

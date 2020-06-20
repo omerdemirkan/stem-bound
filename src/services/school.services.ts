@@ -96,7 +96,7 @@ export default class SchoolService {
         await this.Schools.updateMany(
             { _id: { $in: schoolIds } },
             {
-                $pull: { "meta.students": { $each: studentIds } },
+                $pullAll: { "meta.students": studentIds },
             }
         );
     }
@@ -126,7 +126,7 @@ export default class SchoolService {
         await this.Schools.updateMany(
             { _id: { $in: schoolIds } },
             {
-                $pull: { "meta.schoolOfficials": { $each: schoolOfficialIds } },
+                $pullAll: { "meta.schoolOfficials": schoolOfficialIds },
             }
         );
     }
@@ -156,7 +156,7 @@ export default class SchoolService {
         await this.Schools.updateMany(
             { _id: { $in: schoolIds } },
             {
-                $pull: { "meta.courses": { $each: courseIds } },
+                $pullAll: { "meta.courses": courseIds },
             }
         );
     }

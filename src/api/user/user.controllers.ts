@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { errorParser, userService } from "../../services";
+import { errorParser, userService, metadataService } from "../../services";
 import { EUserRoles } from "../../types";
 import { configureUsersQuery, toUserRole } from "../../helpers/user.helpers";
 import { Types } from "mongoose";
@@ -56,6 +56,7 @@ export async function deleteUserById(req: Request, res: Response) {
         const id = ObjectId(req.params.id);
         const user = await userService.deleteUserById(id);
 
+        await metadataService.handleDeletedUserMetadataChange(user);
         res.json({
             message: "User successfully deleted",
             data: user,

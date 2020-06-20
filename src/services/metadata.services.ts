@@ -77,10 +77,12 @@ export default class MetadataService {
             school: Types.ObjectId;
             students: Types.ObjectId[];
         };
+        console.log([...instructorIds, ...studentIds]);
         await Promise.all([
             this.userService.addCourseMetadata({
                 userIds: [...instructorIds, ...studentIds],
                 courseIds: [courseId],
+                roles: [EUserRoles.INSTRUCTOR, EUserRoles.STUDENT],
             }),
             this.schoolService.addCourseMetadata({
                 courseIds: [courseId],
@@ -105,10 +107,51 @@ export default class MetadataService {
             this.userService.removeCourseMetadata({
                 userIds: [...instructorIds, ...studentIds],
                 courseIds: [courseId],
+                roles: [EUserRoles.INSTRUCTOR, EUserRoles.STUDENT],
             }),
             this.schoolService.removeCourseMetadata({
                 courseIds: [courseId],
                 schoolIds: [schoolId],
+            }),
+        ]);
+    }
+
+    async handleCourseEnrollmentMetadataUpdate({
+        courseId,
+        studentId,
+    }: {
+        courseId: Types.ObjectId;
+        studentId: Types.ObjectId;
+    }) {
+        await Promise.all([
+            this.userService.addCourseMetadata({
+                userIds: [studentId],
+                courseIds: [courseId],
+                roles: [EUserRoles.STUDENT],
+            }),
+            this.courseService.addStudentMetadata({
+                studentIds: [studentId],
+                courseIds: [courseId],
+            }),
+        ]);
+    }
+
+    async handleCourseDropMetadataUpdate({
+        courseId,
+        studentId,
+    }: {
+        courseId: Types.ObjectId;
+        studentId: Types.ObjectId;
+    }) {
+        await Promise.all([
+            this.userService.removeCourseMetadata({
+                userIds: [studentId],
+                courseIds: [courseId],
+                roles: [EUserRoles.STUDENT],
+            }),
+            this.courseService.removeStudentMetadata({
+                studentIds: [studentId],
+                courseIds: [courseId],
             }),
         ]);
     }
