@@ -43,6 +43,10 @@ export default class UserService {
             );
     }
 
+    async findUsersByIds(ids: Types.ObjectId[]) {
+        return await this.Users.find({ _id: { $in: ids } });
+    }
+
     async findUser(where: object) {
         return await this.Users.findOne(where);
     }
