@@ -1,5 +1,11 @@
 import { Request, Response } from "express";
-import { errorParser, userService, metadataService } from "../../services";
+import {
+    errorParser,
+    userService,
+    metadataService,
+    courseService,
+    schoolService,
+} from "../../services";
 import { configureUsersQuery } from "../../helpers/user.helpers";
 import { Types } from "mongoose";
 
@@ -65,6 +71,43 @@ export async function deleteUserById(req: Request, res: Response) {
         res.json({
             message: "User successfully deleted",
             data: user,
+        });
+    } catch (e) {
+        res.status(errorParser.status(e)).json(errorParser.json(e));
+    }
+}
+
+export async function getUserCoursesById(req: Request, res: Response) {
+    try {
+        const student: any = await userService.findUserById(
+            ObjectId(req.params.id)
+        );
+        const courseIds = student.meta.courses.map((id: string) =>
+            ObjectId(id)
+        );
+        const courses = await courseService.findCoursesByIds(courseIds);
+
+        res.json({
+            message: "User courses successfully fetched",
+            data: courses,
+        });
+    } catch (e) {
+        res.status(errorParser.status(e)).json(errorParser.json(e));
+    }
+}
+
+export async function getUserSchoolById(req: Request, res: Response) {
+    try {
+        const student: any = await userService.findUserById(
+            ObjectId(req.params.id)
+        );
+
+        const schoolId = ObjectId(student.meta.school);
+        const school = await schoolService.findSchoolById(schoolId);
+
+        res.json({
+            message: "User courses successfully fetched",
+            data: school,
         });
     } catch (e) {
         res.status(errorParser.status(e)).json(errorParser.json(e));
