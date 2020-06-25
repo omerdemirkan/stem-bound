@@ -11,11 +11,9 @@ const { ObjectId } = Types;
 
 export async function me(req: Request, res: Response) {
     try {
-        const userData = req.query.all
-            ? await userService.findUserById(
-                  ObjectId((req as any).payload.user._id)
-              )
-            : (req as any).payload;
+        const userData = await userService.findUserById(
+            ObjectId((req as any).payload.user._id)
+        );
 
         res.json({
             message: "",

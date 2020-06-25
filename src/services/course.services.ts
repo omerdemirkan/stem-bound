@@ -115,4 +115,31 @@ export default class CourseService {
             }
         );
     }
+
+    // async findCoursesBySchoolLocation({
+    //     coordinates,
+    // }: {
+    //     coordinates: number[];
+    // }) {
+    //     return await this.Courses.aggregate([
+    //         {
+    //             $lookup: {
+    //                 from: "schools",
+    //                 localField: "meta.school",
+    //                 foreignField: "_id",
+    //                 as: "school",
+    //             },
+    //         },
+    //         {
+    //             $geoNear: {
+    //                 near: {
+    //                     type: "Point",
+    //                     coordinates,
+    //                 },
+    //                 distanceField: "distance.calculated",
+    //                 key: "school.location.geoJSON",
+    //             },
+    //         },
+    //     ]);
+    // }
 }

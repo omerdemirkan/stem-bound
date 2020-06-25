@@ -1,1 +1,1 @@
-export function configureCourseQuery(queryParams: any) {}
+export function configureCourseQuery(queryParams: {}) {}

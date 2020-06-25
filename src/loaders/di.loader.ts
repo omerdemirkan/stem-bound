@@ -54,3 +54,11 @@ export const authService = new services.AuthService(
     metadataService,
     eventEmitter
 );
+
+// (async () => {
+//     console.log(
+//         await courseService.findCoursesBySchoolLocation({
+//             coordinates: [-119.49806299999999, 35.3210061],
+//         })
+//     );
+// })();
