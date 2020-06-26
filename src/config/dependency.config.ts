@@ -2,6 +2,8 @@ import jsonwebtoken from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
 import axios from "axios";
 import expressRateLimit from "express-rate-limit";
+import createMailgun from "mailgun-js";
+import config from ".";
 
 export const jwt = Object.freeze({
     sign: jsonwebtoken.sign,
@@ -30,3 +32,14 @@ const rateLimit = (
 ): expressRateLimit.RateLimit => expressRateLimit(options);
 
 export const rateLimiter = rateLimit;
+
+if (!config.mailgunApiKey) {
+    throw new Error(
+        `Mailgun api key in config returned ${config.mailgunApiKey}`
+    );
+}
+
+export const mailgun = createMailgun({
+    apiKey: config.mailgunApiKey,
+    domain: "stembound.education",
+});

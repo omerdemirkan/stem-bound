@@ -1,5 +1,5 @@
 import { Subscriber, EUserEvents } from "../types";
-import { eventEmitter, logger } from "../config";
+import { eventEmitter, logger, mailgun } from "../config";
 
 export default new Subscriber(function () {
     eventEmitter.on(EUserEvents.USER_SIGNUP, function ({ role, user }) {
