@@ -2,7 +2,7 @@ import { logger } from "../config";
 
 export default class ErrorParserService {
     status(error: Error) {
-        logger.error(error);
+        logger.error(error.message);
         return 400;
     }
 

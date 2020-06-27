@@ -58,6 +58,12 @@ export default class AuthService {
     }): Promise<{ user: any; accessToken: string } | null> {
         const user: any = await this.userService.findUserByEmail(email);
 
+        if (!user) {
+            throw new Error(
+                `User could not be found with the email "${email}".`
+            );
+        }
+
         if (await this.bcryptService.compare(password, user.hash)) {
             const payload: ITokenPayload = {
                 role: user.role,
