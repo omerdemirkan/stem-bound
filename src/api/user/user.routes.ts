@@ -40,7 +40,7 @@ userRouter.patch(
 );
 
 userRouter.delete(
-    "/id",
+    "/:id",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.matchParamIdToPayloadUserId,
     userControllers.deleteUserById
