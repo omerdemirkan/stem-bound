@@ -26,19 +26,16 @@ export default class SchoolService {
 
     async findSchoolsByCoordinates({
         coordinates,
-        maxDistance,
         limit,
-        where,
+        query,
         skip,
     }: {
         coordinates: number[];
-        maxDistance?: number | null;
         limit?: number | null;
-        where?: MongooseFilterQuery<ISchoolDataLocal> | null;
+        query?: MongooseFilterQuery<ISchoolDataLocal> | null;
         skip?: number | null;
     }): Promise<ISchoolDataLocal[]> {
-        const aggregateOptions: any[] = [];
-        aggregateOptions.push({
+        const geoNearOptions: any = {
             $geoNear: {
                 near: {
                     type: "Point",
@@ -47,10 +44,11 @@ export default class SchoolService {
                 distanceField: "distance.calculated",
                 key: "location.geoJSON",
             },
-        });
+        };
+        const aggregateOptions: any[] = [geoNearOptions];
 
-        if (where && Object.keys(where).length) {
-            aggregateOptions[0].query = where;
+        if (query && Object.keys(query).length) {
+            geoNearOptions.$geoNear.query = query;
         }
 
         aggregateOptions.push({ $skip: skip || 0 });

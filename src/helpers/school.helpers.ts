@@ -3,9 +3,15 @@ export function configureFindSchoolsQuery({
     long,
     limit,
     skip,
-    state,
+    with_school_officials,
 }: any) {
     let query: any = {};
+
+    if (with_school_officials) {
+        query.meta = {
+            schoolOfficials: { $not: { $size: 0 } },
+        };
+    }
 
     // configure query
 
@@ -17,6 +23,6 @@ export function configureFindSchoolsQuery({
         coordinates: long && lat ? [+long, +lat] : null,
         limit: Math.floor(+limit) || null,
         skip: Math.floor(+skip) || null,
-        where: query,
+        query,
     };
 }
