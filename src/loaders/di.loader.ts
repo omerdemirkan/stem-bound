@@ -55,6 +55,8 @@ export const authService = new services.AuthService(
     eventEmitter
 );
 
+export const chatService = new services.ChatService(models.Chats);
+
 // (async () => {
 //     console.log(
 //         await courseService.findCoursesBySchoolLocation({
