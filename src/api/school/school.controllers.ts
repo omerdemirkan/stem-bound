@@ -12,9 +12,13 @@ const { ObjectId } = Types;
 
 export async function getSchools(req: Request, res: Response) {
     try {
-        const { coordinates, limit, skip, query } = configureFindSchoolsQuery(
-            req.query
-        );
+        const {
+            coordinates,
+            limit,
+            skip,
+            query,
+            text,
+        } = configureFindSchoolsQuery(req.query);
         let data;
         if (coordinates) {
             data = await schoolService.findSchoolsByCoordinates({
@@ -22,7 +26,10 @@ export async function getSchools(req: Request, res: Response) {
                 limit,
                 skip,
                 query,
+                text,
             });
+        } else if (text) {
+            data = await schoolService.findSchoolsByText(text);
         } else {
             data = await schoolService.findSchools(query);
         }

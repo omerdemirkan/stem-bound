@@ -15,7 +15,6 @@ export default class SchoolService {
             limit?: number;
         }
     ) {
-        console.log(where);
         const schools = await this.Schools.find(where || {})
             .sort(options?.sort)
             .skip(options?.skip || 0)
@@ -29,11 +28,13 @@ export default class SchoolService {
         limit,
         query,
         skip,
+        text,
     }: {
         coordinates: number[];
         limit?: number | null;
         query?: MongooseFilterQuery<ISchoolDataLocal> | null;
         skip?: number | null;
+        text?: string;
     }): Promise<ISchoolDataLocal[]> {
         const geoNearOptions: any = {
             $geoNear: {
@@ -51,6 +52,10 @@ export default class SchoolService {
             geoNearOptions.$geoNear.query = query;
         }
 
+        if (text) {
+            aggregateOptions.push({ $text: { $search: text } });
+        }
+
         aggregateOptions.push({ $skip: skip || 0 });
 
         aggregateOptions.push(
@@ -60,6 +65,10 @@ export default class SchoolService {
         const schools = await this.Schools.aggregate(aggregateOptions);
 
         return schools;
+    }
+
+    async findSchoolsByText(text: string) {
+        return await this.Schools.find({ $text: { $search: text } });
     }
 
     findSchool(where: object) {

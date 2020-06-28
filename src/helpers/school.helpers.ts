@@ -4,6 +4,7 @@ export function configureFindSchoolsQuery({
     limit,
     skip,
     with_school_officials,
+    text,
 }: any) {
     let query: any = {};
 
@@ -24,5 +25,6 @@ export function configureFindSchoolsQuery({
         limit: Math.floor(+limit) || null,
         skip: Math.floor(+skip) || null,
         query,
+        text: typeof text === "string" ? text.toUpperCase() : undefined,
     };
 }

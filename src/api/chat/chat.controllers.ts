@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { errorParser, chatService } from "../../services";
+import { errorParser, chatService, metadataService } from "../../services";
 import { Types } from "mongoose";
 
 const { ObjectId } = Types;
@@ -7,15 +7,17 @@ const { ObjectId } = Types;
 export async function createChat(req: Request, res: Response) {
     try {
         const chatData = req.body;
-        const chat: any = await chatService.createChat(chatData);
 
         const userId = (req as any).payload.user._id;
-        if (!chat.meta.users.includes(userId)) {
+        if (!chatData.meta.users.includes(userId)) {
             throw new Error("User id must be included in chat metadata.");
         }
+
+        const newChat: any = await chatService.createChat(chatData);
+        await metadataService.handleNewChatMetadataUpdate(newChat);
         res.json({
             message: "Chat successfully created",
-            data: chat,
+            data: newChat,
         });
     } catch (e) {
         res.status(errorParser.status(e)).json(errorParser.json(e));

@@ -14,6 +14,15 @@ const instructorMetaSchema = new Schema(
                 message: "all course ids added must be unique.",
             },
         },
+        chats: {
+            type: [Schema.Types.ObjectId],
+            required: true,
+            default: [],
+            validate: {
+                validator: schemaValidators.uniqueStringArray,
+                message: "all course ids added must be unique.",
+            },
+        },
     },
     {
         _id: false,

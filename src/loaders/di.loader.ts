@@ -25,6 +25,8 @@ export const courseService = new services.CourseService(
 
 export const schoolService = new services.SchoolService(models.Schools);
 
+export const chatService = new services.ChatService(models.Chats);
+
 // Moved out of models.helpers.ts to avoid circular dependency
 const userModels = {
     [EUserRoles.STUDENT]: models.Students,
@@ -44,7 +46,8 @@ export const userService = new services.UserService(
 export const metadataService = new services.MetadataService(
     schoolService,
     courseService,
-    userService
+    userService,
+    chatService
 );
 
 export const authService = new services.AuthService(
@@ -54,8 +57,6 @@ export const authService = new services.AuthService(
     metadataService,
     eventEmitter
 );
-
-export const chatService = new services.ChatService(models.Chats);
 
 // (async () => {
 //     console.log(

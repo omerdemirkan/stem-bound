@@ -1,4 +1,4 @@
-import { SchoolService, CourseService, UserService } from ".";
+import { SchoolService, CourseService, UserService, ChatService } from ".";
 import { Types } from "mongoose";
 import { EUserRoles } from "../types";
 
@@ -6,7 +6,8 @@ export default class MetadataService {
     constructor(
         private schoolService: SchoolService,
         private courseService: CourseService,
-        private userService: UserService
+        private userService: UserService,
+        private chatService: ChatService
     ) {}
 
     async handleNewUserMetadataUpdate(newUser: any) {
@@ -153,5 +154,13 @@ export default class MetadataService {
                 courseIds: [courseId],
             }),
         ]);
+    }
+
+    async handleNewChatMetadataUpdate(newChat: any) {
+        const userIds = newChat.meta.users;
+        await this.userService.addChatMetadata({
+            chatIds: [newChat._id],
+            userIds,
+        });
     }
 }
