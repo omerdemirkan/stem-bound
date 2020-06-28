@@ -15,10 +15,16 @@ export async function me(req: Request, res: Response) {
             ObjectId((req as any).payload.user._id)
         );
 
+        if (!userData) {
+            throw new Error("User seems to have been deleted.");
+        }
+
         res.json({
-            message: "",
-            accessToken: jwtService.sign((req as any).payload),
-            data: userData,
+            message: "Access token successfully refreshed",
+            data: {
+                user: userData,
+                accessToken: jwtService.sign((req as any).payload),
+            },
         });
     } catch (e) {
         res.status(errorParser.status(e)).json(errorParser.json(e));
@@ -33,7 +39,7 @@ export async function signUp(req: Request, res: Response) {
         });
 
         res.json({
-            message: "",
+            message: "User sign up successful",
             data: { user, accessToken },
         });
     } catch (e) {
@@ -58,7 +64,7 @@ export async function logIn(req: Request, res: Response) {
         const { user, accessToken } = loginResult;
 
         res.json({
-            message: "",
+            message: "User log in successful",
             data: { user, accessToken },
         });
     } catch (e) {

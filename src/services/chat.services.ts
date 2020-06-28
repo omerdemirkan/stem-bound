@@ -4,6 +4,14 @@ export default class ChatService {
     constructor(private Chats: Model<Document>) {}
 
     async createChat(chatData: any) {
+        const chatUsers: any = chatData.meta.users;
+        console.log(chatUsers);
+        const duplicateChat: any = await this.Chats.findOne()
+            .all("meta.users", chatUsers)
+            .size("meta.users", chatUsers.length);
+        if (duplicateChat) {
+            throw new Error("This chat is a duplicate of another chat.");
+        }
         return await this.Chats.create(chatData);
     }
 
