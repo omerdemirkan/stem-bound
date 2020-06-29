@@ -6,6 +6,7 @@
   "scripts": {
     "deploy": "gcloud app deploy",
     "gcp-build": "tsc",
+    "build": "tsc",
     "start": "node src/index.js",
     "dev": "nodemon --exec ts-node src/index.ts",
     "test": "jest"
