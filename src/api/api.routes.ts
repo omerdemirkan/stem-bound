@@ -17,8 +17,4 @@ router.use("/auth", authRouter);
 router.use("/course", courseRouter);
 router.use("/chat", chatRouter);
 
-router.all("*", function (req: Request, res: Response) {
-    res.send("Invalid route.");
-});
-
 export default router;
