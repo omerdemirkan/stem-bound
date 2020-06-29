@@ -2,7 +2,7 @@ import { Server } from "http";
 import request from "supertest";
 import { Types } from "mongoose";
 import initServer from "../../src/server";
-import { studentService } from "../../src/loaders/di.loader";
+import { userService } from "../../src/services";
 import { Students } from "../../src/models";
 
 const { ObjectId } = Types;
@@ -43,10 +43,6 @@ describe("/api/user", () => {
                 email: "jackd@email.com",
                 interests: ["interest"],
             };
-
-            await studentService.createStudent(student1);
-            await studentService.createStudent(student2);
-            await studentService.createStudent(student3);
 
             const res = await request(server).get(`/api/user/student`);
             expect(res.body.data).toHaveLength(3);

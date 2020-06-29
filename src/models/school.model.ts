@@ -180,7 +180,7 @@ locationSchema.index({
     geoJSON: "2dsphere",
 });
 
-schoolSchema.index({ "$**": "text" });
+schoolSchema.index({ name: "text" });
 
 const Schools = mongoose.model("School", schoolSchema);
 
