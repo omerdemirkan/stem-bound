@@ -1,6 +1,8 @@
 import mongoose, { Schema } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
 
+// A subscriber is someone who signs up to the mailing list.
+
 const subscriberSchema = new Schema({
     email: {
         type: String,
