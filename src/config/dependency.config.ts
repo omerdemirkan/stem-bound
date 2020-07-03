@@ -41,5 +41,5 @@ if (!config.mailgunApiKey) {
 
 export const mailgun = createMailgun({
     apiKey: config.mailgunApiKey,
-    domain: "stembound.education",
+    domain: config.clientDomain,
 });

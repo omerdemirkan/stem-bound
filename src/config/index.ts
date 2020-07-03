@@ -15,6 +15,7 @@ const config = Object.freeze({
     accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
     saltRounds: Number(process.env.SALT_ROUNDS),
     mailgunApiKey: process.env.MAILGUN_API_KEY,
+    clientDomain: "stembound.education",
 });
 
 if (Object.values(config).includes(undefined)) {

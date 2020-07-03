@@ -30,7 +30,7 @@ const SchoolOfficials = Users.discriminator(
         position: {
             type: String,
             maxlength: 200,
-            minlength: 8,
+            minlength: 2,
             required: true,
             trim: true,
         },
