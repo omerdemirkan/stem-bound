@@ -14,6 +14,6 @@ const subscriberSchema = new Schema({
     },
 });
 
-const Subscribers = mongoose.model("subscriber", subscriberSchema);
+const MailingListSubscriber = mongoose.model("subscriber", subscriberSchema);
 
-export default Subscribers;
+export default MailingListSubscriber;

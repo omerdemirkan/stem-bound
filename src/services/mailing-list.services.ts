@@ -4,11 +4,15 @@ import { mailgun } from "../config";
 export default class MailingListService {
     constructor(private Subscribers: Model<Document>) {}
 
-    async getSubscriberByEmail(email: string) {
+    async findSubscribers(where = {}) {
+        return await this.Subscribers.find(where);
+    }
+
+    async findSubscriberByEmail(email: string) {
         return await this.Subscribers.findOne({ email });
     }
 
-    async getSubscriberById(id: Types.ObjectId) {
+    async findSubscriberById(id: Types.ObjectId) {
         return await this.Subscribers.findById(id);
     }
 

@@ -58,10 +58,6 @@ export const authService = new services.AuthService(
     eventEmitter
 );
 
-// (async () => {
-//     console.log(
-//         await courseService.findCoursesBySchoolLocation({
-//             coordinates: [-119.49806299999999, 35.3210061],
-//         })
-//     );
-// })();
+export const mailingListService = new services.MailingListService(
+    models.MailingListSubscriber
+);
