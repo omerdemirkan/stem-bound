@@ -4,7 +4,7 @@ WORKDIR /usr/src/stem-bound
 
 COPY package*.json ./
 
-RUN npm install --only=production
+RUN npm install
 
 COPY . ./
 
@@ -12,4 +12,4 @@ RUN npm run build
 
 EXPOSE 8080
 
-CMD ["npm", "start"]
+CMD ["node", "build/index.js"]
