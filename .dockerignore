@@ -2,3 +2,7 @@ Dockerfile
 README.md
 node_modules
 npm-debug.log
+src
+tests
+jest.config.js
+README.md
