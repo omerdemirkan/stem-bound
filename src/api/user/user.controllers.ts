@@ -5,6 +5,7 @@ import {
     metadataService,
     courseService,
     schoolService,
+    chatService,
 } from "../../services";
 import { configureUsersQuery } from "../../helpers/user.helpers";
 import { Types } from "mongoose";
@@ -98,16 +99,33 @@ export async function getUserCoursesById(req: Request, res: Response) {
 
 export async function getUserSchoolById(req: Request, res: Response) {
     try {
-        const student: any = await userService.findUserById(
+        const user: any = await userService.findUserById(
             ObjectId(req.params.id)
         );
 
-        const schoolId = ObjectId(student.meta.school);
+        const schoolId = ObjectId(user.meta.school);
         const school = await schoolService.findSchoolById(schoolId);
 
         res.json({
             message: "User courses successfully fetched",
             data: school,
+        });
+    } catch (e) {
+        res.status(errorParser.status(e)).json(errorParser.json(e));
+    }
+}
+
+export async function getUserChatsById(req: Request, res: Response) {
+    try {
+        const user: any = await userService.findUserById(
+            ObjectId(req.params.id)
+        );
+        const chatIds = user.meta.chats.map((chatId) => ObjectId(chatId));
+        const chats = chatService.findChatsByIds(chatIds);
+
+        res.json({
+            message: "User chats successfuly fetched",
+            data: chats,
         });
     } catch (e) {
         res.status(errorParser.status(e)).json(errorParser.json(e));

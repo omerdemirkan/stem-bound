@@ -161,6 +161,24 @@ export default class MetadataService {
         await this.userService.addChatMetadata({
             chatIds: [newChat._id],
             userIds,
+            roles: [
+                EUserRoles.INSTRUCTOR,
+                EUserRoles.SCHOOL_OFFICIAL,
+                EUserRoles.STUDENT,
+            ],
+        });
+    }
+
+    async handleDeletedChatMetadataUpdate(deletedChat: any) {
+        const userIds = deletedChat.meta.users;
+        await this.userService.removeChatMetadata({
+            chatIds: [deletedChat._id],
+            userIds,
+            roles: [
+                EUserRoles.INSTRUCTOR,
+                EUserRoles.SCHOOL_OFFICIAL,
+                EUserRoles.STUDENT,
+            ],
         });
     }
 }

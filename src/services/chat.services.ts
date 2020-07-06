@@ -15,6 +15,14 @@ export default class ChatService {
         return await this.Chats.create(chatData);
     }
 
+    async findChats(where: object) {
+        return this.Chats.find(where);
+    }
+
+    async findChatsByIds(ids: Types.ObjectId[]) {
+        return this.Chats.find({ _id: { $in: ids } });
+    }
+
     async findChat(where: object) {
         return await this.Chats.find(where);
     }

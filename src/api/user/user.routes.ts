@@ -31,6 +31,13 @@ userRouter.get(
     userControllers.getUserSchoolById
 );
 
+userRouter.get(
+    "/:id/chats",
+    authMiddlewareService.extractTokenPayload,
+    authMiddlewareService.matchParamIdToPayloadUserId,
+    userControllers.getUserChatsById
+);
+
 userRouter.patch(
     "/:id",
     authMiddlewareService.blockRequestBodyMetadata,

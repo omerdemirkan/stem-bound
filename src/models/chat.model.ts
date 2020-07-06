@@ -1,17 +1,23 @@
 import mongoose, { Schema } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
 
-const metaSchema = new Schema({
-    users: {
-        type: [Schema.Types.ObjectId],
-        required: true,
-        validate: {
-            validator: schemaValidators.arrayLength({ min: 2, max: 10 }),
-            message: (props) =>
-                `2 to 10 users required for a chat, ${props.value} is not a valid amount.`,
+const metaSchema = new Schema(
+    {
+        users: {
+            type: [Schema.Types.ObjectId],
+            required: true,
+            validate: {
+                validator: schemaValidators.arrayLength({ min: 2, max: 10 }),
+                message: (props) =>
+                    `2 to 10 users required for a chat, ${props.value} is not a valid amount.`,
+            },
         },
     },
-});
+    {
+        _id: false,
+        timestamps: false,
+    }
+);
 
 const messageSchema = new Schema(
     {
