@@ -33,7 +33,26 @@ export async function getChatById(req: Request, res: Response) {
         }
         res.json({
             message: "Chat successfully fetched",
-            data: chat,
+            data: {
+                ...chat,
+                messages: chat.messages.splice(0, 9),
+            },
+        });
+    } catch (e) {
+        res.status(errorParser.status(e)).json(errorParser.json(e));
+    }
+}
+
+export async function getChatMessagesById(req: Request, res: Response) {
+    try {
+        const id = ObjectId(req.params.id);
+        const chat: any = await chatService.findChatById(id);
+        if (!chat.meta.users.includes((req as any).payload.user._id)) {
+            res.status(403);
+        }
+        res.json({
+            message: "Chat successfully fetched",
+            data: chat.messages,
         });
     } catch (e) {
         res.status(errorParser.status(e)).json(errorParser.json(e));

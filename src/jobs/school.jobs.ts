@@ -3,10 +3,8 @@ import {
     getFilteredAndMappedSchoolData,
     parseCsvAsync,
     schoolCsvColumns,
-    ISchoolDataLocal,
     ISchoolDataOriginal,
 } from "../helpers/school-db.helpers";
-import { AxiosInstance } from "axios";
 
 import Schools from "../models/school.model";
 import { fetch } from "../config/dependency.config";

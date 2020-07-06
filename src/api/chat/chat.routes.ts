@@ -10,6 +10,12 @@ chatRouter.get(
     chatControllers.getChatById
 );
 
+chatRouter.get(
+    "/:id/messages",
+    authMiddlewareService.extractTokenPayload,
+    chatControllers.getChatMessagesById
+);
+
 chatRouter.post(
     "/",
     authMiddlewareService.extractTokenPayload,
