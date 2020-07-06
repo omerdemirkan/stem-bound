@@ -35,10 +35,7 @@ courseRouter.post(
 courseRouter.post(
     "/",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([
-        EUserRoles.INSTRUCTOR,
-        EUserRoles.ADMIN,
-    ]),
+    authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR, "ADMIN"]),
     courseControllers.createCourse
 );
 
@@ -46,20 +43,14 @@ courseRouter.patch(
     "/:id",
     authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([
-        EUserRoles.INSTRUCTOR,
-        EUserRoles.ADMIN,
-    ]),
+    authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR, "ADMIN"]),
     courseControllers.updateCourseById
 );
 
 courseRouter.delete(
     "/:id",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([
-        EUserRoles.INSTRUCTOR,
-        EUserRoles.ADMIN,
-    ]),
+    authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR, "ADMIN"]),
     courseControllers.deleteCourseById
 );
 

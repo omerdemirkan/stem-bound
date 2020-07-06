@@ -30,7 +30,7 @@ export default class AuthMiddlewareService {
         }
     };
 
-    allowedRoles(allowedRoles: EUserRoles[]) {
+    allowedRoles(allowedRoles: (EUserRoles | "ADMIN")[]) {
         return async function (
             req: Request,
             res: Response,
@@ -54,10 +54,7 @@ export default class AuthMiddlewareService {
     ) {
         const id = req.params.id;
         const payloadId = (req as any).payload.user._id || null;
-        if (
-            id === payloadId ||
-            (req as any).payload.role === EUserRoles.ADMIN
-        ) {
+        if (id === payloadId || (req as any).payload.role === "ADMIN") {
             next();
         } else {
             res.sendStatus(403);
@@ -75,7 +72,7 @@ export default class AuthMiddlewareService {
     //             payloadId = payloadId[key]
     //         })
 
-    //         if (paramId === payloadId || (req as any).payload.role ===EUserRoles.ADMIN) {
+    //         if (paramId === payloadId || (req as any).payload.role ==="ADMIN") {
     //             next();
     //         } else {
     //             res.sendStatus(403);

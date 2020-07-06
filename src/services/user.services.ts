@@ -141,8 +141,9 @@ export default class UserService {
     }: {
         userIds: Types.ObjectId[];
         chatIds: Types.ObjectId[];
-        roles: EUserRoles[];
+        roles?: EUserRoles[];
     }) {
+        roles = roles || Object.values(EUserRoles);
         await Promise.all(
             roles.map((role: EUserRoles) => {
                 return this.getUserModelByRole(role).updateMany(
@@ -160,8 +161,9 @@ export default class UserService {
     }: {
         userIds: Types.ObjectId[];
         chatIds: Types.ObjectId[];
-        roles: EUserRoles[];
+        roles?: EUserRoles[];
     }) {
+        roles = roles || Object.values(EUserRoles);
         await Promise.all(
             roles.map((role: EUserRoles) => {
                 return this.getUserModelByRole(role).updateMany(

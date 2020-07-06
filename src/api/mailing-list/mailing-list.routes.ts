@@ -9,7 +9,7 @@ mailingListRouter.post("/", mailingListControllers.createMailingListSubscriber);
 mailingListRouter.get(
     "/",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([EUserRoles.ADMIN]),
+    authMiddlewareService.allowedRoles(["ADMIN"]),
     mailingListControllers.createMailingListSubscriber
 );
 

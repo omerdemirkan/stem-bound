@@ -21,7 +21,7 @@ schoolRouter.get("/:id/courses", schoolController.getSchoolCoursesById);
 schoolRouter.post(
     "/refresh-database",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([EUserRoles.ADMIN]),
+    authMiddlewareService.allowedRoles(["ADMIN"]),
     schoolController.refreshDatabase
 );
 
