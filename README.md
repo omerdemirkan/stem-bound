@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://media-exp1.licdn.com/dms/image/C560BAQEMfNKv2bMYeA/company-logo_200_200/0?e=1600300800&v=beta&t=GukItDQ_kpCPf-dlWgOgTpdxtdBjKPpyUk25vsazats" title="Logo">
+  <img src="https://media-exp1.licdn.com/dms/image/C560BAQEU7cx1-IKgOA/company-logo_200_200/0?e=1602115200&v=beta&t=uC6aI2RMZR-X6cmNJUZh6YCuqDOH2qzb3lNbJV3-mro" title="Logo">
 </p>
 
 # Stem-bound API
@@ -62,59 +62,55 @@ Valid roles (Case sensitive):
 
 ## User Routes
 
-### Instructors
+**GET**
+```/api/user?role=<USER_ROLE>```
 
 **GET**
-```/api/user/instructor```
-
-**GET**
-```/api/user/instructor/:ObjectId```
+```/api/user/:ObjectId?role=<USER_ROLE>```
 
 **PATCH**
-```/api/user/instructor/:ObjectId```
+```/api/user/:ObjectId?role=<USER_ROLE>```
 
 *Auth required, param id must match with that in the access-token payload*
 
 **DELETE**
-```/api/user/instructor/:ObjectId```
+```/api/user/:ObjectId?role=<USER_ROLE>```
 
 *Auth required, param id must match with that in the access-token payload*
 
-
-### Students
-
-**GET**
-```/api/user/student```
+## Course routes
 
 **GET**
-```/api/user/student/:ObjectId```
+```/api/course```
+
+**GET**
+```/api/course/:ObjectId```
+
+**GET**
+```/api/course/:ObjectId/instructors```
+
+**GET**
+```/api/course/:ObjectId/students```
+
+**GET**
+```/api/course/:ObjectId/school```
+
+**POST**
+```/api/course/:ObjectId```
+*Auth required, payload user role must be INSTRUCTOR, payload user id must be included in course instructor metadata*
+
+**POST**
+```/api/course/:ObjectId/enroll```
+*Auth required, payload user role must be STUDENT*
+
+**POST**
+```/api/course/:ObjectId/drop```
+*Auth required, payload user role must be STUDENT*
 
 **PATCH**
-```/api/user/student/:ObjectId```
-
-*Auth required, param id must match with that in the access-token payload*
-
-**DELETE**
-```/api/user/student/:ObjectId```
-
-*Auth required, param id must match with that in the access-token payload*
-
-
-
-### School Officials
-
-**GET**
-```/api/user/school-official```
-
-**GET**
-```/api/user/school-official/:ObjectId```
-
-**PATCH**
-```/api/user/school-official/:ObjectId```
-
-*Auth required, param id must match with that in the access-token payload*
+```/api/course/:ObjectId```
+*Auth required, payload user role must be INSTRUCTOR, payload user id must be included in course instructor metadata*
 
 **DELETE**
-```/api/user/school-official/:ObjectId```
-
-*Auth required, param id must match with that in the access-token payload*
+```/api/course/:ObjectId```
+*Auth required, payload user role must be INSTRUCTOR, payload user id must be included in course instructor metadata*
