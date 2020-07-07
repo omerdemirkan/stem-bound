@@ -11,3 +11,11 @@ export interface ITokenPayload {
         email: string;
     };
 }
+
+export type RequestBodyPayloadComparisonFunction = ({
+    body,
+    payload,
+}: {
+    body: any;
+    payload: ITokenPayload;
+}) => boolean;

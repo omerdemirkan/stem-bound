@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
 
-const metaSchema = new Schema(
+const chatMetaSchema = new Schema(
     {
         users: {
             type: [Schema.Types.ObjectId],
@@ -19,26 +19,33 @@ const metaSchema = new Schema(
     }
 );
 
+const messageMetaSchema = new Schema({
+    from: {
+        type: Schema.Types.ObjectId,
+        required: true,
+    },
+    readBy: {
+        type: [Schema.Types.ObjectId],
+        required: true,
+        default: [],
+        validate: {
+            validator: schemaValidators.uniqueStringArray,
+            message: (props) => `readBy must include unique object ids.`,
+        },
+    },
+});
+
 const messageSchema = new Schema(
     {
-        from: {
-            type: Schema.Types.ObjectId,
-            required: true,
-        },
         text: {
             type: String,
             required: true,
             minlength: 1,
             maxlength: 2000,
         },
-        readBy: {
-            type: [Schema.Types.ObjectId],
+        meta: {
+            type: messageMetaSchema,
             required: true,
-            default: [],
-            validate: {
-                validator: schemaValidators.uniqueStringArray,
-                message: (props) => `readBy must include unique object ids.`,
-            },
         },
     },
     {
@@ -59,7 +66,7 @@ const chatSchema = new Schema(
             default: [],
         },
         meta: {
-            type: metaSchema,
+            type: chatMetaSchema,
             required: true,
         },
     },

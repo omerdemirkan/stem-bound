@@ -1,6 +1,6 @@
 import { JwtService } from ".";
 import { Request, Response, NextFunction } from "express";
-import { EUserRoles } from "../types";
+import { EUserRoles, RequestBodyPayloadComparisonFunction } from "../types";
 import { logger } from "../config";
 
 export default class AuthMiddlewareService {
@@ -90,5 +90,18 @@ export default class AuthMiddlewareService {
                 },
             });
         }
+    }
+
+    compareRequestBodyToPayload(
+        comparisonFunction: RequestBodyPayloadComparisonFunction
+    ) {
+        return function (req: Request, res: Response, next: NextFunction) {
+            const { body, payload } = req as any;
+            if (comparisonFunction({ body, payload })) {
+                next();
+            } else {
+                res.sendStatus(403);
+            }
+        };
     }
 }

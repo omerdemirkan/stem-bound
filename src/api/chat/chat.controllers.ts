@@ -7,12 +7,6 @@ const { ObjectId } = Types;
 export async function createChat(req: Request, res: Response) {
     try {
         const chatData = req.body;
-
-        const userId = (req as any).payload.user._id;
-        if (!chatData.meta.users.includes(userId)) {
-            throw new Error("User id must be included in chat metadata.");
-        }
-
         const newChat: any = await chatService.createChat(chatData);
         await metadataService.handleNewChatMetadataUpdate(newChat);
         res.json({

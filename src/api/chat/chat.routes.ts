@@ -25,12 +25,18 @@ chatRouter.get(
 chatRouter.post(
     "/",
     authMiddlewareService.extractTokenPayload,
+    authMiddlewareService.compareRequestBodyToPayload(({ body, payload }) =>
+        body.meta.users.includes(payload.user._id)
+    ),
     chatControllers.createChat
 );
 
 chatRouter.post(
     "/:id/messages",
     authMiddlewareService.extractTokenPayload,
+    authMiddlewareService.compareRequestBodyToPayload(
+        ({ body, payload }) => body.meta.from === payload.user._id
+    ),
     chatControllers.createChatMessageByChatId
 );
 
