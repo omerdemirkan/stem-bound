@@ -46,4 +46,43 @@ export default class ChatService {
     async deleteChatById(id: Types.ObjectId) {
         return await this.Chats.findByIdAndDelete(id);
     }
+
+    async createMessagesByChatId(id: Types.ObjectId, messages: any[]) {
+        return await this.Chats.findByIdAndUpdate(id, {
+            $push: {
+                messages: {
+                    $each: messages,
+                    $sort: { createdAt: -1 },
+                },
+            },
+        });
+    }
+
+    async updateMessage({
+        chatId,
+        messageId,
+        updatedMessage,
+    }: {
+        chatId: Types.ObjectId;
+        messageId: Types.ObjectId;
+        updatedMessage: any;
+    }) {
+        return await this.Chats.findOneAndUpdate(
+            { _id: chatId, "messages._id": messageId },
+            { "messages.$": updatedMessage },
+            { new: true }
+        );
+    }
+
+    async deleteMessages({
+        chatId,
+        messageIds,
+    }: {
+        chatId: Types.ObjectId;
+        messageIds: Types.ObjectId[];
+    }) {
+        return await this.Chats.findByIdAndUpdate(chatId, {
+            $pullAll: { messages: messageIds },
+        });
+    }
 }

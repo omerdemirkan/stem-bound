@@ -51,17 +51,25 @@ const messageSchema = new Schema(
     }
 );
 
-const chatSchema = new Schema({
-    messages: {
-        type: [messageSchema],
-        required: true,
-        default: [],
+const chatSchema = new Schema(
+    {
+        messages: {
+            type: [messageSchema],
+            required: true,
+            default: [],
+        },
+        meta: {
+            type: metaSchema,
+            required: true,
+        },
     },
-    meta: {
-        type: metaSchema,
-        required: true,
-    },
-});
+    {
+        timestamps: {
+            createdAt: true,
+            updatedAt: true,
+        },
+    }
+);
 
 const Chats = mongoose.model("chat", chatSchema);
 
