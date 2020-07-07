@@ -9,6 +9,7 @@ import {
 } from "../../services";
 import { configureUsersQuery } from "../../helpers/user.helpers";
 import { Types } from "mongoose";
+import { IUser, IStudent, IInstructor, ISchoolOfficial } from "../../types";
 
 const { ObjectId } = Types;
 
@@ -16,8 +17,8 @@ export async function getUsers(req: Request, res: Response) {
     try {
         const { limit, skip, sort, role, where } = configureUsersQuery(
             req.query
-        ) as any;
-        const users = await userService.findUsers(where, {
+        );
+        const users: IUser[] = await userService.findUsers(where, {
             limit,
             skip,
             sort,
@@ -35,7 +36,7 @@ export async function getUsers(req: Request, res: Response) {
 export async function getUserById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
-        const user = await userService.findUserById(id);
+        const user: IUser = await userService.findUserById(id);
 
         res.json({
             message: "User successfully fetched",
@@ -49,14 +50,14 @@ export async function getUserById(req: Request, res: Response) {
 export async function updateUserById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
-        const user = await userService.updateUserById({
+        const updatedUser: IUser = await userService.updateUserById({
             id,
             userData: req.body,
         });
 
         res.json({
             message: "User successfully updated",
-            data: user,
+            data: updatedUser,
         });
     } catch (e) {
         res.status(errorParser.status(e)).json(errorParser.json(e));
@@ -66,12 +67,12 @@ export async function updateUserById(req: Request, res: Response) {
 export async function deleteUserById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
-        const user = await userService.deleteUserById(id);
+        const deletedUser: IUser = await userService.deleteUserById(id);
 
-        await metadataService.handleDeletedUserMetadataUpdate(user);
+        await metadataService.handleDeletedUserMetadataUpdate(deletedUser);
         res.json({
             message: "User successfully deleted",
-            data: user,
+            data: deletedUser,
         });
     } catch (e) {
         res.status(errorParser.status(e)).json(errorParser.json(e));
@@ -80,12 +81,10 @@ export async function deleteUserById(req: Request, res: Response) {
 
 export async function getUserCoursesById(req: Request, res: Response) {
     try {
-        const student: any = await userService.findUserById(
+        const user: IUser = await userService.findUserById(
             ObjectId(req.params.id)
         );
-        const courseIds = student.meta.courses.map((id: string) =>
-            ObjectId(id)
-        );
+        const courseIds = (user as IStudent | IInstructor).meta.courses;
         const courses = await courseService.findCoursesByIds(courseIds);
 
         res.json({
@@ -99,11 +98,11 @@ export async function getUserCoursesById(req: Request, res: Response) {
 
 export async function getUserSchoolById(req: Request, res: Response) {
     try {
-        const user: any = await userService.findUserById(
+        const user: IUser = await userService.findUserById(
             ObjectId(req.params.id)
         );
 
-        const schoolId = ObjectId(user.meta.school);
+        const schoolId = (user as IStudent | ISchoolOfficial).meta.school;
         const school = await schoolService.findSchoolById(schoolId);
 
         res.json({
@@ -117,10 +116,10 @@ export async function getUserSchoolById(req: Request, res: Response) {
 
 export async function getUserChatsById(req: Request, res: Response) {
     try {
-        const user: any = await userService.findUserById(
+        const user: IUser = await userService.findUserById(
             ObjectId(req.params.id)
         );
-        const chatIds = user.meta.chats.map((chatId) => ObjectId(chatId));
+        const chatIds = user.meta.chats;
         const chats = await chatService.findChatsByIds(chatIds);
 
         res.json({

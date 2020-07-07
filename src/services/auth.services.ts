@@ -1,4 +1,4 @@
-import { EUserRoles, ITokenPayload, EUserEvents } from "../types";
+import { EUserRoles, ITokenPayload, EUserEvents, IUser } from "../types";
 import { JwtService, BcryptService, UserService, MetadataService } from ".";
 import { Types } from "mongoose";
 import { EventEmitter } from "events";
@@ -19,7 +19,7 @@ export default class AuthService {
         userData,
     }: {
         role: EUserRoles;
-        userData: object;
+        userData: IUser;
     }): Promise<{ user: any; accessToken: string }> {
         await this.bcryptService.removePasswordAndInsertHash(userData);
 

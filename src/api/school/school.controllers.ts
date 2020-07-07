@@ -7,6 +7,7 @@ import {
     userService,
     courseService,
 } from "../../services";
+import { IUser, IStudent } from "../../types";
 
 const { ObjectId } = Types;
 
@@ -76,10 +77,10 @@ export async function getSchoolStudentsById(req: Request, res: Response) {
         const school: any = await schoolService.findSchoolById(
             ObjectId(req.params.id)
         );
-        const studentIds = school.meta.students.map((id: string) =>
-            ObjectId(id)
-        );
-        const students = await userService.findUsersByIds(studentIds);
+        const studentIds = school.meta.students;
+        const students = (await userService.findUsersByIds(
+            studentIds
+        )) as IStudent[];
 
         res.json({
             message: "School students successfully fetched",
@@ -95,9 +96,7 @@ export async function getSchoolOfficialsById(req: Request, res: Response) {
         const school: any = await schoolService.findSchoolById(
             ObjectId(req.params.id)
         );
-        const schoolOfficialIds = school.meta.schoolOfficials.map(
-            (id: string) => ObjectId(id)
-        );
+        const schoolOfficialIds = school.meta.schoolOfficials;
         const schoolOfficials = await userService.findUsersByIds(
             schoolOfficialIds
         );

@@ -1,12 +1,12 @@
-import { EUserRoles } from "../types";
+import { EUserRoles, IUser } from "../types";
 import { Model, Document, Types } from "mongoose";
 
 const { ObjectId } = Types;
 
 export default class UserService {
     constructor(
-        private getUserModelByRole: (role: EUserRoles) => Model<Document>,
-        private Users: Model<Document>
+        private getUserModelByRole: (role: EUserRoles) => Model<IUser>,
+        private Users: Model<IUser>
     ) {}
 
     async createUser({
@@ -14,11 +14,11 @@ export default class UserService {
         userData,
     }: {
         role: EUserRoles;
-        userData: object;
-    }) {
+        userData: IUser;
+    }): Promise<IUser> {
         if ((userData as any).password)
             throw new Error("We don't store passwords around here kiddo");
-        return this.getUserModelByRole(role).create(userData);
+        return await this.getUserModelByRole(role).create(userData);
     }
 
     async findUsers(
@@ -29,7 +29,7 @@ export default class UserService {
             skip?: number;
             sort?: object;
         }
-    ) {
+    ): Promise<IUser[]> {
         let model = options.role
             ? this.getUserModelByRole(options.role)
             : this.Users;
@@ -45,23 +45,29 @@ export default class UserService {
             );
     }
 
-    async findUsersByIds(ids: Types.ObjectId[]) {
+    async findUsersByIds(ids: Types.ObjectId[]): Promise<IUser[]> {
         return await this.Users.find({ _id: { $in: ids } });
     }
 
-    async findUser(where: object) {
+    async findUser(where: object): Promise<IUser> {
         return await this.Users.findOne(where);
     }
 
-    async findUserById(id: Types.ObjectId) {
+    async findUserById(id: Types.ObjectId): Promise<IUser> {
         return await this.Users.findById(id);
     }
 
-    async findUserByEmail(email: string) {
+    async findUserByEmail(email: string): Promise<IUser> {
         return await this.findUser({ email });
     }
 
-    async updateUser({ where, userData }: { where: object; userData: object }) {
+    async updateUser({
+        where,
+        userData,
+    }: {
+        where: object;
+        userData: object;
+    }): Promise<IUser> {
         return await this.Users.findOneAndUpdate(where, userData, {
             new: true,
         });
@@ -73,15 +79,18 @@ export default class UserService {
     }: {
         id: Types.ObjectId;
         userData: object;
-    }) {
+    }): Promise<IUser> {
         return await this.Users.findByIdAndUpdate(id, userData, { new: true });
     }
 
-    async deleteUser(where: { role: EUserRoles; where: object }) {
+    async deleteUser(where: {
+        role: EUserRoles;
+        where: object;
+    }): Promise<IUser> {
         return await this.Users.findOneAndDelete(where);
     }
 
-    async deleteUserById(id: Types.ObjectId) {
+    async deleteUserById(id: Types.ObjectId): Promise<IUser> {
         return await this.Users.findByIdAndDelete(id);
     }
 
@@ -93,7 +102,7 @@ export default class UserService {
         userIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
         roles: EUserRoles[];
-    }) {
+    }): Promise<void> {
         // Because User meta schemas are determined by the discriminator (roles).
         // I decided against one metadata schema model with everything uptional because
         // default values (empty arrays) have to be set before mongodb is able to push to it.
@@ -121,7 +130,7 @@ export default class UserService {
         userIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
         roles: EUserRoles[];
-    }) {
+    }): Promise<void> {
         await Promise.all(
             roles.map((role: EUserRoles) => {
                 return this.getUserModelByRole(role).updateMany(
@@ -144,7 +153,7 @@ export default class UserService {
         userIds: Types.ObjectId[];
         chatIds: Types.ObjectId[];
         roles?: EUserRoles[];
-    }) {
+    }): Promise<void> {
         roles = roles || Object.values(EUserRoles);
         await Promise.all(
             roles.map((role: EUserRoles) => {
@@ -164,7 +173,7 @@ export default class UserService {
         userIds: Types.ObjectId[];
         chatIds: Types.ObjectId[];
         roles?: EUserRoles[];
-    }) {
+    }): Promise<void> {
         roles = roles || Object.values(EUserRoles);
         await Promise.all(
             roles.map((role: EUserRoles) => {

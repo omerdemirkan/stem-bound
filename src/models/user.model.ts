@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
+import { IUser } from "../types";
 
 const userSchema = new Schema(
     {
@@ -54,6 +55,6 @@ const userSchema = new Schema(
     }
 );
 
-const Users = mongoose.model("user", userSchema);
+const Users = mongoose.model<IUser>("user", userSchema);
 
 export default Users;

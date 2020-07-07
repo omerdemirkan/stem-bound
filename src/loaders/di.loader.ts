@@ -2,7 +2,7 @@ import * as services from "../services/index";
 import * as dependencies from "../config/dependency.config";
 import * as models from "../models";
 import { eventEmitter } from "../config";
-import { EUserRoles } from "../types";
+import { EUserRoles, IUser } from "../types";
 import { Model, Document } from "mongoose";
 // import { getUserModel } from "../helpers/model.helpers";
 
@@ -34,7 +34,7 @@ const userModels = {
     [EUserRoles.SCHOOL_OFFICIAL]: models.SchoolOfficials,
 };
 
-export function getUserModelByRole(role: EUserRoles): Model<Document> {
+export function getUserModelByRole(role: EUserRoles): Model<IUser> {
     return (userModels as any)[role];
 }
 
