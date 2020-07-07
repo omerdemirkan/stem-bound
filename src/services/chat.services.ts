@@ -5,7 +5,6 @@ export default class ChatService {
 
     async createChat(chatData: any) {
         const chatUsers: any = chatData.meta.users;
-        console.log(chatUsers);
         const duplicateChat: any = await this.Chats.findOne()
             .all("meta.users", chatUsers)
             .size("meta.users", chatUsers.length);
@@ -32,11 +31,13 @@ export default class ChatService {
     }
 
     async updateChat(where: object, chatData: any) {
-        return await this.Chats.findOneAndUpdate(where, chatData);
+        return await this.Chats.findOneAndUpdate(where, chatData, {
+            new: true,
+        });
     }
 
     async updateChatById(id: Types.ObjectId, chatData: any) {
-        return await this.Chats.findByIdAndUpdate(id, chatData);
+        return await this.Chats.findByIdAndUpdate(id, chatData, { new: true });
     }
 
     async deleteChat(where: object) {
@@ -47,42 +48,47 @@ export default class ChatService {
         return await this.Chats.findByIdAndDelete(id);
     }
 
-    async createMessagesByChatId(id: Types.ObjectId, messages: any[]) {
-        return await this.Chats.findByIdAndUpdate(id, {
-            $push: {
-                messages: {
-                    $each: messages,
-                    $sort: { createdAt: -1 },
+    async createMessage(id: Types.ObjectId, message: any) {
+        return await this.Chats.findByIdAndUpdate(
+            id,
+            {
+                $push: {
+                    messages: message,
                 },
             },
-        });
+            { new: true }
+        );
     }
 
     async updateMessage({
         chatId,
         messageId,
-        updatedMessage,
+        text,
     }: {
         chatId: Types.ObjectId;
         messageId: Types.ObjectId;
-        updatedMessage: any;
+        text;
     }) {
         return await this.Chats.findOneAndUpdate(
             { _id: chatId, "messages._id": messageId },
-            { "messages.$": updatedMessage },
+            { $set: { "messages.$.text": text } },
             { new: true }
         );
     }
 
-    async deleteMessages({
+    async deleteMessage({
         chatId,
-        messageIds,
+        messageId,
     }: {
         chatId: Types.ObjectId;
-        messageIds: Types.ObjectId[];
+        messageId: Types.ObjectId;
     }) {
-        return await this.Chats.findByIdAndUpdate(chatId, {
-            $pullAll: { messages: messageIds },
-        });
+        return await this.Chats.findByIdAndUpdate(
+            chatId,
+            {
+                $pull: { messages: { _id: messageId } },
+            },
+            { new: true }
+        );
     }
 }

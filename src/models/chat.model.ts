@@ -19,21 +19,26 @@ const chatMetaSchema = new Schema(
     }
 );
 
-const messageMetaSchema = new Schema({
-    from: {
-        type: Schema.Types.ObjectId,
-        required: true,
-    },
-    readBy: {
-        type: [Schema.Types.ObjectId],
-        required: true,
-        default: [],
-        validate: {
-            validator: schemaValidators.uniqueStringArray,
-            message: (props) => `readBy must include unique object ids.`,
+const messageMetaSchema = new Schema(
+    {
+        from: {
+            type: Schema.Types.ObjectId,
+            required: true,
+        },
+        readBy: {
+            type: [Schema.Types.ObjectId],
+            required: true,
+            default: [],
+            validate: {
+                validator: schemaValidators.uniqueStringArray,
+                message: (props) => `readBy must include unique object ids.`,
+            },
         },
     },
-});
+    {
+        _id: false,
+    }
+);
 
 const messageSchema = new Schema(
     {

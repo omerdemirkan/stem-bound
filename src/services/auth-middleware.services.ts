@@ -96,10 +96,12 @@ export default class AuthMiddlewareService {
         comparisonFunction: RequestBodyPayloadComparisonFunction
     ) {
         return function (req: Request, res: Response, next: NextFunction) {
-            const { body, payload } = req as any;
-            if (comparisonFunction({ body, payload })) {
+            try {
+                const { body, payload } = req as any;
+                if (!comparisonFunction({ body, payload })) throw new Error();
+
                 next();
-            } else {
+            } catch (e) {
                 res.sendStatus(403);
             }
         };

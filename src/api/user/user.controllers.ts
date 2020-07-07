@@ -121,7 +121,7 @@ export async function getUserChatsById(req: Request, res: Response) {
             ObjectId(req.params.id)
         );
         const chatIds = user.meta.chats.map((chatId) => ObjectId(chatId));
-        const chats = chatService.findChatsByIds(chatIds);
+        const chats = await chatService.findChatsByIds(chatIds);
 
         res.json({
             message: "User chats successfuly fetched",

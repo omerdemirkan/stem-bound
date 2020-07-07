@@ -41,11 +41,15 @@ export default class CourseService {
     }
 
     async updateCourse(where: object, newCourse: object) {
-        return await this.Courses.findOneAndUpdate(where, newCourse);
+        return await this.Courses.findOneAndUpdate(where, newCourse, {
+            new: true,
+        });
     }
 
     async updateCourseById(id: Types.ObjectId, newCourse: object) {
-        return await this.Courses.findByIdAndUpdate(id, newCourse);
+        return await this.Courses.findByIdAndUpdate(id, newCourse, {
+            new: true,
+        });
     }
 
     async deleteCourse(where: object) {

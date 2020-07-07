@@ -62,7 +62,9 @@ export default class UserService {
     }
 
     async updateUser({ where, userData }: { where: object; userData: object }) {
-        return await this.Users.findOneAndUpdate(where, userData);
+        return await this.Users.findOneAndUpdate(where, userData, {
+            new: true,
+        });
     }
 
     async updateUserById({
@@ -72,7 +74,7 @@ export default class UserService {
         id: Types.ObjectId;
         userData: object;
     }) {
-        return await this.Users.findByIdAndUpdate(id, userData);
+        return await this.Users.findByIdAndUpdate(id, userData, { new: true });
     }
 
     async deleteUser(where: { role: EUserRoles; where: object }) {

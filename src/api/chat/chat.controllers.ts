@@ -27,10 +27,20 @@ export async function getChatById(req: Request, res: Response) {
         }
         res.json({
             message: "Chat successfully fetched",
-            data: {
-                ...chat,
-                messages: chat.messages.splice(0, 9),
-            },
+            data: chat,
+        });
+    } catch (e) {
+        res.status(errorParser.status(e)).json(errorParser.json(e));
+    }
+}
+
+export async function getChatMessagesByChatId(req: Request, res: Response) {
+    try {
+        const id = ObjectId(req.params.id);
+        const chat: any = await chatService.findChatById(id);
+        res.json({
+            message: "Chat successfully fetched",
+            data: chat.messages,
         });
     } catch (e) {
         res.status(errorParser.status(e)).json(errorParser.json(e));
@@ -42,12 +52,8 @@ export async function getChatMessageByIds(req: Request, res: Response) {
         const chatId = ObjectId(req.params.chatId);
         const messageId = ObjectId(req.params.messageId);
         const chat: any = await chatService.findChatById(chatId);
-
-        if (!chat.meta.users.includes((req as any).payload.user._id)) {
-            res.status(403);
-        }
         const message = chat.messages.find(
-            (message) => message._id === messageId
+            (message) => message._id.toString() === messageId.toString()
         );
 
         if (!message) {
@@ -55,7 +61,7 @@ export async function getChatMessageByIds(req: Request, res: Response) {
         }
 
         res.json({
-            message: "Chat successfully fetched",
+            message: "Message successfully fetched",
             data: message,
         });
     } catch (e) {
@@ -63,32 +69,14 @@ export async function getChatMessageByIds(req: Request, res: Response) {
     }
 }
 
-export async function createChatMessageByChatId(req: Request, res: Response) {
-    try {
-        const id = ObjectId(req.params.id);
-        const chat: any = await chatService.findChatById(id);
-        if (!chat.meta.users.includes((req as any).payload.user._id)) {
-            res.status(403);
-        }
-        res.json({
-            message: "Chat successfully fetched",
-            data: chat.messages,
-        });
-    } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
-    }
-}
-
-export async function getChatMessagesByChatId(req: Request, res: Response) {
+export async function createChatMessageById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
 
-        const newChat: any = await chatService.createMessagesByChatId(id, [
-            req.body,
-        ]);
+        const newChat: any = await chatService.createMessage(id, req.body);
         res.json({
-            message: "Chat message successfully fetched",
-            data: newChat,
+            message: "Chat message successfully created",
+            data: newChat.messages,
         });
     } catch (e) {
         res.status(errorParser.status(e)).json(errorParser.json(e));
@@ -111,10 +99,10 @@ export async function updateChatById(req: Request, res: Response) {
 
 export async function updateChatMessageByIds(req: Request, res: Response) {
     try {
-        const result = chatService.updateMessage({
+        const result = await chatService.updateMessage({
             chatId: ObjectId(req.params.chatId),
             messageId: ObjectId(req.params.messageId),
-            updatedMessage: req.body,
+            text: req.body.text,
         });
         res.json({
             message: "Message successfully updated",
@@ -130,6 +118,8 @@ export async function deleteChatById(req: Request, res: Response) {
         const deletedChat = await chatService.deleteChatById(
             ObjectId(req.params.id)
         );
+
+        await metadataService.handleDeletedChatMetadataUpdate(deletedChat);
         res.json({
             message: "Chat successfully deleted",
             data: deletedChat,
@@ -141,9 +131,9 @@ export async function deleteChatById(req: Request, res: Response) {
 
 export async function deleteChatMessageByIds(req: Request, res: Response) {
     try {
-        const updatedChat: any = await chatService.deleteMessages({
+        const updatedChat: any = await chatService.deleteMessage({
             chatId: ObjectId(req.params.chatId),
-            messageIds: [ObjectId(req.params.messageIds)],
+            messageId: ObjectId(req.params.messageId),
         });
 
         res.json({

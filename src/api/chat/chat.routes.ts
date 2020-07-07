@@ -17,7 +17,7 @@ chatRouter.get(
 );
 
 chatRouter.get(
-    "/:chatId/messages/messageId",
+    "/:chatId/messages/:messageId",
     authMiddlewareService.extractTokenPayload,
     chatControllers.getChatMessageByIds
 );
@@ -37,7 +37,7 @@ chatRouter.post(
     authMiddlewareService.compareRequestBodyToPayload(
         ({ body, payload }) => body.meta.from === payload.user._id
     ),
-    chatControllers.createChatMessageByChatId
+    chatControllers.createChatMessageById
 );
 
 chatRouter.patch(
