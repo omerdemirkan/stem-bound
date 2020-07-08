@@ -52,6 +52,11 @@ export async function getChatMessageByIds(req: Request, res: Response) {
         const chatId = ObjectId(req.params.chatId);
         const messageId = ObjectId(req.params.messageId);
         const chat: any = await chatService.findChatById(chatId);
+
+        if (!chat) {
+            throw new Error("Chat not found");
+        }
+
         const message = chat.messages.find(
             (message) => message._id.toString() === messageId.toString()
         );

@@ -1,21 +1,8 @@
 import mongoose, { Schema, Types } from "mongoose";
-import { courseTypes, classTypes } from "../config/constants.config";
 import { schemaValidators } from "../helpers/model.helpers";
+import { ECourseTypes, EClassTypes } from "../types";
 
-// const durationSchema = new Schema({
-//     start: {
-//         type: Date,
-//         required: [true, "Course start date is required."]
-//     },
-//     end: {
-//         type: Date,
-//         required: [true, "Course end date is required."]
-//     }
-// }, {
-//     _id: false
-// });
-
-const metaSchema = new Schema(
+const courseMetaSchema = new Schema(
     {
         instructors: {
             type: [Schema.Types.ObjectId],
@@ -40,11 +27,49 @@ const metaSchema = new Schema(
     }
 );
 
+const announcementMetaSchema = new Schema(
+    {
+        from: {
+            type: Schema.Types.ObjectId,
+            required: true,
+        },
+        readBy: {
+            type: [Schema.Types.ObjectId],
+            required: true,
+        },
+    },
+    {
+        _id: false,
+    }
+);
+
+const announcementSchema = new Schema(
+    {
+        text: {
+            type: String,
+            required: true,
+            minlength: 4,
+            maxlength: 2000,
+        },
+        meta: {
+            type: announcementMetaSchema,
+            required: true,
+        },
+    },
+    {
+        // I want instructors to be able to delete or update announcements by id
+        _id: true,
+        timestamps: {
+            createdAt: true,
+        },
+    }
+);
+
 const classSchema = new Schema(
     {
         type: {
             type: String,
-            enum: classTypes,
+            enum: Object.values(EClassTypes),
             required: true,
         },
         roomNum: {
@@ -68,33 +93,16 @@ const classSchema = new Schema(
         },
     },
     {
-        _id: false,
-    }
-);
-
-const scheduleSchema = new Schema(
-    {
-        classes: {
-            type: [classSchema],
-            required: true,
-            default: [],
-            validate: {
-                validator: schemaValidators.arrayLength({ min: 0, max: 200 }),
-                message: "A maximum of 200 classes allowed",
-            },
-        },
-    },
-    {
-        _id: false,
+        _id: true,
     }
 );
 
 const courseSchema = new Schema({
-    topic: {
+    title: {
         type: String,
         minlength: 4,
         maxlength: 30,
-        required: [true, "Course topic is required."],
+        required: [true, "Course title is required."],
         trim: true,
     },
     shortDescription: {
@@ -112,21 +120,22 @@ const courseSchema = new Schema({
     },
     type: {
         type: String,
-        enum: courseTypes,
+        enum: Object.values(ECourseTypes),
         required: [true, "Course type is required."],
     },
-    // duration: {
-    //     type: durationSchema,
-    //     required: [true, "Course duration is required."]
-    // },
-    meta: {
-        type: metaSchema,
-        required: [true, "Course meta details are required."],
-    },
-    schedule: {
-        type: scheduleSchema,
+    classes: {
+        type: [classSchema],
         required: true,
-        default: {},
+        default: [],
+    },
+    announcements: {
+        type: [announcementSchema],
+        required: true,
+        default: [],
+    },
+    meta: {
+        type: courseMetaSchema,
+        required: [true, "Course meta details are required."],
     },
 });
 
