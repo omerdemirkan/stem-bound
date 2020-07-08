@@ -3,7 +3,7 @@ import * as dependencies from "../config/dependency.config";
 import * as models from "../models";
 import { eventEmitter } from "../config";
 import { EUserRoles, IUser } from "../types";
-import { Model, Document } from "mongoose";
+import { Model } from "mongoose";
 // import { getUserModel } from "../helpers/model.helpers";
 
 // Dependency Injection Loader
