@@ -2,6 +2,7 @@ import { Router } from "express";
 import * as courseControllers from "./course.controllers";
 import { EUserRoles } from "../../types";
 import { authMiddlewareService } from "../../services";
+import classRouter from "./class/class.routes";
 
 const courseRouter = Router();
 
@@ -53,5 +54,7 @@ courseRouter.delete(
     authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR, "ADMIN"]),
     courseControllers.deleteCourseById
 );
+
+courseRouter.use("/:courseId/classes", classRouter);
 
 export default courseRouter;

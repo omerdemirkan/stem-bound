@@ -6,7 +6,7 @@ const { ObjectId } = Types;
 
 export async function getChatMessagesByChatId(req: Request, res: Response) {
     try {
-        const chatId = ObjectId((req as any).chatId);
+        const chatId = ObjectId(req.params.chatId);
         const chat: any = await chatService.findChatById(chatId);
         res.json({
             message: "Chat successfully fetched",
@@ -19,7 +19,7 @@ export async function getChatMessagesByChatId(req: Request, res: Response) {
 
 export async function createChatMessageById(req: Request, res: Response) {
     try {
-        const chatId = ObjectId((req as any).chatId);
+        const chatId = ObjectId(req.params.chatId);
 
         const newChat: any = await chatService.createMessage(chatId, req.body);
         res.json({
@@ -33,7 +33,7 @@ export async function createChatMessageById(req: Request, res: Response) {
 
 export async function getChatMessageByIds(req: Request, res: Response) {
     try {
-        const chatId = ObjectId((req as any).chatId);
+        const chatId = ObjectId(req.params.chatId);
         const messageId = ObjectId(req.params.messageId);
         const chat: any = await chatService.findChatById(chatId);
 
@@ -61,7 +61,7 @@ export async function getChatMessageByIds(req: Request, res: Response) {
 export async function updateChatMessageByIds(req: Request, res: Response) {
     try {
         const result = await chatService.updateMessage({
-            chatId: ObjectId((req as any).chatId),
+            chatId: ObjectId(req.params.chatId),
             messageId: ObjectId(req.params.messageId),
             text: req.body.text,
         });
@@ -77,7 +77,7 @@ export async function updateChatMessageByIds(req: Request, res: Response) {
 export async function deleteChatMessageByIds(req: Request, res: Response) {
     try {
         const updatedChat: any = await chatService.deleteMessage({
-            chatId: ObjectId((req as any).chatId),
+            chatId: ObjectId(req.params.chatId),
             messageId: ObjectId(req.params.messageId),
         });
 

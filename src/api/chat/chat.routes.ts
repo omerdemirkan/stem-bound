@@ -1,5 +1,5 @@
-import { Router, Request, Response, NextFunction } from "express";
-import messagesRoutes from "./messages/messages.routes";
+import { Router } from "express";
+import messagesRoutes from "./message/message.routes";
 import * as chatControllers from "./chat.controllers";
 import { authMiddlewareService } from "../../services";
 
@@ -34,15 +34,6 @@ chatRouter.delete(
     chatControllers.deleteChatById
 );
 
-chatRouter.use(
-    "/:chatId/messages",
-    function (req: Request, res: Response, next: NextFunction) {
-        // Issue: nested routes don't have access to the chatId param.
-        // This middleware is to give access to this param to nested routes.
-        (req as any).chatId = req.params.chatId;
-        next();
-    },
-    messagesRoutes
-);
+chatRouter.use("/:chatId/messages", messagesRoutes);
 
 export default chatRouter;

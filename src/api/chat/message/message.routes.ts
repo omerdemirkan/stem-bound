@@ -1,22 +1,23 @@
 import { Router } from "express";
-import * as messagesControllers from "./messages.controllers";
+import * as messagesControllers from "./message.controllers";
 import { authMiddlewareService } from "../../../services";
 
-const messagesRouter = Router();
+// https://expressjs.com/en/4x/api.html#express.router
+const messageRouter = Router({ mergeParams: true });
 
-messagesRouter.get(
+messageRouter.get(
     "/",
     authMiddlewareService.extractTokenPayload,
     messagesControllers.getChatMessagesByChatId
 );
 
-messagesRouter.get(
+messageRouter.get(
     "/:messageId",
     authMiddlewareService.extractTokenPayload,
     messagesControllers.getChatMessageByIds
 );
 
-messagesRouter.post(
+messageRouter.post(
     "/",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.compareRequestBodyToPayload(
@@ -25,17 +26,17 @@ messagesRouter.post(
     messagesControllers.createChatMessageById
 );
 
-messagesRouter.patch(
+messageRouter.patch(
     "/:messageId",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.blockRequestBodyMetadata,
     messagesControllers.updateChatMessageByIds
 );
 
-messagesRouter.delete(
+messageRouter.delete(
     "/:messageId",
     authMiddlewareService.extractTokenPayload,
     messagesControllers.deleteChatMessageByIds
 );
 
-export default messagesRouter;
+export default messageRouter;

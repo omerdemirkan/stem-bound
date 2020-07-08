@@ -12,11 +12,11 @@ const router: Router = Router();
 
 router.use(modulesMiddlewares.requestLogger);
 
-router.use("/user", userRouter);
-router.use("/school", schoolRouter);
+router.use("/users", userRouter);
+router.use("/schools", schoolRouter);
 router.use("/auth", authRouter);
-router.use("/course", courseRouter);
-router.use("/chat", chatRouter);
+router.use("/courses", courseRouter);
+router.use("/chats", chatRouter);
 router.use("/mailing-list", mailingListRouter);
 
 export default router;
