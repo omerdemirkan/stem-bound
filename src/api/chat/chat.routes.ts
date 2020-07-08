@@ -1,4 +1,5 @@
-import { Router } from "express";
+import { Router, Request, Response, NextFunction } from "express";
+import messagesRoutes from "./messages/messages.routes";
 import * as chatControllers from "./chat.controllers";
 import { authMiddlewareService } from "../../services";
 
@@ -10,18 +11,6 @@ chatRouter.get(
     chatControllers.getChatById
 );
 
-chatRouter.get(
-    "/:id/messages",
-    authMiddlewareService.extractTokenPayload,
-    chatControllers.getChatMessagesByChatId
-);
-
-chatRouter.get(
-    "/:chatId/messages/:messageId",
-    authMiddlewareService.extractTokenPayload,
-    chatControllers.getChatMessageByIds
-);
-
 chatRouter.post(
     "/",
     authMiddlewareService.extractTokenPayload,
@@ -31,27 +20,11 @@ chatRouter.post(
     chatControllers.createChat
 );
 
-chatRouter.post(
-    "/:id/messages",
-    authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.compareRequestBodyToPayload(
-        ({ body, payload }) => body.meta.from === payload.user._id
-    ),
-    chatControllers.createChatMessageById
-);
-
 chatRouter.patch(
     "/:id",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.blockRequestBodyMetadata,
     chatControllers.updateChatById
-);
-
-chatRouter.patch(
-    "/:chatId/messages/:messageId",
-    authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.blockRequestBodyMetadata,
-    chatControllers.updateChatMessageByIds
 );
 
 chatRouter.delete(
@@ -61,10 +34,15 @@ chatRouter.delete(
     chatControllers.deleteChatById
 );
 
-chatRouter.delete(
-    "/:chatId/messages/:messageId",
-    authMiddlewareService.extractTokenPayload,
-    chatControllers.deleteChatMessageByIds
+chatRouter.use(
+    "/:chatId/messages",
+    function (req: Request, res: Response, next: NextFunction) {
+        // Issue: nested routes don't have access to the chatId param.
+        // This middleware is to give access to this param to nested routes.
+        (req as any).chatId = req.params.chatId;
+        next();
+    },
+    messagesRoutes
 );
 
 export default chatRouter;
