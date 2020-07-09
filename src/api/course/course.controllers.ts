@@ -8,28 +8,20 @@ import {
     schoolService,
 } from "../../services";
 import { EErrorTypes } from "../../types/error.types";
+import { ICourse, IStudent, IUser } from "../../types";
 
 const { ObjectId } = Types;
 
 export async function createCourse(req: Request, res: Response) {
     try {
         const courseData = req.body;
-        const instructorId = (req as any).payload.user._id;
-
-        if (!courseData.meta.instructors?.includes(instructorId)) {
-            // To ensure that the instructor creating the course is and instructor for the course.
-            errorService.throwError(EErrorTypes.FORBIDDEN);
-        }
-
-        const newCourse = await courseService.createCourse(courseData);
+        const newCourse: ICourse = await courseService.createCourse(courseData);
 
         await metadataService.handleNewCourseMetadataUpdate(newCourse);
 
-        res.json({
+        res.status(201).json({
             message: "Course successfully created",
-            data: {
-                course: newCourse,
-            },
+            data: newCourse,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -47,7 +39,6 @@ export async function enrollInCourseById(req: Request, res: Response) {
         });
         res.json({
             message: "Successfully enrolled in course.",
-            data: { status: true },
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -64,8 +55,7 @@ export async function dropCourseById(req: Request, res: Response) {
             studentId,
         });
         res.json({
-            message: "Successfully dropped course.",
-            data: { status: true },
+            message: "Successfully dropped course",
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -74,11 +64,14 @@ export async function dropCourseById(req: Request, res: Response) {
 
 export async function getCourses(req: Request, res: Response) {
     try {
-        const data = await courseService.findCourses({});
+        const courses: ICourse[] = await courseService.findCourses({});
 
+        if (!courses) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        }
         res.json({
             message: "Courses successfully fetched",
-            data,
+            data: courses,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -88,11 +81,14 @@ export async function getCourses(req: Request, res: Response) {
 export async function getCourseById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
-        const data = await courseService.findCourseById(id);
+        const course: ICourse = await courseService.findCourseById(id);
 
+        if (!course) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        }
         res.json({
             message: "Course successfully fetched",
-            data,
+            data: course,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -104,11 +100,14 @@ export async function updateCourseById(req: Request, res: Response) {
         const id = ObjectId(req.params.id);
         const newCourseData = req.body;
 
-        const data = await courseService.updateCourseById(id, newCourseData);
+        const updatedCourse: ICourse = await courseService.updateCourseById(
+            id,
+            newCourseData
+        );
 
         res.json({
             message: "Course successfully updated",
-            data,
+            data: updatedCourse,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -119,7 +118,7 @@ export async function deleteCourseById(req: Request, res: Response) {
     try {
         const courseId = ObjectId(req.params.id);
 
-        const deletedCourse: any = await courseService.deleteCourseById(
+        const deletedCourse: ICourse = await courseService.deleteCourseById(
             courseId
         );
 
@@ -138,13 +137,14 @@ export async function deleteCourseById(req: Request, res: Response) {
 
 export async function getCourseInstructorsById(req: Request, res: Response) {
     try {
-        const course: any = await courseService.findCourseById(
+        const course: ICourse = await courseService.findCourseById(
             ObjectId(req.params.id)
         );
-        const instructorIds = course.meta.instructors.map((id: string) =>
-            ObjectId(id)
-        );
 
+        if (!course) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        }
+        const instructorIds = course.meta.instructors;
         const instructors = await userService.findUsersByIds(instructorIds);
 
         res.json({
@@ -158,13 +158,15 @@ export async function getCourseInstructorsById(req: Request, res: Response) {
 
 export async function getCourseStudentsById(req: Request, res: Response) {
     try {
-        const course: any = await courseService.findCourseById(
+        const course: ICourse = await courseService.findCourseById(
             ObjectId(req.params.id)
         );
-        const studentIds = course.meta.students.map((id: string) =>
-            ObjectId(id)
-        );
-        const students = await userService.findUsersByIds(studentIds);
+
+        if (!course) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        }
+        const studentIds = course.meta.students;
+        const students: IUser[] = await userService.findUsersByIds(studentIds);
         res.json({
             message: "Course students successfully fetched",
             data: students,
@@ -176,10 +178,14 @@ export async function getCourseStudentsById(req: Request, res: Response) {
 
 export async function getCourseSchoolById(req: Request, res: Response) {
     try {
-        const course: any = await courseService.findCourseById(
+        const course: ICourse = await courseService.findCourseById(
             ObjectId(req.params.id)
         );
-        const schoolId = ObjectId(course.meta.school);
+
+        if (!course) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        }
+        const schoolId = course.meta.school;
         const school = await schoolService.findSchoolById(schoolId);
         res.json({
             message: "Course school successfully fetched",

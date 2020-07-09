@@ -2,13 +2,14 @@ import { Types } from "mongoose";
 import { Request, Response } from "express";
 import { chatService, errorService } from "../../../services";
 import { EErrorTypes } from "../../../types/error.types";
+import { IChat } from "../../../types/chat.types";
 
 const { ObjectId } = Types;
 
 export async function getChatMessagesByChatId(req: Request, res: Response) {
     try {
         const chatId = ObjectId(req.params.chatId);
-        const chat: any = await chatService.findChatById(chatId);
+        const chat: IChat = await chatService.findChatById(chatId);
         res.json({
             message: "Chat successfully fetched",
             data: chat.messages,
@@ -22,7 +23,10 @@ export async function createChatMessageById(req: Request, res: Response) {
     try {
         const chatId = ObjectId(req.params.chatId);
 
-        const newChat: any = await chatService.createMessage(chatId, req.body);
+        const newChat: IChat = await chatService.createMessage(
+            chatId,
+            req.body
+        );
         res.json({
             message: "Chat message successfully created",
             data: newChat.messages,
@@ -36,7 +40,7 @@ export async function getChatMessageByIds(req: Request, res: Response) {
     try {
         const chatId = ObjectId(req.params.chatId);
         const messageId = ObjectId(req.params.messageId);
-        const chat: any = await chatService.findChatById(chatId);
+        const chat: IChat = await chatService.findChatById(chatId);
 
         if (!chat) {
             errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
@@ -61,14 +65,14 @@ export async function getChatMessageByIds(req: Request, res: Response) {
 
 export async function updateChatMessageByIds(req: Request, res: Response) {
     try {
-        const result = await chatService.updateMessage({
+        const updatedChat: IChat = await chatService.updateMessage({
             chatId: ObjectId(req.params.chatId),
             messageId: ObjectId(req.params.messageId),
             text: req.body.text,
         });
         res.json({
             message: "Message successfully updated",
-            data: result,
+            data: updatedChat,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -77,7 +81,7 @@ export async function updateChatMessageByIds(req: Request, res: Response) {
 
 export async function deleteChatMessageByIds(req: Request, res: Response) {
     try {
-        const updatedChat: any = await chatService.deleteMessage({
+        const updatedChat: IChat = await chatService.deleteMessage({
             chatId: ObjectId(req.params.chatId),
             messageId: ObjectId(req.params.messageId),
         });

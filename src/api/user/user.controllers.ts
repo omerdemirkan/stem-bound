@@ -9,7 +9,13 @@ import {
 } from "../../services";
 import { configureUsersQuery } from "../../helpers/user.helpers";
 import { Types } from "mongoose";
-import { IUser, IStudent, IInstructor, ISchoolOfficial } from "../../types";
+import {
+    IUser,
+    IStudent,
+    IInstructor,
+    ISchoolOfficial,
+    ICourse,
+} from "../../types";
 
 const { ObjectId } = Types;
 
@@ -85,7 +91,9 @@ export async function getUserCoursesById(req: Request, res: Response) {
             ObjectId(req.params.id)
         );
         const courseIds = (user as IStudent | IInstructor).meta.courses;
-        const courses = await courseService.findCoursesByIds(courseIds);
+        const courses: ICourse[] = await courseService.findCoursesByIds(
+            courseIds
+        );
 
         res.json({
             message: "User courses successfully fetched",

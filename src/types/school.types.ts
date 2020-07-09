@@ -36,7 +36,7 @@ export interface ISchoolDataOriginal {
     SHELTER_ID: string;
 }
 
-export interface ISchoolDataLocal {
+export interface ISchool {
     _id?: Types.ObjectId;
     name: string;
     ncesid: string;

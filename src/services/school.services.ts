@@ -1,8 +1,6 @@
 import { Model, Document, Types, MongooseFilterQuery } from "mongoose";
 import { refreshSchoolDatabase } from "../jobs/school.jobs";
-import { ISchoolDataLocal } from "../types";
-
-const { ObjectId } = Types;
+import { ISchool } from "../types";
 
 export default class SchoolService {
     constructor(private Schools: Model<Document>) {}
@@ -32,10 +30,10 @@ export default class SchoolService {
     }: {
         coordinates: number[];
         limit?: number | null;
-        query?: MongooseFilterQuery<ISchoolDataLocal> | null;
+        query?: MongooseFilterQuery<ISchool> | null;
         skip?: number | null;
         text?: string;
-    }): Promise<ISchoolDataLocal[]> {
+    }): Promise<ISchool[]> {
         const geoNearOptions: any = {
             $geoNear: {
                 near: {

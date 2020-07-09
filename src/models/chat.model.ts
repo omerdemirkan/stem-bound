@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
+import { IChat } from "../types/chat.types";
 
 const chatMetaSchema = new Schema(
     {
@@ -83,6 +84,6 @@ const chatSchema = new Schema(
     }
 );
 
-const Chats = mongoose.model("chat", chatSchema);
+const Chats = mongoose.model<IChat>("chat", chatSchema);
 
 export default Chats;

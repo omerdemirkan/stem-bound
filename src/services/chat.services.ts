@@ -1,9 +1,10 @@
 import { Model, Document, Types } from "mongoose";
+import { IChat } from "../types/chat.types";
 
 export default class ChatService {
-    constructor(private Chats: Model<Document>) {}
+    constructor(private Chats: Model<IChat>) {}
 
-    async createChat(chatData: any) {
+    async createChat(chatData: IChat): Promise<IChat> {
         const chatUsers: any = chatData.meta.users;
         const duplicateChat: any = await this.Chats.findOne()
             .all("meta.users", chatUsers)
@@ -14,41 +15,44 @@ export default class ChatService {
         return await this.Chats.create(chatData);
     }
 
-    async findChats(where: object) {
+    async findChats(where: object): Promise<IChat[]> {
         return this.Chats.find(where);
     }
 
-    async findChatsByIds(ids: Types.ObjectId[]) {
+    async findChatsByIds(ids: Types.ObjectId[]): Promise<IChat[]> {
         return this.Chats.find({ _id: { $in: ids } });
     }
 
-    async findChat(where: object) {
-        return await this.Chats.find(where);
+    async findChat(where: object): Promise<IChat> {
+        return await this.Chats.findOne(where);
     }
 
-    async findChatById(id: Types.ObjectId) {
+    async findChatById(id: Types.ObjectId): Promise<IChat> {
         return await this.Chats.findById(id);
     }
 
-    async updateChat(where: object, chatData: any) {
+    async updateChat(where: object, chatData: Partial<IChat>): Promise<IChat> {
         return await this.Chats.findOneAndUpdate(where, chatData, {
             new: true,
         });
     }
 
-    async updateChatById(id: Types.ObjectId, chatData: any) {
+    async updateChatById(
+        id: Types.ObjectId,
+        chatData: Partial<IChat>
+    ): Promise<IChat> {
         return await this.Chats.findByIdAndUpdate(id, chatData, { new: true });
     }
 
-    async deleteChat(where: object) {
+    async deleteChat(where: object): Promise<IChat> {
         return await this.Chats.findOneAndDelete(where);
     }
 
-    async deleteChatById(id: Types.ObjectId) {
+    async deleteChatById(id: Types.ObjectId): Promise<IChat> {
         return await this.Chats.findByIdAndDelete(id);
     }
 
-    async createMessage(id: Types.ObjectId, message: any) {
+    async createMessage(id: Types.ObjectId, message: any): Promise<IChat> {
         return await this.Chats.findByIdAndUpdate(
             id,
             {
@@ -68,7 +72,7 @@ export default class ChatService {
         chatId: Types.ObjectId;
         messageId: Types.ObjectId;
         text;
-    }) {
+    }): Promise<IChat> {
         return await this.Chats.findOneAndUpdate(
             { _id: chatId, "messages._id": messageId },
             { $set: { "messages.$.text": text } },
@@ -82,7 +86,7 @@ export default class ChatService {
     }: {
         chatId: Types.ObjectId;
         messageId: Types.ObjectId;
-    }) {
+    }): Promise<IChat> {
         return await this.Chats.findByIdAndUpdate(
             chatId,
             {

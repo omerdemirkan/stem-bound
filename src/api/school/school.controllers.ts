@@ -20,9 +20,9 @@ export async function getSchools(req: Request, res: Response) {
             query,
             text,
         } = configureFindSchoolsQuery(req.query);
-        let data;
+        let schools;
         if (coordinates) {
-            data = await schoolService.findSchoolsByCoordinates({
+            schools = await schoolService.findSchoolsByCoordinates({
                 coordinates,
                 limit,
                 skip,
@@ -30,14 +30,14 @@ export async function getSchools(req: Request, res: Response) {
                 text,
             });
         } else if (text) {
-            data = await schoolService.findSchoolsByText(text);
+            schools = await schoolService.findSchoolsByText(text);
         } else {
-            data = await schoolService.findSchools(query);
+            schools = await schoolService.findSchools(query);
         }
 
         res.json({
-            message: "",
-            data,
+            message: "Schools successfully fetched",
+            data: schools,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -47,11 +47,11 @@ export async function getSchools(req: Request, res: Response) {
 export async function getSchoolById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
-        const data = await schoolService.findSchoolById(id);
+        const school = await schoolService.findSchoolById(id);
 
         res.json({
-            message: "",
-            data,
+            message: "School successfully fetched",
+            data: school,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -64,7 +64,7 @@ export async function refreshDatabase(req: Request, res: Response) {
         const data = await schoolService.refreshDatabase({ url });
 
         res.json({
-            message: "",
+            message: "School db successfully refreshed",
             data,
         });
     } catch (e) {
