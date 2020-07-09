@@ -1,9 +1,9 @@
-import { Model, Document, Types, MongooseFilterQuery } from "mongoose";
+import { Model, Types, MongooseFilterQuery } from "mongoose";
 import { refreshSchoolDatabase } from "../jobs/school.jobs";
 import { ISchool } from "../types";
 
 export default class SchoolService {
-    constructor(private Schools: Model<Document>) {}
+    constructor(private Schools: Model<ISchool>) {}
 
     async findSchools(
         where: object = {},
@@ -12,7 +12,7 @@ export default class SchoolService {
             skip?: number;
             limit?: number;
         }
-    ) {
+    ): Promise<ISchool[]> {
         const schools = await this.Schools.find(where || {})
             .sort(options?.sort)
             .skip(options?.skip || 0)
@@ -65,16 +65,16 @@ export default class SchoolService {
         return schools;
     }
 
-    async findSchoolsByText(text: string) {
+    async findSchoolsByText(text: string): Promise<ISchool[]> {
         return await this.Schools.find({ $text: { $search: text } });
     }
 
-    findSchool(where: object) {
-        return this.Schools.findOne(where);
+    async findSchool(where: object): Promise<ISchool> {
+        return await this.Schools.findOne(where);
     }
 
-    findSchoolById(id: Types.ObjectId) {
-        return this.Schools.findById(id);
+    async findSchoolById(id: Types.ObjectId): Promise<ISchool> {
+        return await this.Schools.findById(id);
     }
 
     async addStudentMetadata({
@@ -83,7 +83,7 @@ export default class SchoolService {
     }: {
         studentIds: Types.ObjectId[];
         schoolIds: Types.ObjectId[];
-    }) {
+    }): Promise<void> {
         await this.Schools.updateMany(
             { _id: { $in: schoolIds } },
             {
@@ -98,7 +98,7 @@ export default class SchoolService {
     }: {
         studentIds: Types.ObjectId[];
         schoolIds: Types.ObjectId[];
-    }) {
+    }): Promise<void> {
         await this.Schools.updateMany(
             { _id: { $in: schoolIds } },
             {
@@ -113,7 +113,7 @@ export default class SchoolService {
     }: {
         schoolOfficialIds: Types.ObjectId[];
         schoolIds: Types.ObjectId[];
-    }) {
+    }): Promise<void> {
         await this.Schools.updateMany(
             { _id: { $in: schoolIds } },
             {
@@ -130,7 +130,7 @@ export default class SchoolService {
     }: {
         schoolOfficialIds: Types.ObjectId[];
         schoolIds: Types.ObjectId[];
-    }) {
+    }): Promise<void> {
         await this.Schools.updateMany(
             { _id: { $in: schoolIds } },
             {
@@ -145,7 +145,7 @@ export default class SchoolService {
     }: {
         courseIds: Types.ObjectId[];
         schoolIds: Types.ObjectId[];
-    }) {
+    }): Promise<void> {
         await this.Schools.updateMany(
             { _id: { $in: schoolIds } },
             {
@@ -160,7 +160,7 @@ export default class SchoolService {
     }: {
         courseIds: Types.ObjectId[];
         schoolIds: Types.ObjectId[];
-    }) {
+    }): Promise<void> {
         await this.Schools.updateMany(
             { _id: { $in: schoolIds } },
             {

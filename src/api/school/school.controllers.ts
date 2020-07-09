@@ -7,7 +7,7 @@ import {
     userService,
     courseService,
 } from "../../services";
-import { IUser, IStudent } from "../../types";
+import { IUser, IStudent, ISchool, ICourse } from "../../types";
 
 const { ObjectId } = Types;
 
@@ -20,7 +20,7 @@ export async function getSchools(req: Request, res: Response) {
             query,
             text,
         } = configureFindSchoolsQuery(req.query);
-        let schools;
+        let schools: ISchool[];
         if (coordinates) {
             schools = await schoolService.findSchoolsByCoordinates({
                 coordinates,
@@ -47,7 +47,7 @@ export async function getSchools(req: Request, res: Response) {
 export async function getSchoolById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
-        const school = await schoolService.findSchoolById(id);
+        const school: ISchool = await schoolService.findSchoolById(id);
 
         res.json({
             message: "School successfully fetched",
@@ -74,7 +74,7 @@ export async function refreshDatabase(req: Request, res: Response) {
 
 export async function getSchoolStudentsById(req: Request, res: Response) {
     try {
-        const school: any = await schoolService.findSchoolById(
+        const school: ISchool = await schoolService.findSchoolById(
             ObjectId(req.params.id)
         );
         const studentIds = school.meta.students;
@@ -93,7 +93,7 @@ export async function getSchoolStudentsById(req: Request, res: Response) {
 
 export async function getSchoolOfficialsById(req: Request, res: Response) {
     try {
-        const school: any = await schoolService.findSchoolById(
+        const school: ISchool = await schoolService.findSchoolById(
             ObjectId(req.params.id)
         );
         const schoolOfficialIds = school.meta.schoolOfficials;
@@ -112,12 +112,14 @@ export async function getSchoolOfficialsById(req: Request, res: Response) {
 
 export async function getSchoolCoursesById(req: Request, res: Response) {
     try {
-        const school: any = await schoolService.findSchoolById(
+        const school: ISchool = await schoolService.findSchoolById(
             ObjectId(req.params.id)
         );
-        const courseIds = school.meta.courses.map((id: string) => ObjectId(id));
+        const courseIds = school.meta.courses;
 
-        const courses = await courseService.findCoursesByIds(courseIds);
+        const courses: ICourse[] = await courseService.findCoursesByIds(
+            courseIds
+        );
 
         res.json({
             message: "School courses successfully fetched",

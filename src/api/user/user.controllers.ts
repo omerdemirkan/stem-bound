@@ -16,6 +16,7 @@ import {
     ISchoolOfficial,
     ICourse,
 } from "../../types";
+import { IChat } from "../../types/chat.types";
 
 const { ObjectId } = Types;
 
@@ -128,7 +129,7 @@ export async function getUserChatsById(req: Request, res: Response) {
             ObjectId(req.params.id)
         );
         const chatIds = user.meta.chats;
-        const chats = await chatService.findChatsByIds(chatIds);
+        const chats: IChat[] = await chatService.findChatsByIds(chatIds);
 
         res.json({
             message: "User chats successfuly fetched",

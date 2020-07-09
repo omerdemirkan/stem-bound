@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
+import { ISchool } from "../types";
 
 const geoJsonSchema = new Schema({
     type: {
@@ -182,6 +183,6 @@ locationSchema.index({
 
 // schoolSchema.index({ name: "text" });
 
-const Schools = mongoose.model("School", schoolSchema);
+const Schools = mongoose.model<ISchool>("School", schoolSchema);
 
 export default Schools;

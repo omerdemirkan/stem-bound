@@ -32,12 +32,7 @@ export interface IAnnouncement {
 export interface ICourse extends Document {
     title: string;
     shortDescription: string;
-    longDescription: {
-        type: String;
-        minlength: 4;
-        maxlength: 2000;
-        trim: true;
-    };
+    longDescription: string;
     type: string;
     classes: IClass[];
     announcements: IAnnouncement[];

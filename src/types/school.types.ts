@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Types, Document } from "mongoose";
 
 export interface ISchoolDataOriginal {
     X: string;
@@ -36,8 +36,7 @@ export interface ISchoolDataOriginal {
     SHELTER_ID: string;
 }
 
-export interface ISchool {
-    _id?: Types.ObjectId;
+export interface ISchool extends Document {
     name: string;
     ncesid: string;
     districtId: string;
