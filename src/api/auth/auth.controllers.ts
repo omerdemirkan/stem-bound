@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import {
     jwtService,
-    errorParser,
+    errorService,
     authService,
     userService,
 } from "../../services";
@@ -27,7 +27,7 @@ export async function me(req: Request, res: Response) {
             },
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -43,7 +43,7 @@ export async function signUp(req: Request, res: Response) {
             data: { user, accessToken },
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -68,6 +68,6 @@ export async function logIn(req: Request, res: Response) {
             data: { user, accessToken },
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }

@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 import { configureFindSchoolsQuery } from "../../helpers/school.helpers";
 import {
     schoolService,
-    errorParser,
+    errorService,
     userService,
     courseService,
 } from "../../services";
@@ -40,7 +40,7 @@ export async function getSchools(req: Request, res: Response) {
             data,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -54,7 +54,7 @@ export async function getSchoolById(req: Request, res: Response) {
             data,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -68,7 +68,7 @@ export async function refreshDatabase(req: Request, res: Response) {
             data,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -87,7 +87,7 @@ export async function getSchoolStudentsById(req: Request, res: Response) {
             data: students,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -106,7 +106,7 @@ export async function getSchoolOfficialsById(req: Request, res: Response) {
             data: schoolOfficials,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -124,6 +124,6 @@ export async function getSchoolCoursesById(req: Request, res: Response) {
             data: courses,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }

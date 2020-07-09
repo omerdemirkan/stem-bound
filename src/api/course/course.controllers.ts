@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import {
     courseService,
-    errorParser,
+    errorService,
     metadataService,
     userService,
     schoolService,
@@ -33,7 +33,7 @@ export async function createCourse(req: Request, res: Response) {
             },
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -51,7 +51,7 @@ export async function enrollInCourseById(req: Request, res: Response) {
             data: { status: true },
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -69,7 +69,7 @@ export async function dropCourseById(req: Request, res: Response) {
             data: { status: true },
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -82,7 +82,7 @@ export async function getCourses(req: Request, res: Response) {
             data,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -96,7 +96,7 @@ export async function getCourseById(req: Request, res: Response) {
             data,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -112,7 +112,7 @@ export async function updateCourseById(req: Request, res: Response) {
             data,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -133,7 +133,7 @@ export async function deleteCourseById(req: Request, res: Response) {
             },
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -153,7 +153,7 @@ export async function getCourseInstructorsById(req: Request, res: Response) {
             data: instructors,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -171,7 +171,7 @@ export async function getCourseStudentsById(req: Request, res: Response) {
             data: students,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -187,6 +187,6 @@ export async function getCourseSchoolById(req: Request, res: Response) {
             data: school,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }

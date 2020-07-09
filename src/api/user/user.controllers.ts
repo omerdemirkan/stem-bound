@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import {
-    errorParser,
+    errorService,
     userService,
     metadataService,
     courseService,
@@ -29,7 +29,7 @@ export async function getUsers(req: Request, res: Response) {
             data: users,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -43,7 +43,7 @@ export async function getUserById(req: Request, res: Response) {
             data: user,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -60,7 +60,7 @@ export async function updateUserById(req: Request, res: Response) {
             data: updatedUser,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -75,7 +75,7 @@ export async function deleteUserById(req: Request, res: Response) {
             data: deletedUser,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -92,7 +92,7 @@ export async function getUserCoursesById(req: Request, res: Response) {
             data: courses,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -110,7 +110,7 @@ export async function getUserSchoolById(req: Request, res: Response) {
             data: school,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -127,6 +127,6 @@ export async function getUserChatsById(req: Request, res: Response) {
             data: chats,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }

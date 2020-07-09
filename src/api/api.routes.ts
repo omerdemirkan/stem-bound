@@ -1,4 +1,4 @@
-import { Router, Request, Response } from "express";
+import { Router } from "express";
 import * as modulesMiddlewares from "./api.middlewares";
 
 import userRouter from "./user/user.routes";

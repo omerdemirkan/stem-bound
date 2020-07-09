@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { errorParser, chatService, metadataService } from "../../services";
+import { errorService, chatService, metadataService } from "../../services";
 import { Types } from "mongoose";
 
 const { ObjectId } = Types;
@@ -14,7 +14,7 @@ export async function createChat(req: Request, res: Response) {
             data: newChat,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -30,7 +30,7 @@ export async function getChatById(req: Request, res: Response) {
             data: chat,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -44,7 +44,7 @@ export async function updateChatById(req: Request, res: Response) {
             data: newChat,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -60,6 +60,6 @@ export async function deleteChatById(req: Request, res: Response) {
             data: deletedChat,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }

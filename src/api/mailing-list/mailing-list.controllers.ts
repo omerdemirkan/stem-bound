@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { mailingListService, errorParser } from "../../services";
+import { mailingListService, errorService } from "../../services";
 
 export async function createMailingListSubscriber(req: Request, res: Response) {
     try {
@@ -12,7 +12,7 @@ export async function createMailingListSubscriber(req: Request, res: Response) {
             data: mailingListSubscriber,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
@@ -25,6 +25,6 @@ export async function getMailingListSubscribers(req: Request, res: Response) {
             data: mailingListSubscribers,
         });
     } catch (e) {
-        res.status(errorParser.status(e)).json(errorParser.json(e));
+        res.status(errorService.status(e)).json(errorService.json(e));
     }
 }

@@ -8,7 +8,7 @@ import { Model } from "mongoose";
 
 // Dependency Injection Loader
 
-export const errorParser = new services.ErrorParserService();
+export const errorService = new services.ErrorService();
 
 export const jwtService = new services.JwtService(dependencies.jwt);
 
