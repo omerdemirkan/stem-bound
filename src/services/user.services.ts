@@ -115,7 +115,7 @@ export default class UserService {
                         _id: { $in: userIds },
                     },
                     {
-                        $push: { "meta.courses": { $each: courseIds } },
+                        $addToSet: { "meta.courses": { $each: courseIds } },
                     }
                 );
             })
@@ -159,7 +159,7 @@ export default class UserService {
             roles.map((role: EUserRoles) => {
                 return this.getUserModelByRole(role).updateMany(
                     { _id: { $in: userIds } },
-                    { $push: { "meta.chats": { $each: chatIds } } }
+                    { $addToSet: { "meta.chats": { $each: chatIds } } }
                 );
             })
         );

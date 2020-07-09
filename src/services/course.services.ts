@@ -76,7 +76,7 @@ export default class CourseService {
         await this.Courses.updateMany(
             { _id: { $in: courseIds } },
             {
-                $push: { "meta.instructors": { $each: instructorIds } },
+                $addToSet: { "meta.instructors": { $each: instructorIds } },
             }
         );
     }
@@ -106,7 +106,7 @@ export default class CourseService {
         await this.Courses.updateMany(
             { _id: { $in: courseIds } },
             {
-                $push: { "meta.students": { $each: studentIds } },
+                $addToSet: { "meta.students": { $each: studentIds } },
             }
         );
     }

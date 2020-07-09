@@ -87,7 +87,7 @@ export default class SchoolService {
         await this.Schools.updateMany(
             { _id: { $in: schoolIds } },
             {
-                $push: { "meta.students": { $each: studentIds } },
+                $addToSet: { "meta.students": { $each: studentIds } },
             }
         );
     }
@@ -117,7 +117,9 @@ export default class SchoolService {
         await this.Schools.updateMany(
             { _id: { $in: schoolIds } },
             {
-                $push: { "meta.schoolOfficials": { $each: schoolOfficialIds } },
+                $addToSet: {
+                    "meta.schoolOfficials": { $each: schoolOfficialIds },
+                },
             }
         );
     }
@@ -147,7 +149,7 @@ export default class SchoolService {
         await this.Schools.updateMany(
             { _id: { $in: schoolIds } },
             {
-                $push: { "meta.courses": { $each: courseIds } },
+                $addToSet: { "meta.courses": { $each: courseIds } },
             }
         );
     }
