@@ -1,5 +1,5 @@
-import { Model, Document, Types } from "mongoose";
-import { IChat } from "../types/chat.types";
+import { Model, Types } from "mongoose";
+import { IChat, IMessage } from "../types/chat.types";
 
 export default class ChatService {
     constructor(private Chats: Model<IChat>) {}
@@ -52,16 +52,11 @@ export default class ChatService {
         return await this.Chats.findByIdAndDelete(id);
     }
 
-    async createMessage(id: Types.ObjectId, message: any): Promise<IChat> {
-        return await this.Chats.findByIdAndUpdate(
-            id,
-            {
-                $push: {
-                    messages: message,
-                },
-            },
-            { new: true }
-        );
+    async createMessage(id: Types.ObjectId, message: any): Promise<IMessage> {
+        let updatedChat = await this.Chats.findById(id);
+        updatedChat.messages.push(message);
+        await updatedChat.save();
+        return updatedChat.messages[updatedChat.messages.length - 1];
     }
 
     async updateMessage({
@@ -72,11 +67,15 @@ export default class ChatService {
         chatId: Types.ObjectId;
         messageId: Types.ObjectId;
         text;
-    }): Promise<IChat> {
-        return await this.Chats.findOneAndUpdate(
+    }): Promise<IMessage> {
+        const updatedChat = await this.Chats.findOneAndUpdate(
             { _id: chatId, "messages._id": messageId },
             { $set: { "messages.$.text": text } },
             { new: true }
+        );
+        return updatedChat.messages.find(
+            (message: IMessage) =>
+                message._id.toHexString() === messageId.toHexString()
         );
     }
 
@@ -86,13 +85,17 @@ export default class ChatService {
     }: {
         chatId: Types.ObjectId;
         messageId: Types.ObjectId;
-    }): Promise<IChat> {
-        return await this.Chats.findByIdAndUpdate(
+    }): Promise<IMessage> {
+        const updatedChat = await this.Chats.findByIdAndUpdate(
             chatId,
             {
                 $pull: { messages: { _id: messageId } },
             },
-            { new: true }
+            { new: false }
+        );
+        return updatedChat.messages.find(
+            (message: IMessage) =>
+                message._id.toHexString() === messageId.toHexString()
         );
     }
 }

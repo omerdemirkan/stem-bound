@@ -17,6 +17,7 @@ export interface IClass {
     start: Date;
     end: Date;
     message: string;
+    _id?: Types.ObjectId;
 }
 
 export interface IAnnouncement {

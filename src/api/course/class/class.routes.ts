@@ -10,4 +10,16 @@ classRouter.get(
     classControllers.getClassesByCourseId
 );
 
+classRouter.get(
+    "/:classId",
+    authMiddlewareService.extractTokenPayload,
+    classControllers.getClassesByCourseId
+);
+
+classRouter.post(
+    "/",
+    authMiddlewareService.extractTokenPayload,
+    classControllers.createClassByCourseId
+);
+
 export default classRouter;

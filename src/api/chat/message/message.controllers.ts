@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { Request, Response } from "express";
 import { chatService, errorService } from "../../../services";
 import { EErrorTypes } from "../../../types/error.types";
-import { IChat } from "../../../types/chat.types";
+import { IChat, IMessage } from "../../../types/chat.types";
 
 const { ObjectId } = Types;
 
@@ -22,14 +22,13 @@ export async function getChatMessagesByChatId(req: Request, res: Response) {
 export async function createChatMessageById(req: Request, res: Response) {
     try {
         const chatId = ObjectId(req.params.chatId);
-
-        const newChat: IChat = await chatService.createMessage(
+        const updatedMessage: IMessage = await chatService.createMessage(
             chatId,
             req.body
         );
         res.json({
             message: "Chat message successfully created",
-            data: newChat.messages,
+            data: updatedMessage,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -65,14 +64,14 @@ export async function getChatMessageByIds(req: Request, res: Response) {
 
 export async function updateChatMessageByIds(req: Request, res: Response) {
     try {
-        const updatedChat: IChat = await chatService.updateMessage({
+        const updatedMessage: IMessage = await chatService.updateMessage({
             chatId: ObjectId(req.params.chatId),
             messageId: ObjectId(req.params.messageId),
             text: req.body.text,
         });
         res.json({
             message: "Message successfully updated",
-            data: updatedChat,
+            data: updatedMessage,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -81,14 +80,14 @@ export async function updateChatMessageByIds(req: Request, res: Response) {
 
 export async function deleteChatMessageByIds(req: Request, res: Response) {
     try {
-        const updatedChat: IChat = await chatService.deleteMessage({
+        const deletedMessage: IMessage = await chatService.deleteMessage({
             chatId: ObjectId(req.params.chatId),
             messageId: ObjectId(req.params.messageId),
         });
 
         res.json({
             message: "Message successfully deleted",
-            data: updatedChat,
+            data: deletedMessage,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

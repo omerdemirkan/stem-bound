@@ -1,6 +1,6 @@
 import { Model, Document, Types } from "mongoose";
 import { EventEmitter } from "events";
-import { ECourseEvents, ICourse } from "../types";
+import { ECourseEvents, ICourse, IClass } from "../types";
 
 export default class CourseService {
     constructor(
@@ -12,6 +12,21 @@ export default class CourseService {
         const course: ICourse = await this.Courses.create(courseData);
         this.eventEmitter.emit(ECourseEvents.COURSE_CREATED, course);
         return course;
+    }
+
+    async createClasses(
+        courseId: Types.ObjectId,
+        classes: IClass[]
+    ): Promise<IClass[]> {
+        let course = await this.Courses.findById(courseId);
+        course.classes = course.classes.concat(classes);
+        await course.save();
+        const classStartDates = classes.map(
+            (classElem) => new Date(classElem.start)
+        );
+        return course.classes.filter((classElem: IClass) =>
+            classStartDates.includes(classElem.start)
+        );
     }
 
     async findCourses(
@@ -56,6 +71,27 @@ export default class CourseService {
         return await this.Courses.findByIdAndUpdate(id, newCourse, {
             new: true,
         });
+    }
+
+    async updateClass({
+        courseId,
+        classId,
+        classData,
+    }: {
+        courseId: Types.ObjectId;
+        classId: Types.ObjectId;
+        classData: Partial<IClass>;
+    }): Promise<IClass> {
+        const course = await this.Courses.findById(courseId);
+        const classIndex = course.classes
+            .map((classElem) => classElem._id.toHexString())
+            .indexOf(classId.toHexString());
+        course.classes[classIndex] = {
+            ...course.classes[classIndex],
+            ...classData,
+        };
+        await course.save();
+        return course.classes[classIndex];
     }
 
     async deleteCourse(where: object): Promise<ICourse> {
