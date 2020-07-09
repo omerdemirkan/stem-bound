@@ -1,6 +1,6 @@
 import mongoose, { Schema, Types } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
-import { ECourseTypes, EClassTypes } from "../types";
+import { ECourseTypes, EClassTypes, ICourse } from "../types";
 
 const courseMetaSchema = new Schema(
     {
@@ -139,6 +139,6 @@ const courseSchema = new Schema({
     },
 });
 
-const Courses = mongoose.model("Course", courseSchema);
+const Courses = mongoose.model<ICourse>("Course", courseSchema);
 
 export default Courses;

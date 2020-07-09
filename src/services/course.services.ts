@@ -1,15 +1,15 @@
 import { Model, Document, Types } from "mongoose";
 import { EventEmitter } from "events";
-import { ECourseEvents } from "../types";
+import { ECourseEvents, ICourse } from "../types";
 
 export default class CourseService {
     constructor(
-        private Courses: Model<Document>,
+        private Courses: Model<ICourse>,
         private eventEmitter: EventEmitter
     ) {}
 
-    async createCourse(courseData: object = {}) {
-        const course: any = await this.Courses.create(courseData);
+    async createCourse(courseData: ICourse): Promise<ICourse> {
+        const course: ICourse = await this.Courses.create(courseData);
         this.eventEmitter.emit(ECourseEvents.COURSE_CREATED, course);
         return course;
     }
@@ -21,42 +21,48 @@ export default class CourseService {
             skip?: number;
             limit?: number;
         }
-    ) {
+    ): Promise<ICourse[]> {
         return await this.Courses.find(where)
             .sort(options?.sort)
             .skip(options?.skip || 0)
             .limit(options?.limit ? Math.min(options?.limit, 20) : 20);
     }
 
-    async findCoursesByIds(ids: Types.ObjectId[]) {
+    async findCoursesByIds(ids: Types.ObjectId[]): Promise<ICourse[]> {
         return await this.Courses.find({ _id: { $in: ids } });
     }
 
-    async findCourse(where: object) {
+    async findCourse(where: object): Promise<ICourse> {
         return await this.Courses.findOne(where);
     }
 
-    async findCourseById(id: Types.ObjectId) {
+    async findCourseById(id: Types.ObjectId): Promise<ICourse> {
         return await this.Courses.findById(id);
     }
 
-    async updateCourse(where: object, newCourse: object) {
+    async updateCourse(
+        where: object,
+        newCourse: Partial<ICourse>
+    ): Promise<ICourse> {
         return await this.Courses.findOneAndUpdate(where, newCourse, {
             new: true,
         });
     }
 
-    async updateCourseById(id: Types.ObjectId, newCourse: object) {
+    async updateCourseById(
+        id: Types.ObjectId,
+        newCourse: object
+    ): Promise<ICourse> {
         return await this.Courses.findByIdAndUpdate(id, newCourse, {
             new: true,
         });
     }
 
-    async deleteCourse(where: object) {
+    async deleteCourse(where: object): Promise<ICourse> {
         return await this.Courses.findOneAndDelete(where);
     }
 
-    async deleteCourseById(id: Types.ObjectId) {
+    async deleteCourseById(id: Types.ObjectId): Promise<ICourse> {
         return await this.Courses.findByIdAndDelete(id);
     }
 
@@ -66,7 +72,7 @@ export default class CourseService {
     }: {
         instructorIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
-    }) {
+    }): Promise<void> {
         await this.Courses.updateMany(
             { _id: { $in: courseIds } },
             {
@@ -81,7 +87,7 @@ export default class CourseService {
     }: {
         instructorIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
-    }) {
+    }): Promise<void> {
         await this.Courses.updateMany(
             { _id: { $in: courseIds } },
             {
@@ -96,7 +102,7 @@ export default class CourseService {
     }: {
         studentIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
-    }) {
+    }): Promise<void> {
         await this.Courses.updateMany(
             { _id: { $in: courseIds } },
             {
@@ -111,7 +117,7 @@ export default class CourseService {
     }: {
         studentIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
-    }) {
+    }): Promise<void> {
         await this.Courses.updateMany(
             { _id: { $in: courseIds } },
             {
@@ -119,31 +125,4 @@ export default class CourseService {
             }
         );
     }
-
-    // async findCoursesBySchoolLocation({
-    //     coordinates,
-    // }: {
-    //     coordinates: number[];
-    // }) {
-    //     return await this.Courses.aggregate([
-    //         {
-    //             $lookup: {
-    //                 from: "schools",
-    //                 localField: "meta.school",
-    //                 foreignField: "_id",
-    //                 as: "school",
-    //             },
-    //         },
-    //         {
-    //             $geoNear: {
-    //                 near: {
-    //                     type: "Point",
-    //                     coordinates,
-    //                 },
-    //                 distanceField: "distance.calculated",
-    //                 key: "school.location.geoJSON",
-    //             },
-    //         },
-    //     ]);
-    // }
 }
