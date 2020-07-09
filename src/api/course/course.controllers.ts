@@ -7,6 +7,7 @@ import {
     userService,
     schoolService,
 } from "../../services";
+import { EErrorTypes } from "../../types/error.types";
 
 const { ObjectId } = Types;
 
@@ -17,9 +18,7 @@ export async function createCourse(req: Request, res: Response) {
 
         if (!courseData.meta.instructors?.includes(instructorId)) {
             // To ensure that the instructor creating the course is and instructor for the course.
-            throw new Error(
-                `Payload user id isn't included in course instructors metadata.`
-            );
+            errorService.throwError(EErrorTypes.FORBIDDEN);
         }
 
         const newCourse = await courseService.createCourse(courseData);

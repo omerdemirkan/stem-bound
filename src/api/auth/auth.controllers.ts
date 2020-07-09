@@ -6,6 +6,7 @@ import {
     userService,
 } from "../../services";
 import { Types } from "mongoose";
+import { EErrorTypes } from "../../types/error.types";
 
 const { ObjectId } = Types;
 
@@ -16,7 +17,7 @@ export async function me(req: Request, res: Response) {
         );
 
         if (!userData) {
-            throw new Error("User seems to have been deleted.");
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
         }
 
         res.json({

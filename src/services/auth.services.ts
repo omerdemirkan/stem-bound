@@ -1,7 +1,14 @@
 import { EUserRoles, ITokenPayload, EUserEvents, IUser } from "../types";
-import { JwtService, BcryptService, UserService, MetadataService } from ".";
+import {
+    JwtService,
+    BcryptService,
+    UserService,
+    MetadataService,
+    errorService,
+} from ".";
 import { Types } from "mongoose";
 import { EventEmitter } from "events";
+import { EErrorTypes } from "../types/error.types";
 
 const { ObjectId } = Types;
 
@@ -59,9 +66,7 @@ export default class AuthService {
         const user: any = await this.userService.findUserByEmail(email);
 
         if (!user) {
-            throw new Error(
-                `User could not be found with the email "${email}".`
-            );
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
         }
 
         if (await this.bcryptService.compare(password, user.hash)) {

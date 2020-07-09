@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import { Request, Response } from "express";
 import { chatService, errorService } from "../../../services";
+import { EErrorTypes } from "../../../types/error.types";
 
 const { ObjectId } = Types;
 
@@ -38,7 +39,7 @@ export async function getChatMessageByIds(req: Request, res: Response) {
         const chat: any = await chatService.findChatById(chatId);
 
         if (!chat) {
-            throw new Error("Chat not found");
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
         }
 
         const message = chat.messages.find(
@@ -46,7 +47,7 @@ export async function getChatMessageByIds(req: Request, res: Response) {
         );
 
         if (!message) {
-            throw new Error("Message not found");
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
         }
 
         res.json({

@@ -1,6 +1,5 @@
 import { logger, errors } from "../config";
-import { Response } from "express";
-import { EErrors } from "../types/error.types";
+import { EErrorTypes } from "../types/error.types";
 
 export default class ErrorService {
     status(error: Error) {
@@ -16,7 +15,7 @@ export default class ErrorService {
         };
     }
 
-    throwError(errorType: EErrors) {
+    throwError(errorType: EErrorTypes) {
         const errorData = errors[errorType];
         const error = new Error(errorData.message);
         (error as any).status = errorData.status;

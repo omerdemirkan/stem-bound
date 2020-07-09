@@ -1,4 +1,6 @@
 import { EUserRoles } from "../types";
+import { errorService } from "../services";
+import { EErrorTypes } from "../types/error.types";
 
 export function configureUsersQuery(
     requestQueries: any
@@ -43,7 +45,7 @@ export function isValidUserRole(s: any) {
 
 export function toUserRole(s: any): EUserRoles {
     if (typeof s !== "string" || !isValidUserRole(s.toUpperCase()))
-        throw new Error("Invalid user role");
+        errorService.throwError(EErrorTypes.BAD_REQUEST);
 
     return s.toUpperCase() as EUserRoles;
 }

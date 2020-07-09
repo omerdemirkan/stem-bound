@@ -1,6 +1,6 @@
 // SCHOOL
 
-import { EErrors } from "../types/error.types";
+import { EErrorTypes } from "../types/error.types";
 
 export const schoolCsvColumns = [
     "X",
@@ -43,16 +43,24 @@ export const courseTypes = ["IN_PERSON", "REMOTE", "HYBRID"];
 export const classTypes = ["IN_PERSON", "REMOTE"];
 
 export const errors = Object.freeze({
-    [EErrors.DOCUMENT_NOT_FOUND]: {
-        status: 404,
-        message: "Can't find what you're looking for",
+    [EErrorTypes.BAD_REQUEST]: {
+        status: 400,
+        message: "You should read the documentation",
     },
-    [EErrors.UNAUTHORIZED]: {
+    [EErrorTypes.UNAUTHORIZED]: {
         status: 401,
         message: "You need to be authenticated",
     },
-    [EErrors.FORBIDDEN]: {
+    [EErrorTypes.FORBIDDEN]: {
         status: 403,
         message: "You aren't allowed access",
+    },
+    [EErrorTypes.DOCUMENT_NOT_FOUND]: {
+        status: 404,
+        message: "Can't find what you're looking for",
+    },
+    [EErrorTypes.CONFLICT]: {
+        status: 409,
+        message: "Conflict found",
     },
 });
