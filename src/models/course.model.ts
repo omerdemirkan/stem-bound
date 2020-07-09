@@ -1,6 +1,6 @@
 import mongoose, { Schema, Types } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
-import { ECourseTypes, EClassTypes, ICourse } from "../types";
+import { ECourseTypes, EMeetingTypes, ICourse } from "../types";
 
 const courseMetaSchema = new Schema(
     {
@@ -65,11 +65,11 @@ const announcementSchema = new Schema(
     }
 );
 
-const classSchema = new Schema(
+const meetingSchema = new Schema(
     {
         type: {
             type: String,
-            enum: Object.values(EClassTypes),
+            enum: Object.values(EMeetingTypes),
             required: true,
         },
         roomNum: {
@@ -123,8 +123,8 @@ const courseSchema = new Schema({
         enum: Object.values(ECourseTypes),
         required: [true, "Course type is required."],
     },
-    classes: {
-        type: [classSchema],
+    meetings: {
+        type: [meetingSchema],
         required: true,
         default: [],
     },

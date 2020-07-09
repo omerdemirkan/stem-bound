@@ -40,7 +40,7 @@ export const schoolCsvColumns = [
 
 export const courseTypes = ["IN_PERSON", "REMOTE", "HYBRID"];
 
-export const classTypes = ["IN_PERSON", "REMOTE"];
+export const meetingTypes = ["IN_PERSON", "REMOTE"];
 
 export const errors = Object.freeze({
     [EErrorTypes.BAD_REQUEST]: {

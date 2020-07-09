@@ -1,6 +1,6 @@
 import { Model, Document, Types } from "mongoose";
 import { EventEmitter } from "events";
-import { ECourseEvents, ICourse, IClass } from "../types";
+import { ECourseEvents, ICourse, IMeeting } from "../types";
 
 export default class CourseService {
     constructor(
@@ -14,18 +14,18 @@ export default class CourseService {
         return course;
     }
 
-    async createClasses(
+    async createMeetings(
         courseId: Types.ObjectId,
-        classes: IClass[]
-    ): Promise<IClass[]> {
+        meetings: IMeeting[]
+    ): Promise<IMeeting[]> {
         let course = await this.Courses.findById(courseId);
-        course.classes = course.classes.concat(classes);
+        course.meetings = course.meetings.concat(meetings);
         await course.save();
-        const classStartDates = classes.map(
-            (classElem) => new Date(classElem.start)
+        const meetingStartDates = meetings.map(
+            (meeting) => new Date(meeting.start)
         );
-        return course.classes.filter((classElem: IClass) =>
-            classStartDates.includes(classElem.start)
+        return course.meetings.filter((meeting: IMeeting) =>
+            meetingStartDates.includes(meeting.start)
         );
     }
 
@@ -73,25 +73,25 @@ export default class CourseService {
         });
     }
 
-    async updateClass({
+    async updateMeeting({
         courseId,
-        classId,
-        classData,
+        meetingId,
+        meetingData,
     }: {
         courseId: Types.ObjectId;
-        classId: Types.ObjectId;
-        classData: Partial<IClass>;
-    }): Promise<IClass> {
+        meetingId: Types.ObjectId;
+        meetingData: Partial<IMeeting>;
+    }): Promise<IMeeting> {
         const course = await this.Courses.findById(courseId);
-        const classIndex = course.classes
-            .map((classElem) => classElem._id.toHexString())
-            .indexOf(classId.toHexString());
-        course.classes[classIndex] = {
-            ...course.classes[classIndex],
-            ...classData,
+        const meetingIndex = course.meetings
+            .map((meeting) => meeting._id.toHexString())
+            .indexOf(meetingId.toHexString());
+        course.meetings[meetingIndex] = {
+            ...course.meetings[meetingIndex],
+            ...meetingData,
         };
         await course.save();
-        return course.classes[classIndex];
+        return course.meetings[meetingIndex];
     }
 
     async deleteCourse(where: object): Promise<ICourse> {

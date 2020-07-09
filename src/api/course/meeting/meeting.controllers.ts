@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { errorService, courseService } from "../../../services";
 import { Types } from "mongoose";
-import { ICourse, IClass } from "../../../types";
+import { ICourse, IMeeting } from "../../../types";
 import { EErrorTypes } from "../../../types/error.types";
 
 const { ObjectId } = Types;
 
-export async function getClassesByCourseId(req: Request, res: Response) {
+export async function getMeetingsByCourseId(req: Request, res: Response) {
     try {
         const courseId = ObjectId(req.params.courseId);
         const course: ICourse = await courseService.findCourseById(courseId);
@@ -14,49 +14,49 @@ export async function getClassesByCourseId(req: Request, res: Response) {
             errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
         }
         res.json({
-            message: "Classes successfully fetched",
-            data: course.classes,
+            message: "Meetings successfully fetched",
+            data: course.meetings,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
-export async function getClassByIds(req: Request, res: Response) {
+export async function getMeetingByIds(req: Request, res: Response) {
     try {
         const courseId = ObjectId(req.params.courseId);
-        const classId = ObjectId(req.params.classId);
+        const meetingId = ObjectId(req.params.meetingId);
         const course: ICourse = await courseService.findCourseById(courseId);
         if (!course) {
             errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
         }
-        const foundClass = course.classes.find(
-            (classElem: IClass) =>
-                classElem._id.toString() === classId.toString()
+        const meeting = course.meetings.find(
+            (meeting: IMeeting) =>
+                meeting._id.toString() === meetingId.toString()
         );
-        if (!foundClass) {
+        if (!meeting) {
             errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
         }
         res.json({
-            message: "Class successfully found",
-            data: foundClass,
+            message: "Meeting successfully found",
+            data: meeting,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
-export async function createClassByCourseId(req: Request, res: Response) {
+export async function createMeetingByCourseId(req: Request, res: Response) {
     try {
         const courseId = ObjectId(req.params.courseId);
-        const newClasses: IClass[] = await courseService.createClasses(
+        const newMeetings: IMeeting[] = await courseService.createMeetings(
             courseId,
-            req.body.classes || [req.body]
+            req.body.meetings || [req.body]
         );
 
         res.json({
-            message: "Classes successfully added",
-            data: newClasses,
+            message: "Meetings successfully added",
+            data: newMeetings,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

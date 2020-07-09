@@ -2,7 +2,7 @@ import { Router } from "express";
 import * as courseControllers from "./course.controllers";
 import { EUserRoles } from "../../types";
 import { authMiddlewareService } from "../../services";
-import classRouter from "./class/class.routes";
+import meetingRouter from "./meeting/meeting.routes";
 
 const courseRouter = Router();
 
@@ -58,6 +58,6 @@ courseRouter.delete(
     courseControllers.deleteCourseById
 );
 
-courseRouter.use("/:courseId/classes", classRouter);
+courseRouter.use("/:courseId/meetings", meetingRouter);
 
 export default courseRouter;

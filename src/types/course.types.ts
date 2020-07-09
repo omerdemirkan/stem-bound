@@ -6,12 +6,12 @@ export enum ECourseTypes {
     HYBRID = "HYBRID",
 }
 
-export enum EClassTypes {
+export enum EMeetingTypes {
     IN_PERSON = "IN_PERSON",
     REMOTE = "REMOTE",
 }
 
-export interface IClass {
+export interface IMeeting {
     type: string;
     roomNum: string;
     start: Date;
@@ -35,7 +35,7 @@ export interface ICourse extends Document {
     shortDescription: string;
     longDescription: string;
     type: string;
-    classes: IClass[];
+    meetings: IMeeting[];
     announcements: IAnnouncement[];
     meta: {
         instructors: Types.ObjectId[];
