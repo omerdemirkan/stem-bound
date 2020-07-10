@@ -6,16 +6,13 @@ const schoolRouter = Router();
 
 schoolRouter.get("/", schoolController.getSchools);
 
-schoolRouter.get("/:id", schoolController.getSchoolById);
+schoolRouter.get("/:id", schoolController.getSchool);
 
-schoolRouter.get("/:id/students", schoolController.getSchoolStudentsById);
+schoolRouter.get("/:id/students", schoolController.getSchoolStudents);
 
-schoolRouter.get(
-    "/:id/school-officials",
-    schoolController.getSchoolOfficialsById
-);
+schoolRouter.get("/:id/school-officials", schoolController.getSchoolOfficials);
 
-schoolRouter.get("/:id/courses", schoolController.getSchoolCoursesById);
+schoolRouter.get("/:id/courses", schoolController.getSchoolCourses);
 
 schoolRouter.post(
     "/refresh-database",

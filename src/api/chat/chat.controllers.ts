@@ -20,7 +20,7 @@ export async function createChat(req: Request, res: Response) {
     }
 }
 
-export async function getChatById(req: Request, res: Response) {
+export async function getChat(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const chat: IChat = await chatService.findChatById(id);
@@ -38,7 +38,7 @@ export async function getChatById(req: Request, res: Response) {
     }
 }
 
-export async function updateChatById(req: Request, res: Response) {
+export async function updateChat(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const updatedChat: IChat = await chatService.updateChatById(
@@ -55,7 +55,7 @@ export async function updateChatById(req: Request, res: Response) {
     }
 }
 
-export async function deleteChatById(req: Request, res: Response) {
+export async function deleteChat(req: Request, res: Response) {
     try {
         const deletedChat: IChat = await chatService.deleteChatById(
             ObjectId(req.params.id)

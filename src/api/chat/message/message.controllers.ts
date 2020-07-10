@@ -6,7 +6,7 @@ import { IChat, IMessage } from "../../../types/chat.types";
 
 const { ObjectId } = Types;
 
-export async function getChatMessagesByChatId(req: Request, res: Response) {
+export async function getChatMessages(req: Request, res: Response) {
     try {
         const chatId = ObjectId(req.params.chatId);
         const chat: IChat = await chatService.findChatById(chatId);
@@ -19,7 +19,7 @@ export async function getChatMessagesByChatId(req: Request, res: Response) {
     }
 }
 
-export async function createChatMessageById(req: Request, res: Response) {
+export async function createChatMessage(req: Request, res: Response) {
     try {
         const chatId = ObjectId(req.params.chatId);
         const updatedMessage: IMessage = await chatService.createMessage(
@@ -35,7 +35,7 @@ export async function createChatMessageById(req: Request, res: Response) {
     }
 }
 
-export async function getChatMessageByIds(req: Request, res: Response) {
+export async function getChatMessage(req: Request, res: Response) {
     try {
         const chatId = ObjectId(req.params.chatId);
         const messageId = ObjectId(req.params.messageId);
@@ -62,7 +62,7 @@ export async function getChatMessageByIds(req: Request, res: Response) {
     }
 }
 
-export async function updateChatMessageByIds(req: Request, res: Response) {
+export async function updateChatMessage(req: Request, res: Response) {
     try {
         const updatedMessage: IMessage = await chatService.updateMessage({
             chatId: ObjectId(req.params.chatId),
@@ -78,7 +78,7 @@ export async function updateChatMessageByIds(req: Request, res: Response) {
     }
 }
 
-export async function deleteChatMessageByIds(req: Request, res: Response) {
+export async function deleteChatMessage(req: Request, res: Response) {
     try {
         const deletedMessage: IMessage = await chatService.deleteMessage({
             chatId: ObjectId(req.params.chatId),

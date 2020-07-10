@@ -8,29 +8,26 @@ const courseRouter = Router();
 
 courseRouter.get("/", courseControllers.getCourses);
 
-courseRouter.get("/:id", courseControllers.getCourseById);
+courseRouter.get("/:id", courseControllers.getCourse);
 
-courseRouter.get(
-    "/:id/instructors",
-    courseControllers.getCourseInstructorsById
-);
+courseRouter.get("/:id/instructors", courseControllers.getCourseInstructors);
 
-courseRouter.get("/:id/students", courseControllers.getCourseStudentsById);
+courseRouter.get("/:id/students", courseControllers.getCourseStudents);
 
-courseRouter.get("/:id/school", courseControllers.getCourseSchoolById);
+courseRouter.get("/:id/school", courseControllers.getCourseSchool);
 
 courseRouter.post(
     "/:id/enroll",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([EUserRoles.STUDENT]),
-    courseControllers.enrollInCourseById
+    courseControllers.enrollInCourse
 );
 
 courseRouter.post(
     "/:id/drop",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([EUserRoles.STUDENT]),
-    courseControllers.dropCourseById
+    courseControllers.dropCourse
 );
 
 courseRouter.post(
@@ -48,14 +45,14 @@ courseRouter.patch(
     authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR, "ADMIN"]),
-    courseControllers.updateCourseById
+    courseControllers.updateCourse
 );
 
 courseRouter.delete(
     "/:id",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR, "ADMIN"]),
-    courseControllers.deleteCourseById
+    courseControllers.deleteCourse
 );
 
 courseRouter.use("/:courseId/meetings", meetingRouter);

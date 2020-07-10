@@ -7,7 +7,7 @@ const userRouter = Router();
 
 userRouter.get("/", userControllers.getUsers);
 
-userRouter.get("/:id", userControllers.getUserById);
+userRouter.get("/:id", userControllers.getUser);
 
 userRouter.get(
     "/:id/courses",
@@ -17,7 +17,7 @@ userRouter.get(
         EUserRoles.STUDENT,
     ]),
     authMiddlewareService.matchParamIdToPayloadUserId,
-    userControllers.getUserCoursesById
+    userControllers.getUserCourses
 );
 
 userRouter.get(
@@ -28,14 +28,14 @@ userRouter.get(
         EUserRoles.STUDENT,
     ]),
     authMiddlewareService.matchParamIdToPayloadUserId,
-    userControllers.getUserSchoolById
+    userControllers.getUserSchool
 );
 
 userRouter.get(
     "/:id/chats",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.matchParamIdToPayloadUserId,
-    userControllers.getUserChatsById
+    userControllers.getUserChats
 );
 
 userRouter.patch(
@@ -43,14 +43,14 @@ userRouter.patch(
     authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.matchParamIdToPayloadUserId,
-    userControllers.updateUserById
+    userControllers.updateUser
 );
 
 userRouter.delete(
     "/:id",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.matchParamIdToPayloadUserId,
-    userControllers.deleteUserById
+    userControllers.deleteUser
 );
 
 export default userRouter;

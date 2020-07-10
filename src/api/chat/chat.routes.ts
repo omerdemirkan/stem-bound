@@ -8,7 +8,7 @@ const chatRouter = Router();
 chatRouter.get(
     "/:id",
     authMiddlewareService.extractTokenPayload,
-    chatControllers.getChatById
+    chatControllers.getChat
 );
 
 chatRouter.post(
@@ -24,14 +24,14 @@ chatRouter.patch(
     "/:id",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.blockRequestBodyMetadata,
-    chatControllers.updateChatById
+    chatControllers.updateChat
 );
 
 chatRouter.delete(
     "/:id",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles(["ADMIN"]),
-    chatControllers.deleteChatById
+    chatControllers.deleteChat
 );
 
 chatRouter.use("/:chatId/messages", messagesRoutes);

@@ -45,7 +45,7 @@ export async function getSchools(req: Request, res: Response) {
     }
 }
 
-export async function getSchoolById(req: Request, res: Response) {
+export async function getSchool(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const school: ISchool = await schoolService.findSchoolById(id);
@@ -77,7 +77,7 @@ export async function refreshDatabase(req: Request, res: Response) {
     }
 }
 
-export async function getSchoolStudentsById(req: Request, res: Response) {
+export async function getSchoolStudents(req: Request, res: Response) {
     try {
         const school: ISchool = await schoolService.findSchoolById(
             ObjectId(req.params.id)
@@ -99,7 +99,7 @@ export async function getSchoolStudentsById(req: Request, res: Response) {
     }
 }
 
-export async function getSchoolOfficialsById(req: Request, res: Response) {
+export async function getSchoolOfficials(req: Request, res: Response) {
     try {
         const school: ISchool = await schoolService.findSchoolById(
             ObjectId(req.params.id)
@@ -121,7 +121,7 @@ export async function getSchoolOfficialsById(req: Request, res: Response) {
     }
 }
 
-export async function getSchoolCoursesById(req: Request, res: Response) {
+export async function getSchoolCourses(req: Request, res: Response) {
     try {
         const school: ISchool = await schoolService.findSchoolById(
             ObjectId(req.params.id)

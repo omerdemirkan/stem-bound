@@ -8,13 +8,13 @@ const messageRouter = Router({ mergeParams: true });
 messageRouter.get(
     "/",
     authMiddlewareService.extractTokenPayload,
-    messagesControllers.getChatMessagesByChatId
+    messagesControllers.getChatMessages
 );
 
 messageRouter.get(
     "/:messageId",
     authMiddlewareService.extractTokenPayload,
-    messagesControllers.getChatMessageByIds
+    messagesControllers.getChatMessage
 );
 
 messageRouter.post(
@@ -23,20 +23,20 @@ messageRouter.post(
     authMiddlewareService.compareRequestBodyToPayload(
         ({ body, payload }) => body.meta.from === payload.user._id
     ),
-    messagesControllers.createChatMessageById
+    messagesControllers.createChatMessage
 );
 
 messageRouter.patch(
     "/:messageId",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.blockRequestBodyMetadata,
-    messagesControllers.updateChatMessageByIds
+    messagesControllers.updateChatMessage
 );
 
 messageRouter.delete(
     "/:messageId",
     authMiddlewareService.extractTokenPayload,
-    messagesControllers.deleteChatMessageByIds
+    messagesControllers.deleteChatMessage
 );
 
 export default messageRouter;

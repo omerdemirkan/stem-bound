@@ -28,7 +28,7 @@ export async function createCourse(req: Request, res: Response) {
     }
 }
 
-export async function enrollInCourseById(req: Request, res: Response) {
+export async function enrollInCourse(req: Request, res: Response) {
     try {
         const studentId = ObjectId((req as any).payload.user._id);
         const courseId = ObjectId(req.params.id);
@@ -45,7 +45,7 @@ export async function enrollInCourseById(req: Request, res: Response) {
     }
 }
 
-export async function dropCourseById(req: Request, res: Response) {
+export async function dropCourse(req: Request, res: Response) {
     try {
         const studentId = ObjectId((req as any).payload.user._id);
         const courseId = ObjectId(req.params.id);
@@ -78,7 +78,7 @@ export async function getCourses(req: Request, res: Response) {
     }
 }
 
-export async function getCourseById(req: Request, res: Response) {
+export async function getCourse(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const course: ICourse = await courseService.findCourseById(id);
@@ -95,7 +95,7 @@ export async function getCourseById(req: Request, res: Response) {
     }
 }
 
-export async function updateCourseById(req: Request, res: Response) {
+export async function updateCourse(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const newCourseData = req.body;
@@ -114,7 +114,7 @@ export async function updateCourseById(req: Request, res: Response) {
     }
 }
 
-export async function deleteCourseById(req: Request, res: Response) {
+export async function deleteCourse(req: Request, res: Response) {
     try {
         const courseId = ObjectId(req.params.id);
 
@@ -135,7 +135,7 @@ export async function deleteCourseById(req: Request, res: Response) {
     }
 }
 
-export async function getCourseInstructorsById(req: Request, res: Response) {
+export async function getCourseInstructors(req: Request, res: Response) {
     try {
         const course: ICourse = await courseService.findCourseById(
             ObjectId(req.params.id)
@@ -156,7 +156,7 @@ export async function getCourseInstructorsById(req: Request, res: Response) {
     }
 }
 
-export async function getCourseStudentsById(req: Request, res: Response) {
+export async function getCourseStudents(req: Request, res: Response) {
     try {
         const course: ICourse = await courseService.findCourseById(
             ObjectId(req.params.id)
@@ -176,7 +176,7 @@ export async function getCourseStudentsById(req: Request, res: Response) {
     }
 }
 
-export async function getCourseSchoolById(req: Request, res: Response) {
+export async function getCourseSchool(req: Request, res: Response) {
     try {
         const course: ICourse = await courseService.findCourseById(
             ObjectId(req.params.id)

@@ -41,7 +41,7 @@ export async function getUsers(req: Request, res: Response) {
     }
 }
 
-export async function getUserById(req: Request, res: Response) {
+export async function getUser(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const user: IUser = await userService.findUserById(id);
@@ -58,7 +58,7 @@ export async function getUserById(req: Request, res: Response) {
     }
 }
 
-export async function updateUserById(req: Request, res: Response) {
+export async function updateUser(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const updatedUser: IUser = await userService.updateUserById({
@@ -75,7 +75,7 @@ export async function updateUserById(req: Request, res: Response) {
     }
 }
 
-export async function deleteUserById(req: Request, res: Response) {
+export async function deleteUser(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const deletedUser: IUser = await userService.deleteUserById(id);
@@ -90,7 +90,7 @@ export async function deleteUserById(req: Request, res: Response) {
     }
 }
 
-export async function getUserCoursesById(req: Request, res: Response) {
+export async function getUserCourses(req: Request, res: Response) {
     try {
         const user: IUser = await userService.findUserById(
             ObjectId(req.params.id)
@@ -112,7 +112,7 @@ export async function getUserCoursesById(req: Request, res: Response) {
     }
 }
 
-export async function getUserSchoolById(req: Request, res: Response) {
+export async function getUserSchool(req: Request, res: Response) {
     try {
         const user: IUser = await userService.findUserById(
             ObjectId(req.params.id)
@@ -132,7 +132,7 @@ export async function getUserSchoolById(req: Request, res: Response) {
     }
 }
 
-export async function getUserChatsById(req: Request, res: Response) {
+export async function getUserChats(req: Request, res: Response) {
     try {
         const user: IUser = await userService.findUserById(
             ObjectId(req.params.id)
