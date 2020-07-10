@@ -77,6 +77,12 @@ const meetingSchema = new Schema(
             minlength: 1,
             maxlength: 50,
             trim: true,
+            required: [
+                function () {
+                    return this.type === EMeetingTypes.IN_PERSON;
+                },
+                "In person meetings require a room number",
+            ],
         },
         start: {
             type: Date,

@@ -6,7 +6,7 @@ import { EErrorTypes } from "../../../types/error.types";
 
 const { ObjectId } = Types;
 
-export async function getMeetingsByCourseId(req: Request, res: Response) {
+export async function getMeetings(req: Request, res: Response) {
     try {
         const courseId = ObjectId(req.params.courseId);
         const course: ICourse = await courseService.findCourseById(courseId);
@@ -22,7 +22,7 @@ export async function getMeetingsByCourseId(req: Request, res: Response) {
     }
 }
 
-export async function getMeetingByIds(req: Request, res: Response) {
+export async function getMeeting(req: Request, res: Response) {
     try {
         const courseId = ObjectId(req.params.courseId);
         const meetingId = ObjectId(req.params.meetingId);
@@ -46,7 +46,7 @@ export async function getMeetingByIds(req: Request, res: Response) {
     }
 }
 
-export async function createMeetingByCourseId(req: Request, res: Response) {
+export async function createMeeting(req: Request, res: Response) {
     try {
         const courseId = ObjectId(req.params.courseId);
         const newMeetings: IMeeting[] = await courseService.createMeetings(
@@ -57,6 +57,42 @@ export async function createMeetingByCourseId(req: Request, res: Response) {
         res.json({
             message: "Meetings successfully added",
             data: newMeetings,
+        });
+    } catch (e) {
+        res.status(errorService.status(e)).json(errorService.json(e));
+    }
+}
+
+export async function updateMeeting(req: Request, res: Response) {
+    try {
+        const courseId = ObjectId(req.params.courseId);
+        const meetingId = ObjectId(req.params.meetingId);
+        const updatedMeeting: IMeeting = await courseService.updateMeeting({
+            courseId,
+            meetingId,
+            meetingData: req.body,
+        });
+        res.json({
+            message: "Meeting successfully updated",
+            data: updatedMeeting,
+        });
+    } catch (e) {
+        res.status(errorService.status(e)).json(errorService.json(e));
+    }
+}
+
+export async function deleteMeeting(req: Request, res: Response) {
+    try {
+        const courseId = ObjectId(req.params.courseId);
+        const meetingId = ObjectId(req.params.meetingId);
+        const deletedMeeting: IMeeting = await courseService.deleteMeeting({
+            courseId,
+            meetingId,
+        });
+
+        res.json({
+            message: "Meeting successfully deleted",
+            data: deletedMeeting,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

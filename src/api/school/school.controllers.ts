@@ -7,7 +7,8 @@ import {
     userService,
     courseService,
 } from "../../services";
-import { IUser, IStudent, ISchool, ICourse } from "../../types";
+import { IStudent, ISchool, ICourse } from "../../types";
+import { EErrorTypes } from "../../types/error.types";
 
 const { ObjectId } = Types;
 
@@ -49,6 +50,10 @@ export async function getSchoolById(req: Request, res: Response) {
         const id = ObjectId(req.params.id);
         const school: ISchool = await schoolService.findSchoolById(id);
 
+        if (!school) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        }
+
         res.json({
             message: "School successfully fetched",
             data: school,
@@ -77,10 +82,13 @@ export async function getSchoolStudentsById(req: Request, res: Response) {
         const school: ISchool = await schoolService.findSchoolById(
             ObjectId(req.params.id)
         );
+        if (!school) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        }
         const studentIds = school.meta.students;
-        const students = (await userService.findUsersByIds(
-            studentIds
-        )) as IStudent[];
+        const students = studentIds.length
+            ? ((await userService.findUsersByIds(studentIds)) as IStudent[])
+            : [];
 
         res.json({
             message: "School students successfully fetched",
@@ -96,10 +104,13 @@ export async function getSchoolOfficialsById(req: Request, res: Response) {
         const school: ISchool = await schoolService.findSchoolById(
             ObjectId(req.params.id)
         );
+        if (!school) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        }
         const schoolOfficialIds = school.meta.schoolOfficials;
-        const schoolOfficials = await userService.findUsersByIds(
-            schoolOfficialIds
-        );
+        const schoolOfficials = schoolOfficialIds.length
+            ? await userService.findUsersByIds(schoolOfficialIds)
+            : [];
 
         res.json({
             message: "School school officials successfully fetched",
@@ -115,11 +126,13 @@ export async function getSchoolCoursesById(req: Request, res: Response) {
         const school: ISchool = await schoolService.findSchoolById(
             ObjectId(req.params.id)
         );
+        if (!school) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        }
         const courseIds = school.meta.courses;
-
-        const courses: ICourse[] = await courseService.findCoursesByIds(
-            courseIds
-        );
+        const courses: ICourse[] = courseIds.length
+            ? await courseService.findCoursesByIds(courseIds)
+            : [];
 
         res.json({
             message: "School courses successfully fetched",

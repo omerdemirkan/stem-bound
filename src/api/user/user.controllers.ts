@@ -17,6 +17,7 @@ import {
     ICourse,
 } from "../../types";
 import { IChat } from "../../types/chat.types";
+import { EErrorTypes } from "../../types/error.types";
 
 const { ObjectId } = Types;
 
@@ -44,6 +45,9 @@ export async function getUserById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const user: IUser = await userService.findUserById(id);
+        if (!user) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        }
 
         res.json({
             message: "User successfully fetched",
@@ -91,10 +95,13 @@ export async function getUserCoursesById(req: Request, res: Response) {
         const user: IUser = await userService.findUserById(
             ObjectId(req.params.id)
         );
+        if (!user) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        }
         const courseIds = (user as IStudent | IInstructor).meta.courses;
-        const courses: ICourse[] = await courseService.findCoursesByIds(
-            courseIds
-        );
+        const courses: ICourse[] = courseIds.length
+            ? await courseService.findCoursesByIds(courseIds)
+            : [];
 
         res.json({
             message: "User courses successfully fetched",
@@ -110,7 +117,9 @@ export async function getUserSchoolById(req: Request, res: Response) {
         const user: IUser = await userService.findUserById(
             ObjectId(req.params.id)
         );
-
+        if (!user) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        }
         const schoolId = (user as IStudent | ISchoolOfficial).meta.school;
         const school = await schoolService.findSchoolById(schoolId);
 
@@ -128,8 +137,13 @@ export async function getUserChatsById(req: Request, res: Response) {
         const user: IUser = await userService.findUserById(
             ObjectId(req.params.id)
         );
+        if (!user) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        }
         const chatIds = user.meta.chats;
-        const chats: IChat[] = await chatService.findChatsByIds(chatIds);
+        const chats: IChat[] = chatIds.length
+            ? await chatService.findChatsByIds(chatIds)
+            : [];
 
         res.json({
             message: "User chats successfuly fetched",

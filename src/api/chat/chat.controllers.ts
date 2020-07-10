@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { errorService, chatService, metadataService } from "../../services";
 import { Types } from "mongoose";
 import { IChat } from "../../types/chat.types";
+import { EErrorTypes } from "../../types/error.types";
 
 const { ObjectId } = Types;
 
@@ -23,7 +24,9 @@ export async function getChatById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const chat: IChat = await chatService.findChatById(id);
-        if (!chat.meta.users.includes((req as any).payload.user._id)) {
+        if (!chat) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        } else if (!chat.meta.users.includes((req as any).payload.user._id)) {
             res.status(403);
         }
         res.json({
@@ -38,11 +41,14 @@ export async function getChatById(req: Request, res: Response) {
 export async function updateChatById(req: Request, res: Response) {
     try {
         const id = ObjectId(req.params.id);
-        const newChat: IChat = await chatService.updateChatById(id, req.body);
+        const updatedChat: IChat = await chatService.updateChatById(
+            id,
+            req.body
+        );
 
         res.json({
             message: "Chat successfully updated",
-            data: newChat,
+            data: updatedChat,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

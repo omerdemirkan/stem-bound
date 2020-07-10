@@ -1,4 +1,4 @@
-import { Model, Document, Types } from "mongoose";
+import { Model, Types } from "mongoose";
 import { EventEmitter } from "events";
 import { ECourseEvents, ICourse, IMeeting } from "../types";
 
@@ -21,11 +21,11 @@ export default class CourseService {
         let course = await this.Courses.findById(courseId);
         course.meetings = course.meetings.concat(meetings);
         await course.save();
-        const meetingStartDates = meetings.map(
-            (meeting) => new Date(meeting.start)
+        const meetingStartDates = meetings.map((meeting) =>
+            new Date(meeting.start).toString()
         );
         return course.meetings.filter((meeting: IMeeting) =>
-            meetingStartDates.includes(meeting.start)
+            meetingStartDates.includes(meeting.start.toString())
         );
     }
 
@@ -82,7 +82,7 @@ export default class CourseService {
         meetingId: Types.ObjectId;
         meetingData: Partial<IMeeting>;
     }): Promise<IMeeting> {
-        const course = await this.Courses.findById(courseId);
+        const course = await this.findCourseById(courseId);
         const meetingIndex = course.meetings
             .map((meeting) => meeting._id.toHexString())
             .indexOf(meetingId.toHexString());
@@ -100,6 +100,25 @@ export default class CourseService {
 
     async deleteCourseById(id: Types.ObjectId): Promise<ICourse> {
         return await this.Courses.findByIdAndDelete(id);
+    }
+
+    async deleteMeeting({
+        courseId,
+        meetingId,
+    }: {
+        courseId: Types.ObjectId;
+        meetingId: Types.ObjectId;
+    }): Promise<IMeeting> {
+        const course = await this.Courses.findOneAndUpdate(
+            { _id: courseId },
+            {
+                $pull: { meetings: { _id: meetingId } },
+            }
+        );
+        return course.meetings.find(
+            (meeting: IMeeting) =>
+                meeting._id.toHexString() === meetingId.toHexString()
+        );
     }
 
     async addInstructorMetadata({

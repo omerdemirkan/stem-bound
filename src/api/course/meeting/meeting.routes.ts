@@ -7,19 +7,31 @@ const meetingRouter = Router({ mergeParams: true });
 meetingRouter.get(
     "/",
     authMiddlewareService.extractTokenPayload,
-    meetingControllers.getMeetingsByCourseId
+    meetingControllers.getMeetings
 );
 
 meetingRouter.get(
     "/:meetingId",
     authMiddlewareService.extractTokenPayload,
-    meetingControllers.getMeetingByIds
+    meetingControllers.getMeeting
 );
 
 meetingRouter.post(
     "/",
     authMiddlewareService.extractTokenPayload,
-    meetingControllers.createMeetingByCourseId
+    meetingControllers.createMeeting
+);
+
+meetingRouter.patch(
+    "/:meetingId",
+    authMiddlewareService.extractTokenPayload,
+    meetingControllers.updateMeeting
+);
+
+meetingRouter.delete(
+    "/:meetingId",
+    authMiddlewareService.extractTokenPayload,
+    meetingControllers.deleteMeeting
 );
 
 export default meetingRouter;

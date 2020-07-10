@@ -10,7 +10,7 @@ export default class ErrorService {
     json(error: Error) {
         return {
             error: {
-                message: error.message,
+                message: (error as any)._message || error.message,
             },
         };
     }
