@@ -1,6 +1,6 @@
 import { fetch, logger } from "../config";
 import { ILocationDataOriginal } from "../types";
-import { mapLocationData } from "../helpers";
+import { mapAndFilterLocationData } from "../helpers";
 import { Locations } from "../models";
 
 const defaultUrl =
@@ -11,7 +11,7 @@ export async function refreshLocationDatabase(options?: { url?: string }) {
     const fetchedLocationData = (await fetch.get(options?.url || defaultUrl))
         .data;
 
-    const locations = mapLocationData(fetchedLocationData);
+    const locations = mapAndFilterLocationData(fetchedLocationData);
 
     const numLocations = locations.length;
     const numDBLocations = await Locations.countDocuments();

@@ -17,3 +17,26 @@ export function mapLocationData(
         },
     }));
 }
+
+export function filterLocationData(
+    data: ILocationDataOriginal[]
+): ILocationDataOriginal[] {
+    let locationsHashMap = {};
+    let i = data.length;
+    let key: string;
+    while (i--) {
+        key = data[i].fields.state + data[i].fields.city;
+        if (
+            !locationsHashMap[key] ||
+            new Date(data[i].record_timestamp) >
+                new Date(locationsHashMap[key].record_timestamp)
+        ) {
+            locationsHashMap[key] = data[i];
+        }
+    }
+    return Object.values(locationsHashMap);
+}
+
+export function mapAndFilterLocationData(data: ILocationDataOriginal[]) {
+    return mapLocationData(filterLocationData(data));
+}
