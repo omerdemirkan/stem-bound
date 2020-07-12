@@ -55,18 +55,6 @@ export async function refreshSchoolDatabase({
     const deletionData = await Schools.deleteMany({});
     const insertionData = await Schools.insertMany(updatedSchoolsData);
 
-    // try {
-    //     if (!fs.existsSync('data')) {
-    //         fs.mkdirSync('data')
-    //     } else if (fs.existsSync('data/schools.csv')) {
-    //         fs.unlinkSync('data/schools.csv')
-    //     }
-    //     const file = fs.createWriteStream('data/schools.csv');
-    //     file.write(csvData);
-    // } catch (e) {
-    //     logger.info(`Error in writing csv file: ${e}`);
-    // }
-
     return {
         results: {
             deletionData,

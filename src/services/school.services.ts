@@ -1,5 +1,5 @@
 import { Model, Types, MongooseFilterQuery } from "mongoose";
-import { refreshSchoolDatabase } from "../jobs/school.jobs";
+import { refreshSchoolDatabase } from "../jobs";
 import { ISchool } from "../types";
 
 export default class SchoolService {

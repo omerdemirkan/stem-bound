@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const geoJsonSchema = new Schema({
     type: {
@@ -13,9 +13,9 @@ const geoJsonSchema = new Schema({
     },
 });
 
-const citySchema = new Schema(
+const locationSchema = new Schema(
     {
-        zipCode: {
+        zip: {
             type: Number,
             required: true,
         },
@@ -23,7 +23,15 @@ const citySchema = new Schema(
             type: String,
             required: true,
         },
+        state: {
+            type: String,
+            required: true,
+        },
         geoJSON: geoJsonSchema,
     },
     { _id: false, timestamps: false }
 );
+
+const Locations = mongoose.model("Location", locationSchema);
+
+export default Locations;

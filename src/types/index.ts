@@ -4,3 +4,4 @@ export * from "./auth.types";
 export * from "./course.types";
 export * from "./user.types";
 export * from "./dependency.types";
+export * from "./location.types";
