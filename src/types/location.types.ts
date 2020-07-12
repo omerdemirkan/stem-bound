@@ -1,3 +1,5 @@
+import { Document } from "mongoose";
+
 export interface ILocationDataOriginal {
     datasetid: string;
     recordid: string;
@@ -15,7 +17,7 @@ export interface ILocationDataOriginal {
     record_timestamp: Date;
 }
 
-export interface ILocationData {
+export interface ILocationData extends Document {
     zip: string;
     city: string;
     state: string;

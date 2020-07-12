@@ -1,23 +1,28 @@
 import mongoose, { Schema } from "mongoose";
+import { ILocationData } from "../types";
 
-const geoJsonSchema = new Schema({
-    type: {
-        type: String,
-        enum: ["Point"],
-        required: true,
-        default: "Point",
+export const geoJsonSchema = new Schema(
+    {
+        type: {
+            type: String,
+            enum: ["Point"],
+            required: true,
+            default: "Point",
+        },
+        coordinates: {
+            type: [Number],
+            required: true,
+        },
     },
-    coordinates: {
-        type: [Number],
-        required: true,
-    },
-});
+    { _id: false }
+);
 
 const locationSchema = new Schema(
     {
         zip: {
-            type: Number,
+            type: String,
             required: true,
+            unique: true,
         },
         city: {
             type: String,
@@ -29,9 +34,11 @@ const locationSchema = new Schema(
         },
         geoJSON: geoJsonSchema,
     },
-    { _id: false, timestamps: false }
+    { _id: false, timestamps: false, versionKey: false }
 );
 
-const Locations = mongoose.model("Location", locationSchema);
+locationSchema.index({ city: "text", zip: "text" });
+
+const Locations = mongoose.model<ILocationData>("Location", locationSchema);
 
 export default Locations;

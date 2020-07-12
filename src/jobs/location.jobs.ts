@@ -24,14 +24,7 @@ export async function refreshLocationDatabase(options?: { url?: string }) {
 
     const deletionData = await Locations.deleteMany({});
     const insertionData = await Locations.insertMany(locations);
-    logger.info({
-        results: {
-            deletionData,
-            insertionData: {
-                numInserted: insertionData.length,
-            },
-        },
-    });
+    logger.info("Location db refreshed");
 
     return {
         results: {

@@ -1,19 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
 import { ISchool } from "../types";
-
-const geoJsonSchema = new Schema({
-    type: {
-        type: String,
-        enum: ["Point"],
-        required: true,
-        default: "Point",
-    },
-    coordinates: {
-        type: [Number],
-        required: true,
-    },
-});
+import { geoJsonSchema } from "./location.model";
 
 const locationSchema = new Schema(
     {
@@ -181,7 +169,7 @@ locationSchema.index({
     geoJSON: "2dsphere",
 });
 
-// schoolSchema.index({ name: "text" });
+schoolSchema.index({ name: "text", "location.zip": "text" });
 
 const Schools = mongoose.model<ISchool>("School", schoolSchema);
 

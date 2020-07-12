@@ -9,5 +9,6 @@ export { default as UserService } from "./user.services";
 export { default as MetadataService } from "./metadata.services";
 export { default as ChatService } from "./chat.services";
 export { default as MailingListService } from "./mailing-list.services";
+export { default as LocationService } from "./location.services";
 
 export * from "../loaders/di.loader";
