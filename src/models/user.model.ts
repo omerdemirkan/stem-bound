@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
 import { IUser } from "../types";
+import { locationSchema } from "./location.model";
 
 const userSchema = new Schema(
     {
@@ -43,8 +44,11 @@ const userSchema = new Schema(
         },
         longDescription: {
             type: String,
-            minlength: 4,
             maxlength: 2000,
+        },
+        location: {
+            type: locationSchema,
+            required: true,
         },
     },
     {

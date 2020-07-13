@@ -1,4 +1,5 @@
 import { Types, Document } from "mongoose";
+import { ILocationData } from "./location.types";
 
 export enum EUserRoles {
     SCHOOL_OFFICIAL = "SCHOOL_OFFICIAL",
@@ -14,6 +15,15 @@ interface IBaseUser extends Document {
     hash: string;
     shortDescription: string;
     longDescription: string;
+    location: {
+        zip: string;
+        city: string;
+        state: string;
+        geoJSON: {
+            type: "Point";
+            coordinates: number[];
+        };
+    };
 }
 
 export interface IInstructor extends IBaseUser, Document {

@@ -17,12 +17,11 @@ export const geoJsonSchema = new Schema(
     { _id: false }
 );
 
-const locationSchema = new Schema(
+export const locationSchema = new Schema(
     {
         zip: {
             type: String,
             required: true,
-            unique: true,
         },
         city: {
             type: String,

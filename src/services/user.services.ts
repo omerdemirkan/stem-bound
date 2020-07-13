@@ -1,12 +1,14 @@
-import { EUserRoles, IUser } from "../types";
-import { Model, Document, Types } from "mongoose";
+import { EUserRoles, IUser, ILocationData } from "../types";
+import { Model, Types } from "mongoose";
+import { LocationService } from ".";
 
 const { ObjectId } = Types;
 
 export default class UserService {
     constructor(
         private getUserModelByRole: (role: EUserRoles) => Model<IUser>,
-        private Users: Model<IUser>
+        private Users: Model<IUser>,
+        private locationService: LocationService
     ) {}
 
     async createUser({
@@ -18,6 +20,11 @@ export default class UserService {
     }): Promise<IUser> {
         if ((userData as any).password)
             throw new Error("We don't store passwords around here kiddo");
+
+        userData.location = await this.locationService.findLocationByZip(
+            (userData as any).zip
+        );
+        console.log(userData);
         return await this.getUserModelByRole(role).create(userData);
     }
 

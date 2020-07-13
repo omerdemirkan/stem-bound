@@ -42,7 +42,8 @@ export function getUserModelByRole(role: EUserRoles): Model<IUser> {
 
 export const userService = new services.UserService(
     getUserModelByRole,
-    models.Users
+    models.Users,
+    locationService
 );
 
 export const metadataService = new services.MetadataService(
