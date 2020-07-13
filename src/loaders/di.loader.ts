@@ -1,4 +1,4 @@
-import * as services from "../services/index";
+import * as services from "../services";
 import * as dependencies from "../config/dependency.config";
 import * as models from "../models";
 import { eventEmitter } from "../config";

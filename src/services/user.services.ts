@@ -21,10 +21,9 @@ export default class UserService {
         if ((userData as any).password)
             throw new Error("We don't store passwords around here kiddo");
 
-        userData.location = await this.locationService.findLocationByZip(
+        userData.location = ((await this.locationService.findLocationByZip(
             (userData as any).zip
-        );
-        console.log(userData);
+        )) as any)._doc;
         return await this.getUserModelByRole(role).create(userData);
     }
 

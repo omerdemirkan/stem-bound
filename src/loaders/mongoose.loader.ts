@@ -8,6 +8,7 @@ export default async function () {
         useCreateIndex: true,
         useNewUrlParser: true,
         useFindAndModify: false,
+        autoIndex: true,
     });
 
     logger.info("MongoDB connected");
