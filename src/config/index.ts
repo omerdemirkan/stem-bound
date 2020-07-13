@@ -25,6 +25,5 @@ if (Object.values(config).includes(undefined)) {
 
 export default config;
 
-export * from "./constants.config";
 export * from "./dependency.config";
 export * from "./global.config";

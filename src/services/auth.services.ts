@@ -49,10 +49,7 @@ export default class AuthService {
 
         const accessToken = await this.jwtService.sign(payload);
 
-        this.eventEmitter.emit(EUserEvents.USER_SIGNUP, {
-            role: newUser.role,
-            user: newUser,
-        });
+        this.eventEmitter.emit(EUserEvents.USER_SIGNUP, newUser);
         return { user: newUser, accessToken };
     }
 

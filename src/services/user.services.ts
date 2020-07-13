@@ -1,4 +1,4 @@
-import { EUserRoles, IUser, ILocationData } from "../types";
+import { EUserRoles, IUser } from "../types";
 import { Model, Types } from "mongoose";
 import { LocationService } from ".";
 

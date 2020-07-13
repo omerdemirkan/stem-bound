@@ -1,5 +1,6 @@
-import { logger, errors } from "../config";
+import { logger } from "../config";
 import { EErrorTypes } from "../types/error.types";
+import { errors } from "../constants";
 
 export default class ErrorService {
     status(error: Error) {

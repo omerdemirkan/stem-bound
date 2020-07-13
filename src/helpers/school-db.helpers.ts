@@ -78,6 +78,3 @@ export function parseCsvAsync(
         });
     });
 }
-
-export { ISchool, ISchoolDataOriginal } from "../types";
-export { schoolCsvColumns } from "../config/constants.config";
