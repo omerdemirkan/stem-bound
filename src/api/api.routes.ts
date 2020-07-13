@@ -1,5 +1,5 @@
 import { Router } from "express";
-import * as modulesMiddlewares from "./api.middlewares";
+import * as apiMiddlewares from "./api.middlewares";
 
 import userRouter from "./user/user.routes";
 import schoolRouter from "./school/school.routes";
@@ -11,7 +11,8 @@ import locationRouter from "./location/location.routes";
 
 const router: Router = Router();
 
-router.use(modulesMiddlewares.requestLogger);
+router.use(apiMiddlewares.apiRateLimiter);
+router.use(apiMiddlewares.requestLogger);
 
 router.use("/users", userRouter);
 router.use("/schools", schoolRouter);
