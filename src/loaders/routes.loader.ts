@@ -1,4 +1,4 @@
-import routes from "../api/v1/v1.routes";
+import routes from "../api/api.routes";
 import { Application, Request, Response } from "express";
 
 export default function (app: Application) {
