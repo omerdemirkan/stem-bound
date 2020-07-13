@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as mailingListControllers from "./mailing-list.controllers";
-import { authMiddlewareService } from "../../services";
-import { EUserRoles } from "../../types";
+import { authMiddlewareService } from "../../../services";
+import { EUserRoles } from "../../../types";
 
 const mailingListRouter = Router();
 

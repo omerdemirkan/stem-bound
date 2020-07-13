@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { mailingListService, errorService } from "../../services";
+import { mailingListService, errorService } from "../../../services";
 
 export async function createMailingListSubscriber(req: Request, res: Response) {
     try {

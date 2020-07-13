@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { logger, rateLimiter } from "../config";
+import { logger, rateLimiter } from "../../config";
 
 export function requestLogger(
     req: Request,

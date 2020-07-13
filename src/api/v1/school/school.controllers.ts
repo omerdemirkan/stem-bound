@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
-import { configureFindSchoolsQuery } from "../../helpers/school.helpers";
+import { configureFindSchoolsQuery } from "../../../helpers/school.helpers";
 import {
     schoolService,
     errorService,
     userService,
     courseService,
-} from "../../services";
-import { IStudent, ISchool, ICourse } from "../../types";
-import { EErrorTypes } from "../../types/error.types";
+} from "../../../services";
+import { IStudent, ISchool, ICourse } from "../../../types";
+import { EErrorTypes } from "../../../types/error.types";
 
 const { ObjectId } = Types;
 

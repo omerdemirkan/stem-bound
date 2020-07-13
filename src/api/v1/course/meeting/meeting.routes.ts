@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { authMiddlewareService } from "../../../services";
+import { authMiddlewareService } from "../../../../services";
 import * as meetingControllers from "./meeting.controllers";
 
 const meetingRouter = Router({ mergeParams: true });

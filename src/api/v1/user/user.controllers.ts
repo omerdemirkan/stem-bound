@@ -6,8 +6,8 @@ import {
     courseService,
     schoolService,
     chatService,
-} from "../../services";
-import { configureUsersQuery } from "../../helpers/user.helpers";
+} from "../../../services";
+import { configureUsersQuery } from "../../../helpers/user.helpers";
 import { Types } from "mongoose";
 import {
     IUser,
@@ -15,9 +15,9 @@ import {
     IInstructor,
     ISchoolOfficial,
     ICourse,
-} from "../../types";
-import { IChat } from "../../types/chat.types";
-import { EErrorTypes } from "../../types/error.types";
+} from "../../../types";
+import { IChat } from "../../../types/chat.types";
+import { EErrorTypes } from "../../../types/error.types";
 
 const { ObjectId } = Types;
 

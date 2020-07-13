@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as messagesControllers from "./message.controllers";
-import { authMiddlewareService } from "../../../services";
+import { authMiddlewareService } from "../../../../services";
 
 // https://expressjs.com/en/4x/api.html#express.router
 const messageRouter = Router({ mergeParams: true });

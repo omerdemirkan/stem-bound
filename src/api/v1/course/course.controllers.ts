@@ -6,9 +6,9 @@ import {
     metadataService,
     userService,
     schoolService,
-} from "../../services";
-import { EErrorTypes } from "../../types/error.types";
-import { ICourse, IStudent, IUser } from "../../types";
+} from "../../../services";
+import { EErrorTypes } from "../../../types/error.types";
+import { ICourse, IStudent, IUser } from "../../../types";
 
 const { ObjectId } = Types;
 

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as courseControllers from "./course.controllers";
-import { EUserRoles } from "../../types";
-import { authMiddlewareService } from "../../services";
+import { EUserRoles } from "../../../types";
+import { authMiddlewareService } from "../../../services";
 import meetingRouter from "./meeting/meeting.routes";
 
 const courseRouter = Router();

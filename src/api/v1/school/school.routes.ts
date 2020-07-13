@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as schoolController from "./school.controllers";
-import { authMiddlewareService } from "../../services";
+import { authMiddlewareService } from "../../../services";
 
 const schoolRouter = Router();
 

@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { errorService, courseService } from "../../../services";
+import { errorService, courseService } from "../../../../services";
 import { Types } from "mongoose";
-import { ICourse, IMeeting } from "../../../types";
-import { EErrorTypes } from "../../../types/error.types";
+import { ICourse, IMeeting } from "../../../../types";
+import { EErrorTypes } from "../../../../types/error.types";
 
 const { ObjectId } = Types;
 

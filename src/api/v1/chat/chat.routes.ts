@@ -1,7 +1,7 @@
 import { Router } from "express";
 import messagesRoutes from "./message/message.routes";
 import * as chatControllers from "./chat.controllers";
-import { authMiddlewareService } from "../../services";
+import { authMiddlewareService } from "../../../services";
 
 const chatRouter = Router();
 

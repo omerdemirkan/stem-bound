@@ -4,9 +4,9 @@ import {
     errorService,
     authService,
     userService,
-} from "../../services";
+} from "../../../services";
 import { Types } from "mongoose";
-import { EErrorTypes } from "../../types/error.types";
+import { EErrorTypes } from "../../../types/error.types";
 
 const { ObjectId } = Types;
 
