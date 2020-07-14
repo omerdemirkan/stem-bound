@@ -24,13 +24,13 @@ export default class SchoolService {
     async findSchoolsByCoordinates({
         coordinates,
         limit,
-        query,
+        where,
         skip,
         text,
     }: {
         coordinates: number[];
         limit?: number | null;
-        query?: MongooseFilterQuery<ISchool> | null;
+        where?: MongooseFilterQuery<ISchool> | null;
         skip?: number | null;
         text?: string;
     }): Promise<ISchool[]> {
@@ -46,8 +46,8 @@ export default class SchoolService {
         };
         const aggregateOptions: any[] = [geoNearOptions];
 
-        if (query && Object.keys(query).length) {
-            geoNearOptions.$geoNear.query = query;
+        if (where && Object.keys(where).length) {
+            geoNearOptions.$geoNear.query = where;
         }
 
         if (text) {

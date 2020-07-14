@@ -1,3 +1,4 @@
+import geoIp from "geoip-lite";
 import { ILocationDataOriginal, ILocationData } from "../types/location.types";
 
 export function configureLocationQuery(query: { text }) {
@@ -39,4 +40,18 @@ export function filterLocationData(
 
 export function mapAndFilterLocationData(data: ILocationDataOriginal[]) {
     return mapLocationData(filterLocationData(data));
+}
+
+export function getCoordinatesByIp(
+    ip: string
+): { latitude: number; longitude: number } {
+    try {
+        const {
+            ll: [latitude, longitude],
+        } = geoIp.lookup(ip);
+        return { latitude, longitude };
+    } catch (e) {
+        // If an error occurs, this is likely cause by localhost ip during development.
+        return { latitude: 34.0522, longitude: -118.2437 };
+    }
 }

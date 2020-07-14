@@ -1,4 +1,4 @@
-import { Types, Document } from "mongoose";
+import { Types, Document, MongooseFilterQuery } from "mongoose";
 
 export interface ISchoolDataOriginal {
     X: string;
@@ -71,4 +71,13 @@ export interface ISchool extends Document {
         students: Types.ObjectId[];
         courses: Types.ObjectId[];
     };
+}
+
+export interface ISchoolQuery {
+    limit?: number;
+    skip?: number;
+    sort?: object;
+    where?: MongooseFilterQuery<ISchool>;
+    coordinates?: number[];
+    text?: string;
 }

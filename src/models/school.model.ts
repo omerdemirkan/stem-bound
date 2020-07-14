@@ -35,6 +35,7 @@ const locationSchema = new Schema(
         geoJSON: {
             type: geoJsonSchema,
             required: true,
+            index: "2dsphere",
         },
     },
     {
@@ -164,10 +165,6 @@ const schoolSchema = new Schema(
         versionKey: false,
     }
 );
-
-locationSchema.index({
-    geoJSON: "2dsphere",
-});
 
 schoolSchema.index({ name: "text" }, { unique: false });
 

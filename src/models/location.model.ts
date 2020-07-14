@@ -23,21 +23,24 @@ export const locationSchema = new Schema(
             type: String,
             required: true,
             unique: false,
+            index: "text",
         },
         city: {
             type: String,
             required: true,
+            index: "text",
         },
         state: {
             type: String,
             required: true,
         },
-        geoJSON: geoJsonSchema,
+        geoJSON: {
+            type: geoJsonSchema,
+            index: "2dsphere",
+        },
     },
     { _id: false, timestamps: false, versionKey: false }
 );
-
-locationSchema.index({ zip: "text", city: "text" }, { unique: false });
 
 const Locations = mongoose.model<ILocationData>("Location", locationSchema);
 

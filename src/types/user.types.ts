@@ -1,4 +1,4 @@
-import { Types, Document } from "mongoose";
+import { Types, Document, MongooseFilterQuery } from "mongoose";
 import { ILocationData } from "./location.types";
 
 export enum EUserRoles {
@@ -52,3 +52,13 @@ export interface IStudent extends IBaseUser, Document {
 }
 
 export type IUser = IInstructor | ISchoolOfficial | IStudent;
+
+export interface IUserQuery {
+    limit?: number;
+    skip?: number;
+    sort?: object;
+    role?: EUserRoles;
+    where?: MongooseFilterQuery<IUser>;
+    coordinates?: number[];
+    text?: string;
+}

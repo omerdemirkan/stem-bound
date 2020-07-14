@@ -15,6 +15,7 @@ import {
     IInstructor,
     ISchoolOfficial,
     ICourse,
+    IUserQuery,
 } from "../../../types";
 import { IChat } from "../../../types/chat.types";
 import { EErrorTypes } from "../../../types/error.types";
@@ -23,15 +24,16 @@ const { ObjectId } = Types;
 
 export async function getUsers(req: Request, res: Response) {
     try {
-        const { limit, skip, sort, role, where } = configureUsersQuery(
-            req.query
-        );
-        const users: IUser[] = await userService.findUsers(where, {
-            limit,
-            skip,
-            sort,
-            role,
-        });
+        const query: IUserQuery = configureUsersQuery(req.query, req.ip);
+        let users: IUser[];
+        if (query.coordinates) {
+            users = await userService.findUsersByCoordinates(
+                query.coordinates,
+                query
+            );
+        } else {
+            users = await userService.findUsers(query.where, query);
+        }
         res.json({
             message: "Users successfully found",
             data: users,

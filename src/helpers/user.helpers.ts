@@ -1,24 +1,21 @@
-import { EUserRoles } from "../types";
+import { EUserRoles, IUserQuery } from "../types";
 import { errorService } from "../services";
 import { EErrorTypes } from "../types/error.types";
+import { getCoordinatesByIp } from "./location.helpers";
 
 export function configureUsersQuery(
-    requestQueries: any
-): {
-    limit?: number;
-    skip?: number;
-    sort?: object;
-    role?: EUserRoles;
-    where?: object;
-} {
-    const { role, limit, skip, sort_field, sort_direction } = requestQueries;
-    let query: {
-        limit?: number;
-        skip?: number;
-        sort?: object;
-        role?: EUserRoles;
-        where?: object;
-    } = {};
+    requestQueries: any,
+    ip: string
+): Partial<IUserQuery> {
+    const {
+        role,
+        limit,
+        skip,
+        sort_field,
+        sort_direction,
+        geo_ip,
+    } = requestQueries;
+    let query: Partial<IUserQuery> = {};
 
     if (isValidUserRole(role)) {
         query.role = role.toUpperCase();
@@ -32,8 +29,13 @@ export function configureUsersQuery(
         query.limit = +limit;
     }
 
-    if (skip) {
+    if (+skip) {
         query.skip = +skip;
+    }
+
+    if (geo_ip) {
+        const { latitude, longitude } = getCoordinatesByIp(ip);
+        query.coordinates = [longitude, latitude];
     }
 
     return query;

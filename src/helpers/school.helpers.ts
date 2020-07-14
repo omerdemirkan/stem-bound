@@ -1,30 +1,45 @@
-export function configureFindSchoolsQuery({
-    lat,
-    long,
-    limit,
-    skip,
-    with_school_officials,
-    text,
-}: any) {
-    let query: any = {};
+import { ISchoolQuery } from "../types";
+import { getCoordinatesByIp } from "./location.helpers";
+
+export function configureFindSchoolsQuery(
+    requestQueries: any,
+    ip: string
+): ISchoolQuery {
+    const {
+        lat,
+        long,
+        limit,
+        skip,
+        with_school_officials,
+        text,
+        geo_ip,
+    } = requestQueries;
+    let query: any = { where: {} };
 
     if (with_school_officials) {
-        query.meta = {
+        query.where.meta = {
             schoolOfficials: { $not: { $size: 0 } },
         };
     }
 
-    // configure query
-
-    if (!Object.keys(query)) {
-        query = null;
+    if (long && lat) {
+        query.coordinates = [+long, +lat];
+    } else if (geo_ip) {
+        const { latitude, longitude } = getCoordinatesByIp(ip);
+        query.coordinates = [longitude, latitude];
     }
-    return {
-        // geoJSON format
-        coordinates: long && lat ? [+long, +lat] : null,
-        limit: Math.floor(+limit) || null,
-        skip: Math.floor(+skip) || null,
-        query,
-        text: typeof text === "string" ? text.toUpperCase() : undefined,
-    };
+
+    if (+limit) {
+        query.limit = +limit;
+    }
+
+    if (+skip) {
+        query.skip = +skip;
+    }
+
+    if (typeof text === "string") {
+        query.text = text.toUpperCase();
+    }
+
+    return query;
 }

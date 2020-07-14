@@ -1,8 +1,7 @@
 import { Types } from "mongoose";
 import { Request, Response } from "express";
 import { chatService, errorService } from "../../../../services";
-import { EErrorTypes } from "../../../../types/error.types";
-import { IChat, IMessage } from "../../../../types/chat.types";
+import { IChat, IMessage, EErrorTypes } from "../../../../types";
 
 const { ObjectId } = Types;
 
