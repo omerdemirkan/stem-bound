@@ -14,6 +14,8 @@ export function configureUsersQuery(
         sort_field,
         sort_direction,
         geo_ip,
+        lat,
+        long,
     } = requestQueries;
     let query: Partial<IUserQuery> = {};
 
@@ -36,6 +38,8 @@ export function configureUsersQuery(
     if (geo_ip) {
         const { latitude, longitude } = getCoordinatesByIp(ip);
         query.coordinates = [longitude, latitude];
+    } else if (+lat & +long) {
+        query.coordinates = [+long, +lat];
     }
 
     return query;

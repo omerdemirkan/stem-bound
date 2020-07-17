@@ -31,7 +31,6 @@ export default class UserService {
         coordinates: number[],
         { limit, where, skip, text, role }: IUserQuery
     ) {
-        console.log("aggregating by coords");
         let aggregateOptions: any[] = [
             {
                 $geoNear: {
