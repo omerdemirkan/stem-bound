@@ -34,7 +34,7 @@ courseRouter.post(
     "/",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR, "ADMIN"]),
-    authMiddlewareService.compareRequestBodyToPayload(({ body, payload }) =>
+    authMiddlewareService.validateRequest(({ body, payload }) =>
         body.meta.instructors?.includes(payload.user._id)
     ),
     courseControllers.createCourse

@@ -1,6 +1,7 @@
 import { EUserRoles } from "./index";
 
 import { Types } from "mongoose";
+import { type } from "os";
 
 export interface ITokenPayload {
     role: EUserRoles;
@@ -12,10 +13,12 @@ export interface ITokenPayload {
     };
 }
 
-export type RequestBodyPayloadComparisonFunction = ({
+export type IRequestValidationFunction = ({
     body,
     payload,
+    params,
 }: {
-    body: any;
-    payload: ITokenPayload;
+    body?: any;
+    payload?: ITokenPayload;
+    params?: any;
 }) => boolean;

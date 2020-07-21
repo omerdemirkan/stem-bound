@@ -14,7 +14,7 @@ chatRouter.get(
 chatRouter.post(
     "/",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.compareRequestBodyToPayload(({ body, payload }) =>
+    authMiddlewareService.validateRequest(({ body, payload }) =>
         body.meta.users.includes(payload.user._id)
     ),
     chatControllers.createChat
@@ -24,6 +24,7 @@ chatRouter.patch(
     "/:id",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.blockRequestBodyMetadata,
+    authMiddlewareService.validateRequest(({ body }) => !body.messages),
     chatControllers.updateChat
 );
 

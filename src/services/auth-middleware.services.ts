@@ -1,6 +1,6 @@
 import { JwtService } from ".";
 import { Request, Response, NextFunction } from "express";
-import { EUserRoles, RequestBodyPayloadComparisonFunction } from "../types";
+import { EUserRoles, IRequestValidationFunction } from "../types";
 import { logger } from "../config";
 
 export default class AuthMiddlewareService {
@@ -61,25 +61,6 @@ export default class AuthMiddlewareService {
         }
     }
 
-    // matchParamIdToPayloadValue({ key }: { key: string }) {
-    //     const keys = key.split('.');
-    //     return function (req: Request, res: Response, next: NextFunction) {
-
-    //         const paramId = req.params.id;
-
-    //         let payloadId = (req as any).payload;
-    //         keys.forEach(key => {
-    //             payloadId = payloadId[key]
-    //         })
-
-    //         if (paramId === payloadId || (req as any).payload.role ==="ADMIN") {
-    //             next();
-    //         } else {
-    //             res.sendStatus(403);
-    //         }
-    //     }
-    // }
-
     blockRequestBodyMetadata(req: Request, res: Response, next: NextFunction) {
         if (!req.body.meta) {
             next();
@@ -92,14 +73,12 @@ export default class AuthMiddlewareService {
         }
     }
 
-    compareRequestBodyToPayload(
-        comparisonFunction: RequestBodyPayloadComparisonFunction
-    ) {
+    validateRequest(comparisonFunction: IRequestValidationFunction) {
         return function (req: Request, res: Response, next: NextFunction) {
             try {
-                const { body, payload } = req as any;
-                if (!comparisonFunction({ body, payload })) throw new Error();
-
+                const { body, payload, params } = req as any;
+                if (!comparisonFunction({ body, payload, params }))
+                    throw new Error();
                 next();
             } catch (e) {
                 res.sendStatus(403);

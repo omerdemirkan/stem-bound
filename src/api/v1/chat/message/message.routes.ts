@@ -20,7 +20,7 @@ messageRouter.get(
 messageRouter.post(
     "/",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.compareRequestBodyToPayload(
+    authMiddlewareService.validateRequest(
         ({ body, payload }) => body.meta.from === payload.user._id
     ),
     messagesControllers.createChatMessage
