@@ -52,11 +52,22 @@ export default class ChatService {
         return await this.Chats.findByIdAndDelete(id);
     }
 
-    async createMessage(id: Types.ObjectId, message: any): Promise<IMessage> {
-        let updatedChat = await this.Chats.findById(id);
-        updatedChat.messages.push(message);
+    async createMessage({
+        chatId,
+        text,
+        senderId,
+    }: {
+        chatId: Types.ObjectId;
+        text: string;
+        senderId: Types.ObjectId;
+    }): Promise<IMessage> {
+        let updatedChat = await this.Chats.findById(chatId);
+        updatedChat.messages.unshift({
+            text,
+            meta: { from: senderId, readBy: [] },
+        });
         await updatedChat.save();
-        return updatedChat.messages[updatedChat.messages.length - 1];
+        return updatedChat.messages[0];
     }
 
     async updateMessage({

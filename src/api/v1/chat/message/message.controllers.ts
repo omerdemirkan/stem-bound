@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { Request, Response } from "express";
 import { chatService, errorService } from "../../../../services";
-import { IChat, IMessage, EErrorTypes } from "../../../../types";
+import { IChat, IMessage, EErrorTypes, ITokenPayload } from "../../../../types";
 
 const { ObjectId } = Types;
 
@@ -21,10 +21,11 @@ export async function getChatMessages(req: Request, res: Response) {
 export async function createChatMessage(req: Request, res: Response) {
     try {
         const chatId = ObjectId(req.params.chatId);
-        const updatedMessage: IMessage = await chatService.createMessage(
+        const updatedMessage: IMessage = await chatService.createMessage({
             chatId,
-            req.body
-        );
+            text: req.body.text,
+            senderId: (req as any).payload.user._id,
+        });
         res.json({
             message: "Chat message successfully created",
             data: updatedMessage,
