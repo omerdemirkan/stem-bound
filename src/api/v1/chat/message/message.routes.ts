@@ -21,7 +21,7 @@ messageRouter.post(
     "/",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.validateRequest(
-        ({ body, payload }) => body.meta.from === payload.user._id
+        ({ body }) => !(body.meta || body.createdAt || body.updatedAt)
     ),
     messagesControllers.createChatMessage
 );
@@ -29,7 +29,9 @@ messageRouter.post(
 messageRouter.patch(
     "/:messageId",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.blockRequestBodyMetadata,
+    authMiddlewareService.validateRequest(
+        ({ body }) => !(body.meta || body.createdAt || body.updatedAt)
+    ),
     messagesControllers.updateChatMessage
 );
 
