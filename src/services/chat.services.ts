@@ -21,11 +21,17 @@ export default class ChatService {
     }
 
     async findChats(where: object): Promise<IChat[]> {
-        return this.Chats.find(where);
+        return await this.Chats.find(where);
     }
 
-    async findChatsByIds(ids: Types.ObjectId[]): Promise<IChat[]> {
-        return this.Chats.find({ _id: { $in: ids } });
+    async findChatsByIds({
+        ids,
+        userId,
+    }: {
+        ids: Types.ObjectId[];
+        userId: Types.ObjectId;
+    }): Promise<IChat[]> {
+        return await this.findChats({ _id: { $in: ids } });
     }
 
     async findChat(where: object): Promise<IChat> {

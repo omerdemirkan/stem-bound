@@ -16,9 +16,11 @@ import {
     ISchoolOfficial,
     ICourse,
     IUserQuery,
+    ITokenPayload,
 } from "../../../types";
 import { IChat } from "../../../types/chat.types";
 import { EErrorTypes } from "../../../types/error.types";
+import { configureChatsByRequestQuery } from "../../../helpers/chat.helpers";
 
 const { ObjectId } = Types;
 
@@ -144,12 +146,21 @@ export async function getUserChats(req: Request, res: Response) {
         }
         const chatIds = user.meta.chats;
         const chats: IChat[] = chatIds.length
-            ? await chatService.findChatsByIds(chatIds)
+            ? await chatService.findChatsByIds({
+                  ids: chatIds,
+                  userId: user._id,
+              })
             : [];
+
+        const configuredChats = configureChatsByRequestQuery({
+            userId: user._id,
+            chats: chats,
+            requestQuery: req.query,
+        });
 
         res.json({
             message: "User chats successfuly fetched",
-            data: chats,
+            data: configuredChats,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
