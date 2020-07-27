@@ -1,5 +1,5 @@
 import { Model, Document, Types } from "mongoose";
-import { mailgun } from "../config";
+import { mailClient } from "../config";
 
 export default class MailingListService {
     constructor(private Subscribers: Model<Document>) {}
@@ -29,6 +29,6 @@ export default class MailingListService {
     }
 
     async sendEmail(emailData: any) {
-        return await mailgun.messages().send(emailData);
+        return await mailClient.messages().send(emailData);
     }
 }

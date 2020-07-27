@@ -1,6 +1,6 @@
 import { EUserEvents, IEventEmitterOnFunction, IUser } from "../types";
 import { logger } from "../config";
-import { Subscriber } from "../helpers/subscriber.helpers";
+import { Subscriber } from "../helpers";
 
 function initializeUserSubscribers(on: IEventEmitterOnFunction) {
     on(EUserEvents.USER_SIGNUP, function (user: IUser) {

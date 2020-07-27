@@ -1,8 +1,13 @@
 import { Model, Types } from "mongoose";
 import { IChat, IMessage } from "../types/chat.types";
+import { EventEmitter } from "events";
+import { EChatEvents } from "../types";
 
 export default class ChatService {
-    constructor(private Chats: Model<IChat>) {}
+    constructor(
+        private Chats: Model<IChat>,
+        private eventEmitter: EventEmitter
+    ) {}
 
     async createChat(chatData: IChat): Promise<IChat> {
         const chatUsers: any = chatData.meta.users;
@@ -67,7 +72,14 @@ export default class ChatService {
             meta: { from: senderId, readBy: [] },
         });
         await updatedChat.save();
-        return updatedChat.messages[0];
+        const message = updatedChat.messages[0];
+
+        this.eventEmitter.emit(EChatEvents.CHAT_MESSAGE_CREATED, {
+            chatId,
+            message,
+        });
+
+        return message;
     }
 
     async updateMessage({
@@ -84,10 +96,17 @@ export default class ChatService {
             { $set: { "messages.$.text": text } },
             { new: true }
         );
-        return updatedChat.messages.find(
+        const message = updatedChat.messages.find(
             (message: IMessage) =>
                 message._id.toHexString() === messageId.toHexString()
         );
+
+        this.eventEmitter.emit(EChatEvents.CHAT_MESSAGE_UPDATED, {
+            chatId,
+            message,
+        });
+
+        return message;
     }
 
     async deleteMessage({
@@ -104,9 +123,16 @@ export default class ChatService {
             },
             { new: false }
         );
-        return updatedChat.messages.find(
+        const message = updatedChat.messages.find(
             (message: IMessage) =>
                 message._id.toHexString() === messageId.toHexString()
         );
+
+        this.eventEmitter.emit(EChatEvents.CHAT_MESSAGE_DELETED, {
+            chatId,
+            message,
+        });
+
+        return message;
     }
 }

@@ -6,6 +6,12 @@ export enum ECourseEvents {
     COURSE_CREATED = "COURSE_CREATED",
 }
 
+export enum EChatEvents {
+    CHAT_MESSAGE_CREATED = "CHAT_MESSAGE_CREATED",
+    CHAT_MESSAGE_UPDATED = "CHAT_MESSAGE_UPDATED",
+    CHAT_MESSAGE_DELETED = "CHAT_MESSAGE_DELETED",
+}
+
 export type IEventEmitterOnFunction = (
     event: string | symbol,
     listener: (...args: any[]) => void

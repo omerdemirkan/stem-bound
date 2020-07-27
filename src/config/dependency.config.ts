@@ -39,7 +39,7 @@ if (!config.mailgunApiKey) {
     );
 }
 
-export const mailgun = createMailgun({
+export const mailClient = createMailgun({
     apiKey: config.mailgunApiKey,
     domain: config.clientDomain,
 });

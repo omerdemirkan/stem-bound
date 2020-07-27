@@ -27,7 +27,7 @@ export const locationService = new services.LocationService(models.Locations);
 
 export const schoolService = new services.SchoolService(models.Schools);
 
-export const chatService = new services.ChatService(models.Chats);
+export const chatService = new services.ChatService(models.Chats, eventEmitter);
 
 // Moved out of models.helpers.ts to avoid circular dependency
 const userModels = {
