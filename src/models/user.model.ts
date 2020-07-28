@@ -11,6 +11,7 @@ const userSchema = new Schema(
             maxlength: 20,
             required: [true, "First name required"],
             trim: true,
+            index: "text",
         },
         lastName: {
             type: String,
@@ -18,6 +19,7 @@ const userSchema = new Schema(
             maxlength: 20,
             required: [true, "Last name required"],
             trim: true,
+            index: "text",
         },
         email: {
             type: String,

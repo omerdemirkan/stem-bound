@@ -16,4 +16,6 @@ export interface IChat extends Document {
     meta: {
         users: Types.ObjectId[];
     };
+    createdAt?: Date;
+    updatedAt?: Date;
 }

@@ -1,7 +1,7 @@
 import { IChat } from "../types";
 import { Types } from "mongoose";
 
-export function configureChatsByRequestQuery({
+export function configureChatResponseData({
     chats,
     userId,
     requestQuery,
@@ -12,6 +12,8 @@ export function configureChatsByRequestQuery({
 }): Partial<IChat>[] {
     const configuredChats: Partial<IChat>[] = chats.map((chat) => ({
         _id: chat._id,
+        createdAt: chat.createdAt,
+        updatedAt: chat.updatedAt,
         meta: chat.meta,
         messages: [],
     }));

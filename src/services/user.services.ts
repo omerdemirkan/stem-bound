@@ -1,5 +1,5 @@
 import { EUserRoles, IUser, IUserQuery } from "../types";
-import { Model, Types, MongooseFilterQuery } from "mongoose";
+import { Model, Types } from "mongoose";
 import { LocationService } from ".";
 
 const { ObjectId } = Types;
@@ -62,17 +62,24 @@ export default class UserService {
         return await model.aggregate(aggregateOptions);
     }
 
-    async findUsers(
-        where: object,
-        { coordinates, limit, skip, text, role, sort }: IUserQuery
-    ): Promise<IUser[]> {
-        let model = role ? this.getUserModelByRole(role) : this.Users;
+    async findUsers({ coordinates, ...options }: IUserQuery): Promise<IUser[]> {
+        if (coordinates) {
+            return await this.findUsersByCoordinates(coordinates, options);
+        }
 
+        const model = options.role
+            ? this.getUserModelByRole(options.role)
+            : this.Users;
+        let where: any = {};
+
+        if (options.text) {
+            where.$text = { $search: options.text };
+        }
         return await model
-            .find(where || {})
-            .sort(sort)
-            .skip(skip || 0)
-            .limit(typeof limit === "number" && limit < 20 ? limit : 20);
+            .find(where)
+            .sort(options.sort)
+            .skip(options.skip || 0)
+            .limit(Math.min(options.limit, 20));
     }
 
     async findUsersByIds(ids: Types.ObjectId[]): Promise<IUser[]> {

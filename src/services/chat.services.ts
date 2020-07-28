@@ -20,18 +20,32 @@ export default class ChatService {
         return await this.Chats.create(chatData);
     }
 
-    async findChats(where: object): Promise<IChat[]> {
-        return await this.Chats.find(where);
+    async findChats(options: {
+        where: object;
+        limit?: number;
+        skip?: number;
+        sort?: object;
+    }): Promise<IChat[]> {
+        return await this.Chats.find(options.where)
+            .sort(options.sort)
+            .skip(options.skip || 0)
+            .limit(Math.min(options.limit, 20));
     }
 
     async findChatsByIds({
         ids,
-        userId,
+        ...options
     }: {
         ids: Types.ObjectId[];
-        userId: Types.ObjectId;
+        where?: object;
+        limit?: number;
+        skip?: number;
+        sort?: object;
     }): Promise<IChat[]> {
-        return await this.findChats({ _id: { $in: ids } });
+        return await this.findChats({
+            where: { _id: { $in: ids } },
+            ...options,
+        });
     }
 
     async findChat(where: object): Promise<IChat> {
