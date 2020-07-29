@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { Request, Response } from "express";
 import { chatService, errorService } from "../../../../services";
 import { IChat, IMessage, EErrorTypes } from "../../../../types";
+import { configureMessageArrayResponseData } from "../../../../helpers/chat.helpers";
 
 const { ObjectId } = Types;
 
@@ -9,9 +10,14 @@ export async function getChatMessages(req: Request, res: Response) {
     try {
         const chatId = ObjectId(req.params.chatId);
         const chat: IChat = await chatService.findChatById(chatId);
+        if (!chat) {
+            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+        }
         res.json({
             message: "Chat successfully fetched",
-            data: chat.messages,
+            data: configureMessageArrayResponseData(chat.messages, {
+                query: req.query,
+            }),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

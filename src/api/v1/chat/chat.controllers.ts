@@ -3,6 +3,7 @@ import { errorService, chatService, metadataService } from "../../../services";
 import { Types } from "mongoose";
 import { IChat } from "../../../types/chat.types";
 import { EErrorTypes } from "../../../types/error.types";
+import { configureChatResponseData } from "../../../helpers/chat.helpers";
 
 const { ObjectId } = Types;
 
@@ -13,7 +14,7 @@ export async function createChat(req: Request, res: Response) {
         await metadataService.handleNewChatMetadataUpdate(newChat);
         res.json({
             message: "Chat successfully created",
-            data: newChat,
+            data: configureChatResponseData(newChat, { query: req.query }),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -31,7 +32,7 @@ export async function getChat(req: Request, res: Response) {
         }
         res.json({
             message: "Chat successfully fetched",
-            data: chat,
+            data: configureChatResponseData(chat, { query: req.query }),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -48,7 +49,7 @@ export async function updateChat(req: Request, res: Response) {
 
         res.json({
             message: "Chat successfully updated",
-            data: updatedChat,
+            data: configureChatResponseData(updatedChat, { query: req.query }),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -64,7 +65,7 @@ export async function deleteChat(req: Request, res: Response) {
         await metadataService.handleDeletedChatMetadataUpdate(deletedChat);
         res.json({
             message: "Chat successfully deleted",
-            data: deletedChat,
+            data: configureChatResponseData(deletedChat, { query: req.query }),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

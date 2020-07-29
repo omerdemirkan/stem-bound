@@ -20,7 +20,7 @@ import {
 } from "../../../types";
 import { IChat } from "../../../types/chat.types";
 import { EErrorTypes } from "../../../types/error.types";
-import { configureChatResponseData } from "../../../helpers/chat.helpers";
+import { configureChatArrayResponseData } from "../../../helpers/chat.helpers";
 
 const { ObjectId } = Types;
 
@@ -144,15 +144,12 @@ export async function getUserChats(req: Request, res: Response) {
               })
             : [];
 
-        const configuredChats = configureChatResponseData({
-            userId: user._id,
-            chats: chats,
-            requestQuery: req.query,
-        });
-
         res.json({
             message: "User chats successfuly fetched",
-            data: configuredChats,
+            data: configureChatArrayResponseData(chats, {
+                query: req.query,
+                payload: (req as any).payload,
+            }),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

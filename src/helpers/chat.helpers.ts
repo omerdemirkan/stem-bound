@@ -1,15 +1,9 @@
-import { IChat } from "../types";
-import { Types } from "mongoose";
+import { IChat, ITokenPayload, IMessage } from "../types";
 
-export function configureChatResponseData({
-    chats,
-    userId,
-    requestQuery,
-}: {
-    chats: IChat[];
-    userId: Types.ObjectId;
-    requestQuery: any;
-}): Partial<IChat>[] {
+export function configureChatArrayResponseData(
+    chats: IChat[],
+    { query, payload }: { query: any; payload: ITokenPayload }
+): Partial<IChat>[] {
     const configuredChats: Partial<IChat>[] = chats.map((chat) => ({
         _id: chat._id,
         createdAt: chat.createdAt,
@@ -18,7 +12,8 @@ export function configureChatResponseData({
         messages: [],
     }));
 
-    const { include_unread_messages } = requestQuery;
+    const userId = payload.user._id;
+    const { include_unread_messages } = query;
 
     if (include_unread_messages) {
         let readMessageFound;
@@ -44,3 +39,34 @@ export function configureChatResponseData({
     }
     return configuredChats;
 }
+
+export function configureChatResponseData(
+    chat: IChat,
+    { query }: { query: any }
+): Partial<IChat> {
+    const limit = Math.min(+query.limit, 20);
+    const skip = +query.skip || 0;
+
+    return {
+        _id: chat._id,
+        createdAt: chat.createdAt,
+        updatedAt: chat.updatedAt,
+        meta: chat.meta,
+        messages: chat.messages.slice(skip, limit + 1),
+    };
+}
+
+export function configureMessageArrayResponseData(
+    messages: IMessage[],
+    { query }: { query: any }
+): Partial<IMessage[]> {
+    const limit = Math.min(+query.limit, 20);
+    const skip = +query.skip || 0;
+
+    return messages.slice(skip, limit + 1);
+}
+
+export function configureMessageResponseData(
+    message: IMessage,
+    { query }: { query: any }
+) {}
