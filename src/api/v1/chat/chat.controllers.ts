@@ -8,7 +8,26 @@ const { ObjectId } = Types;
 
 export async function createChat(req: Request, res: Response) {
     try {
-        const chatData = req.body;
+        const chatData: IChat = req.body;
+        chatData.meta.users = chatData.meta.users.map((id) =>
+            ObjectId(id as any)
+        );
+        const duplicateChat = await chatService.findChatByUserIds(
+            chatData.meta.users,
+            { exact: true }
+        );
+
+        if (duplicateChat && req.query.duplicate_fallback) {
+            return res.json({
+                message: "Duplicate chat found",
+                data: configureChatResponseData(duplicateChat, {
+                    query: req.query,
+                }),
+            });
+        } else if (duplicateChat && !req.query.duplicate_fallback) {
+            errorService.throwError(EErrorTypes.CONFLICT);
+        }
+
         const newChat: IChat = await chatService.createChat(chatData);
         await metadataService.handleNewChatMetadataUpdate(newChat);
         res.json({

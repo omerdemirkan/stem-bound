@@ -8,15 +8,29 @@ export default class ChatService {
         private eventEmitter: EventEmitter
     ) {}
 
-    async createChat(chatData: IChat): Promise<IChat> {
-        const chatUsers: any = chatData.meta.users;
-        const duplicateChat: any = await this.Chats.findOne()
-            .all("meta.users", chatUsers)
-            .size("meta.users", chatUsers.length);
-        if (duplicateChat) {
-            throw new Error("This chat is a duplicate of another chat.");
+    async createChat(
+        chatData: IChat,
+        options?: { preventDuplicationByUserIds?: boolean }
+    ): Promise<IChat> {
+        if (options?.preventDuplicationByUserIds) {
+            const chatUsers: any = chatData.meta.users;
+            const duplicateChat: any = await this.findChatByUserIds(chatUsers, {
+                exact: true,
+            });
+            if (duplicateChat) {
+                throw new Error("This chat is a duplicate of another chat.");
+            }
         }
         return await this.Chats.create(chatData);
+    }
+
+    findChatByUserIds(userIds, options?: { exact: boolean }) {
+        let query = this.Chats.findOne().all("meta.users", userIds);
+
+        if (options?.exact) {
+            query = query.size("meta.users", userIds.length);
+        }
+        return query;
     }
 
     async findChats(options: {
