@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
 import { errorService, chatService, metadataService } from "../../../services";
 import { Types } from "mongoose";
-import { IChat } from "../../../types/chat.types";
-import { EErrorTypes } from "../../../types/error.types";
+import { IChat, EErrorTypes } from "../../../types";
 import { configureChatResponseData } from "../../../helpers/chat.helpers";
 
 const { ObjectId } = Types;

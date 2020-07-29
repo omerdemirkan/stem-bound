@@ -6,7 +6,7 @@ import {
     userService,
 } from "../../../services";
 import { Types } from "mongoose";
-import { EErrorTypes } from "../../../types/error.types";
+import { EErrorTypes } from "../../../types";
 
 const { ObjectId } = Types;
 

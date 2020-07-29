@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { errorService, locationService } from "../../../services";
 import { configureLocationQuery } from "../../../helpers";
-import { EErrorTypes } from "../../../types/error.types";
+import { EErrorTypes } from "../../../types";
 
 export async function getLocations(req: Request, res: Response) {
     try {

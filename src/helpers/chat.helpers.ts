@@ -1,4 +1,5 @@
 import { IChat, ITokenPayload, IMessage } from "../types";
+import { Types } from "mongoose";
 
 export function configureChatArrayResponseData(
     chats: IChat[],
@@ -12,7 +13,7 @@ export function configureChatArrayResponseData(
         messages: [],
     }));
 
-    const userId = payload.user._id;
+    const userId = Types.ObjectId(payload.user._id);
     const { include_unread_messages } = query;
 
     if (include_unread_messages) {
@@ -24,7 +25,7 @@ export function configureChatArrayResponseData(
             while (!readMessageFound && messageIndex < chat.messages.length) {
                 if (
                     chat.messages[messageIndex].meta.from.toHexString() ===
-                        userId.toHexString() ||
+                        userId.toString() ||
                     !chat.messages[messageIndex].meta.readBy.includes(userId)
                 ) {
                     configuredChats[chatIndex].messages.push(

@@ -1,7 +1,6 @@
 import { Model, Types } from "mongoose";
-import { IChat, IMessage } from "../types/chat.types";
+import { IChat, IMessage, EChatEvents } from "../types";
 import { EventEmitter } from "events";
-import { EChatEvents } from "../types";
 
 export default class ChatService {
     constructor(

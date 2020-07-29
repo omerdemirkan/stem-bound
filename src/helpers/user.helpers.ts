@@ -1,6 +1,5 @@
-import { EUserRoles, IUserQuery } from "../types";
+import { EUserRoles, IUserQuery, EErrorTypes } from "../types";
 import { errorService } from "../services";
-import { EErrorTypes } from "../types/error.types";
 import { getCoordinatesByIp } from "./location.helpers";
 
 export function configureUsersQuery(

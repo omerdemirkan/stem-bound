@@ -16,10 +16,9 @@ import {
     ISchoolOfficial,
     ICourse,
     IUserQuery,
-    ITokenPayload,
+    IChat,
+    EErrorTypes,
 } from "../../../types";
-import { IChat } from "../../../types/chat.types";
-import { EErrorTypes } from "../../../types/error.types";
 import { configureChatArrayResponseData } from "../../../helpers/chat.helpers";
 
 const { ObjectId } = Types;

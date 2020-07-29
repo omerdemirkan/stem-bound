@@ -4,9 +4,9 @@ import { Types } from "mongoose";
 import { type } from "os";
 
 export interface ITokenPayload {
-    role: EUserRoles;
+    role: EUserRoles | "ADMIN";
     user: {
-        _id: Types.ObjectId;
+        _id: string;
         firstName: string;
         lastName: string;
         email: string;

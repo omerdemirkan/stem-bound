@@ -1,5 +1,5 @@
 import geoIp from "geoip-lite";
-import { ILocationDataOriginal, ILocationData } from "../types/location.types";
+import { ILocationDataOriginal, ILocationData } from "../types";
 
 export function configureLocationQuery(query: { text }) {
     return { text: query.text };

@@ -7,8 +7,7 @@ import {
     userService,
     courseService,
 } from "../../../services";
-import { IStudent, ISchool, ICourse } from "../../../types";
-import { EErrorTypes } from "../../../types/error.types";
+import { IStudent, ISchool, ICourse, EErrorTypes } from "../../../types";
 
 const { ObjectId } = Types;
 

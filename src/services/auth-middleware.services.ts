@@ -1,6 +1,10 @@
 import { JwtService } from ".";
 import { Request, Response, NextFunction } from "express";
-import { EUserRoles, IRequestValidationFunction } from "../types";
+import {
+    EUserRoles,
+    IRequestValidationFunction,
+    ITokenPayload,
+} from "../types";
 import { logger } from "../config";
 
 export default class AuthMiddlewareService {
@@ -22,7 +26,9 @@ export default class AuthMiddlewareService {
             });
 
         try {
-            (req as any).payload = await this.jwtService.verify(token);
+            (req as any).payload = (await this.jwtService.verify(
+                token
+            )) as ITokenPayload;
             next();
         } catch (e) {
             logger.info(e);

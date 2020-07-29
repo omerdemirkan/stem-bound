@@ -1,6 +1,6 @@
 // SCHOOL
 
-import { EErrorTypes } from "../types/error.types";
+import { EErrorTypes } from "../types";
 
 export const errors = Object.freeze({
     [EErrorTypes.BAD_REQUEST]: {

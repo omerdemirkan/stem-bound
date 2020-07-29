@@ -1,4 +1,10 @@
-import { EUserRoles, ITokenPayload, EUserEvents, IUser } from "../types";
+import {
+    EUserRoles,
+    ITokenPayload,
+    EUserEvents,
+    IUser,
+    EErrorTypes,
+} from "../types";
 import {
     JwtService,
     BcryptService,
@@ -8,7 +14,6 @@ import {
 } from ".";
 import { Types } from "mongoose";
 import { EventEmitter } from "events";
-import { EErrorTypes } from "../types/error.types";
 
 const { ObjectId } = Types;
 

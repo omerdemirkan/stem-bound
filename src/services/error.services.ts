@@ -1,5 +1,5 @@
 import { logger } from "../config";
-import { EErrorTypes } from "../types/error.types";
+import { EErrorTypes } from "../types";
 import { errors } from "../constants";
 
 export default class ErrorService {

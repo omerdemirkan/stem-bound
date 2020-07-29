@@ -1,5 +1,5 @@
 import { Types, Document, MongooseFilterQuery } from "mongoose";
-import { ILocationData } from "./location.types";
+import { ILocationData } from ".";
 
 export enum EUserRoles {
     SCHOOL_OFFICIAL = "SCHOOL_OFFICIAL",

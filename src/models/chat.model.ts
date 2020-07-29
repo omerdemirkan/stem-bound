@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import { schemaValidators } from "../helpers/model.helpers";
-import { IChat } from "../types/chat.types";
+import { schemaValidators } from "../helpers";
+import { IChat } from "../types";
 
 const chatMetaSchema = new Schema(
     {

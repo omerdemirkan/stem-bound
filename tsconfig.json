@@ -14,7 +14,6 @@
     "rootDir": "src",
     "outDir": "./build"
   },
-  // "files": ["./src/types/override.types.ts"],
   "include": ["./*", "src/**/*.ts"],
   "exclude": ["node_modules/**"]
 }
