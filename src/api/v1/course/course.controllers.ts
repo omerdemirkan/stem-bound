@@ -7,7 +7,8 @@ import {
     userService,
     schoolService,
 } from "../../../services";
-import { ICourse, IStudent, IUser, EErrorTypes } from "../../../types";
+import { ICourse, IUser, EErrorTypes } from "../../../types";
+import { configureCourseArrayResponseData } from "../../../helpers";
 
 const { ObjectId } = Types;
 
@@ -70,7 +71,10 @@ export async function getCourses(req: Request, res: Response) {
         }
         res.json({
             message: "Courses successfully fetched",
-            data: courses,
+            data: configureCourseArrayResponseData(courses, {
+                query: req.query,
+                payload: (req as any).payload,
+            }),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

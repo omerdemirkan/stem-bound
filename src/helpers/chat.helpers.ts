@@ -6,10 +6,7 @@ export function configureChatArrayResponseData(
     { query, payload }: { query: any; payload: ITokenPayload }
 ): Partial<IChat>[] {
     const configuredChats: Partial<IChat>[] = chats.map((chat) => ({
-        _id: chat._id,
-        createdAt: chat.createdAt,
-        updatedAt: chat.updatedAt,
-        meta: chat.meta,
+        ...chat.toObject(),
         messages: [],
     }));
 
@@ -49,10 +46,7 @@ export function configureChatResponseData(
     const skip = +query.skip || 0;
 
     return {
-        _id: chat._id,
-        createdAt: chat.createdAt,
-        updatedAt: chat.updatedAt,
-        meta: chat.meta,
+        ...chat.toObject(),
         messages: chat.messages.slice(skip, limit + 1),
     };
 }

@@ -20,6 +20,7 @@ import {
     EErrorTypes,
 } from "../../../types";
 import { configureChatArrayResponseData } from "../../../helpers/chat.helpers";
+import { configureCourseArrayResponseData } from "../../../helpers";
 
 const { ObjectId } = Types;
 
@@ -100,7 +101,10 @@ export async function getUserCourses(req: Request, res: Response) {
 
         res.json({
             message: "User courses successfully fetched",
-            data: courses,
+            data: configureCourseArrayResponseData(courses, {
+                query: req.query,
+                payload: (req as any).payload,
+            }),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

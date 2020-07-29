@@ -24,7 +24,7 @@ export interface IAnnouncement {
     text: string;
     meta: {
         from: Types.ObjectId;
-        readBy: Types.ObjectId;
+        readBy: Types.ObjectId[];
     };
     _id?: string;
     createdAt?: Date;
