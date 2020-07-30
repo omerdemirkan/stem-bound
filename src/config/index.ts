@@ -17,6 +17,10 @@ const config = Object.freeze({
     saltRounds: Number(process.env.SALT_ROUNDS),
     mailgunApiKey: process.env.MAILGUN_API_KEY,
     clientDomain: "stembound.education",
+    clientOrigin:
+        process.env.NODE_ENV === "production"
+            ? "https://stembound.education"
+            : "http://localhost:3000",
 });
 
 if (Object.values(config).includes(undefined)) {
