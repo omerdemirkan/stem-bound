@@ -1,11 +1,19 @@
 export { default as initializeChatSocket } from "./chat.socket";
-
+import { eventEmitter } from "../config";
 import { Server, Socket } from "socket.io";
 import initializeChatSocket from "./chat.socket";
-import { eventEmitter } from "../config";
 
 export function init(io: Server) {
-    io.on("connection", (socket: Socket) => {
-        initializeChatSocket(socket);
+    console.log("Inside socket initializer");
+    io.on("connection", function (socket: Socket) {
+        console.log(`
+        
+        
+        A USER CONNECTED!!!
+        
+        
+        `);
+        socket.emit("greet", "Yoo whats good");
+        initializeChatSocket(socket, eventEmitter);
     });
 }

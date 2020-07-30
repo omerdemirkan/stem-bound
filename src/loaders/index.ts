@@ -10,8 +10,8 @@ import routesLoader from "./routes.loader";
 
 export default async function ({ app }: { app: Application }) {
     expressLoader(app);
-    socketLoader(app);
     eventsLoader();
     await mongooseLoader();
     routesLoader(app);
+    socketLoader(app);
 }
