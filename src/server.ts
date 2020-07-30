@@ -1,9 +1,9 @@
 import express, { Application } from "express";
-import loaders from "./loaders";
+import loadServer from "./loaders";
 
 async function initServer() {
-    const server: Application = express();
-    await loaders({ app: server });
+    const app: Application = express();
+    const server = await loadServer({ app });
     return server;
 }
 

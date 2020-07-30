@@ -7,11 +7,18 @@ import expressLoader from "./express.loader";
 import mongooseLoader from "./mongoose.loader";
 import eventsLoader from "./events.loader";
 import routesLoader from "./routes.loader";
+import { Server } from "http";
 
-export default async function ({ app }: { app: Application }) {
+export default async function loadServer({
+    app,
+}: {
+    app: Application;
+}): Promise<Server> {
     expressLoader(app);
     eventsLoader();
     await mongooseLoader();
     routesLoader(app);
-    socketLoader(app);
+
+    const server: Server = socketLoader(app);
+    return server;
 }

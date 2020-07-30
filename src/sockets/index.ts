@@ -4,16 +4,13 @@ import { Server, Socket } from "socket.io";
 import initializeChatSocket from "./chat.socket";
 
 export function init(io: Server) {
-    console.log("Inside socket initializer");
     io.on("connection", function (socket: Socket) {
-        console.log(`
-        
-        
-        A USER CONNECTED!!!
-        
-        
-        `);
-        socket.emit("greet", "Yoo whats good");
+        console.log("User connected");
+
+        socket.on("ping", function () {
+            console.log("Server pinged");
+            socket.emit("pong", "Boojie");
+        });
         initializeChatSocket(socket, eventEmitter);
     });
 }

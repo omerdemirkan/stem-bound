@@ -1,10 +1,11 @@
-import http from "http";
-import Server from "socket.io";
+import SocketIO from "socket.io";
 import * as sockets from "../sockets";
+import config from "../config";
+import http from "http";
 
-export default function socketLoader(app) {
-    const io = new Server(http.createServer(app));
-    // io.origins(["http://localhost:3000"]);
+export default function socketLoader(app): http.Server {
+    const server = new http.Server(app);
+    const io = new SocketIO(server);
     sockets.init(io);
-    io.listen(443);
+    return server;
 }
