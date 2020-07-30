@@ -86,9 +86,10 @@ export async function updateChatMessage(req: Request, res: Response) {
 
 export async function deleteChatMessage(req: Request, res: Response) {
     try {
-        const deletedMessage: IMessage = await chatService.deleteMessage({
+        const deletedMessage: IMessage = await chatService.setMessageDeletion({
             chatId: ObjectId(req.params.chatId),
             messageId: ObjectId(req.params.messageId),
+            isDeleted: req.query.restore ? false : true,
         });
 
         res.json({

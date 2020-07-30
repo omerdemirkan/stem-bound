@@ -7,34 +7,34 @@ export function configureChatArrayResponseData(
 ): Partial<IChat>[] {
     const configuredChats: Partial<IChat>[] = chats.map((chat) => ({
         ...chat.toObject(),
-        messages: [],
+        messages: chat.messages.slice(0, 21),
     }));
 
     const userId = Types.ObjectId(payload.user._id);
     const { include_unread_messages } = query;
 
-    if (include_unread_messages) {
-        let readMessageFound;
-        let messageIndex;
-        chats.forEach(function (chat, chatIndex) {
-            readMessageFound = false;
-            messageIndex = 0;
-            while (!readMessageFound && messageIndex < chat.messages.length) {
-                if (
-                    chat.messages[messageIndex].meta.from.toHexString() ===
-                        userId.toString() ||
-                    !chat.messages[messageIndex].meta.readBy.includes(userId)
-                ) {
-                    configuredChats[chatIndex].messages.push(
-                        chat.messages[messageIndex]
-                    );
-                    messageIndex++;
-                } else {
-                    readMessageFound = true;
-                }
-            }
-        });
-    }
+    // if (include_unread_messages) {
+    //     let readMessageFound;
+    //     let messageIndex;
+    //     chats.forEach(function (chat, chatIndex) {
+    //         readMessageFound = false;
+    //         messageIndex = 0;
+    //         while (!readMessageFound && messageIndex < chat.messages.length) {
+    //             if (
+    //                 chat.messages[messageIndex].meta.from.toHexString() ===
+    //                     userId.toString() ||
+    //                 !chat.messages[messageIndex].meta.readBy.includes(userId)
+    //             ) {
+    //                 configuredChats[chatIndex].messages.push(
+    //                     chat.messages[messageIndex]
+    //                 );
+    //                 messageIndex++;
+    //             } else {
+    //                 readMessageFound = true;
+    //             }
+    //         }
+    //     });
+    // }
     return configuredChats;
 }
 

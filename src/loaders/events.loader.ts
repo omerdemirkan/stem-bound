@@ -1,7 +1,5 @@
-import * as subscribers from "../subscribers/index";
+import * as subscribers from "../subscribers";
 
-export default function () {
-    Object.values(subscribers).forEach(function (subscriber) {
-        subscriber.initialize();
-    });
+export default function eventsLoader() {
+    subscribers.init();
 }

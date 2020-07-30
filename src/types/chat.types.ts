@@ -6,6 +6,7 @@ export interface IMessage {
         from: Types.ObjectId;
         readBy: Types.ObjectId[];
     };
+    isDeleted: boolean;
     _id?: Types.ObjectId;
     createdAt?: Date;
     updatedAt?: Date;

@@ -9,12 +9,15 @@ import { IEventEmitterOnFunction } from "../types";
 // Passing the on function alone to subscribers without binding to the event emitter causes an error.
 const on = eventEmitter.on.bind(eventEmitter);
 
-export function Subscriber(initialize: (on: IEventEmitterOnFunction) => void) {
-    this.initialized = false;
-    this.initialize = function (): void {
-        if (!this.initialized) {
-            initialize.call(this, on);
-            this.initialized = true;
-        }
-    };
+export class Subscriber {
+    initialized: boolean = false;
+    initialize: () => any;
+    constructor(initialize: (on: IEventEmitterOnFunction) => void) {
+        this.initialize = function (): void {
+            if (!this.initialized) {
+                initialize.call(this, on);
+                this.initialized = true;
+            }
+        };
+    }
 }

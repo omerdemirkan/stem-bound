@@ -27,17 +27,9 @@ export const fetch = Object.freeze({
     delete: axios.delete,
 });
 
-const rateLimit = (
+export const rateLimiter = (
     options?: expressRateLimit.Options | undefined
 ): expressRateLimit.RateLimit => expressRateLimit(options);
-
-export const rateLimiter = rateLimit;
-
-if (!config.mailgunApiKey) {
-    throw new Error(
-        `Mailgun api key in config returned ${config.mailgunApiKey}`
-    );
-}
 
 export const mailClient = createMailgun({
     apiKey: config.mailgunApiKey,

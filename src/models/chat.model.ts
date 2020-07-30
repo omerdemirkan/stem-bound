@@ -53,6 +53,10 @@ const messageSchema = new Schema(
             type: messageMetaSchema,
             required: true,
         },
+        isDeleted: {
+            type: Boolean,
+            default: false,
+        },
     },
     {
         // I want users to be able to alter messages by id.

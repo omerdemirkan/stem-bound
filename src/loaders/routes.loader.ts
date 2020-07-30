@@ -1,7 +1,7 @@
 import routes from "../api/api.routes";
 import { Application, Request, Response } from "express";
 
-export default function (app: Application) {
+export default function routesLoader(app: Application) {
     app.use("/api", routes);
 
     app.all("/*", function (req: Request, res: Response) {

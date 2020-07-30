@@ -103,6 +103,7 @@ export default class ChatService {
         updatedChat.messages.unshift({
             text,
             meta: { from: senderId, readBy: [] },
+            isDeleted: false,
         });
         await updatedChat.save();
         const message = updatedChat.messages[0];
@@ -142,19 +143,19 @@ export default class ChatService {
         return message;
     }
 
-    async deleteMessage({
+    async setMessageDeletion({
         chatId,
         messageId,
+        isDeleted,
     }: {
         chatId: Types.ObjectId;
         messageId: Types.ObjectId;
+        isDeleted: boolean;
     }): Promise<IMessage> {
-        const updatedChat = await this.Chats.findByIdAndUpdate(
-            chatId,
-            {
-                $pull: { messages: { _id: messageId } },
-            },
-            { new: false }
+        const updatedChat = await this.Chats.findOneAndUpdate(
+            { _id: chatId, "messages._id": messageId },
+            { $set: { "messages.$.isDeleted": isDeleted } },
+            { new: true }
         );
         const message = updatedChat.messages.find(
             (message: IMessage) =>
