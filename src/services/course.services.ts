@@ -1,6 +1,6 @@
 import { Model, Types } from "mongoose";
 import { EventEmitter } from "events";
-import { ECourseEvents, ICourse, IMeeting } from "../types";
+import { ECourseEvents, ICourse, IMeeting, IAnnouncement } from "../types";
 
 export default class CourseService {
     constructor(
@@ -12,21 +12,6 @@ export default class CourseService {
         const course: ICourse = await this.Courses.create(courseData);
         this.eventEmitter.emit(ECourseEvents.COURSE_CREATED, course);
         return course;
-    }
-
-    async createMeetings(
-        courseId: Types.ObjectId,
-        meetings: IMeeting[]
-    ): Promise<IMeeting[]> {
-        let course = await this.Courses.findById(courseId);
-        course.meetings = course.meetings.concat(meetings);
-        await course.save();
-        const meetingStartDates = meetings.map((meeting) =>
-            new Date(meeting.start).toString()
-        );
-        return course.meetings.filter((meeting: IMeeting) =>
-            meetingStartDates.includes(meeting.start.toString())
-        );
     }
 
     async findCourses(
@@ -73,6 +58,29 @@ export default class CourseService {
         });
     }
 
+    async deleteCourse(where: object): Promise<ICourse> {
+        return await this.Courses.findOneAndDelete(where);
+    }
+
+    async deleteCourseById(id: Types.ObjectId): Promise<ICourse> {
+        return await this.Courses.findByIdAndDelete(id);
+    }
+
+    async createMeetings(
+        courseId: Types.ObjectId,
+        meetings: IMeeting[]
+    ): Promise<IMeeting[]> {
+        let course = await this.Courses.findById(courseId);
+        course.meetings = course.meetings.concat(meetings);
+        await course.save();
+        const meetingStartDates = meetings.map((meeting) =>
+            new Date(meeting.start).toString()
+        );
+        return course.meetings.filter((meeting: IMeeting) =>
+            meetingStartDates.includes(meeting.start.toString())
+        );
+    }
+
     async updateMeeting({
         courseId,
         meetingId,
@@ -83,23 +91,12 @@ export default class CourseService {
         meetingData: Partial<IMeeting>;
     }): Promise<IMeeting> {
         const course = await this.findCourseById(courseId);
-        const meetingIndex = course.meetings
-            .map((meeting) => meeting._id.toHexString())
-            .indexOf(meetingId.toHexString());
-        course.meetings[meetingIndex] = {
-            ...course.meetings[meetingIndex],
-            ...meetingData,
-        };
+        const meetingIndex = course.meetings.findIndex(
+            (meeting) => meeting._id.toString() === meetingId.toString()
+        );
+        Object.assign(course.meetings[meetingIndex], meetingData);
         await course.save();
         return course.meetings[meetingIndex];
-    }
-
-    async deleteCourse(where: object): Promise<ICourse> {
-        return await this.Courses.findOneAndDelete(where);
-    }
-
-    async deleteCourseById(id: Types.ObjectId): Promise<ICourse> {
-        return await this.Courses.findByIdAndDelete(id);
     }
 
     async deleteMeeting({
@@ -117,7 +114,57 @@ export default class CourseService {
         );
         return course.meetings.find(
             (meeting: IMeeting) =>
-                meeting._id.toHexString() === meetingId.toHexString()
+                meeting._id.toString() === meetingId.toString()
+        );
+    }
+
+    async createAnnouncement(
+        announcementData,
+        { courseId }: { courseId: Types.ObjectId }
+    ): Promise<IAnnouncement> {
+        const course = await this.Courses.findById(courseId);
+        course.announcements.unshift(announcementData);
+        await course.save();
+        return course.announcements[0];
+    }
+
+    async updateAnnouncement(
+        announcementData,
+        {
+            courseId,
+            announcementId,
+        }: { courseId: Types.ObjectId; announcementId: Types.ObjectId }
+    ): Promise<IAnnouncement> {
+        const course = await this.Courses.findById(courseId);
+        const announcementIndex = course.announcements.findIndex(
+            (announcement) =>
+                announcement._id.toString() === announcementId.toString()
+        );
+        Object.assign(
+            course.announcements[announcementIndex],
+            announcementData
+        );
+        await course.save();
+        return course.announcements[announcementIndex];
+    }
+
+    async deleteAnnouncement({
+        courseId,
+        announcementId,
+    }: {
+        courseId: Types.ObjectId;
+        announcementId: Types.ObjectId;
+    }) {
+        const course = await this.Courses.findByIdAndUpdate(
+            courseId,
+            {
+                $pull: { announcements: { _id: announcementId.toString() } },
+            },
+            { new: false }
+        );
+        return course.announcements.find(
+            (announcement) =>
+                announcement._id.toString() === announcementId.toString()
         );
     }
 

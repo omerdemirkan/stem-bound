@@ -10,8 +10,15 @@ export default class ChatService {
 
     async createChat(
         chatData: IChat,
-        options?: { preventDuplicationByUserIds?: boolean }
+        options?: {
+            preventDuplicationByUserIds?: boolean;
+            preventEmptyMessages?: boolean;
+        }
     ): Promise<IChat> {
+        if (options?.preventEmptyMessages && !chatData.messages.length) {
+            throw new Error("Initial messages Required");
+        }
+
         if (options?.preventDuplicationByUserIds) {
             const chatUsers: any = chatData.meta.users;
             const duplicateChat: any = await this.findChatByUserIds(chatUsers, {
@@ -21,6 +28,9 @@ export default class ChatService {
                 throw new Error("This chat is a duplicate of another chat.");
             }
         }
+
+        console.log(chatData);
+
         return await this.Chats.create(chatData);
     }
 
@@ -47,6 +57,7 @@ export default class ChatService {
 
     async findChatsByIds({
         ids,
+        where,
         ...options
     }: {
         ids: Types.ObjectId[];
@@ -56,7 +67,7 @@ export default class ChatService {
         sort?: object;
     }): Promise<IChat[]> {
         return await this.findChats({
-            where: { _id: { $in: ids } },
+            where: { _id: { $in: ids }, ...where },
             ...options,
         });
     }
@@ -132,7 +143,7 @@ export default class ChatService {
         );
         const message = updatedChat.messages.find(
             (message: IMessage) =>
-                message._id.toHexString() === messageId.toHexString()
+                message._id.toString() === messageId.toString()
         );
 
         this.eventEmitter.emit(EChatEvents.CHAT_MESSAGE_UPDATED, {
@@ -159,7 +170,7 @@ export default class ChatService {
         );
         const message = updatedChat.messages.find(
             (message: IMessage) =>
-                message._id.toHexString() === messageId.toHexString()
+                message._id.toString() === messageId.toString()
         );
 
         this.eventEmitter.emit(EChatEvents.CHAT_MESSAGE_DELETED, {

@@ -54,16 +54,4 @@ export default function initializeChatSocket(
             })
         );
     }
-    eventEmitter.addListener(
-        EChatEvents.CHAT_MESSAGE_CREATED,
-        newChatMessageEventListener
-    );
-
-    socket.on("disconnect", () => {
-        console.log("user disconnected");
-        eventEmitter.removeListener(
-            EChatEvents.CHAT_MESSAGE_CREATED,
-            newChatMessageEventListener
-        );
-    });
 }

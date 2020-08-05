@@ -5,11 +5,9 @@ import initializeChatSocket from "./chat.socket";
 
 export function init(io: Server) {
     io.on("connection", function (socket: Socket) {
-        console.log("User connected");
-
-        socket.on("ping", function () {
-            console.log("Server pinged");
-            socket.emit("pong", "Boojie");
+        console.log("User has connected");
+        socket.on("disconnect", () => {
+            console.log("User has disconnected");
         });
         initializeChatSocket(socket, eventEmitter);
     });

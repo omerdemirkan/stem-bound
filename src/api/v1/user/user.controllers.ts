@@ -144,6 +144,7 @@ export async function getUserChats(req: Request, res: Response) {
             ? await chatService.findChatsByIds({
                   ids: chatIds,
                   sort: { updatedAt: -1 },
+                  // where: { messages: { $not: { $size: 0 } } },
               })
             : [];
 

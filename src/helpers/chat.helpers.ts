@@ -21,7 +21,7 @@ export function configureChatArrayResponseData(
     //         messageIndex = 0;
     //         while (!readMessageFound && messageIndex < chat.messages.length) {
     //             if (
-    //                 chat.messages[messageIndex].meta.from.toHexString() ===
+    //                 chat.messages[messageIndex].meta.from.toString() ===
     //                     userId.toString() ||
     //                 !chat.messages[messageIndex].meta.readBy.includes(userId)
     //             ) {
@@ -42,12 +42,18 @@ export function configureChatResponseData(
     chat: IChat,
     { query }: { query: any }
 ): Partial<IChat> {
-    const limit = Math.min(+query.limit, 20);
+    const limit = +query.limit ? Math.min(+query.limit, 20) : 20;
     const skip = +query.skip || 0;
+    const messages = chat.messages.slice(skip, limit + 1);
 
+    messages.forEach(function (message) {
+        if (message.isDeleted) {
+            message.text = "This message was deleted";
+        }
+    });
     return {
         ...chat.toObject(),
-        messages: chat.messages.slice(skip, limit + 1),
+        messages,
     };
 }
 
@@ -55,7 +61,7 @@ export function configureMessageArrayResponseData(
     messages: IMessage[],
     { query }: { query: any }
 ): Partial<IMessage[]> {
-    const limit = Math.min(+query.limit, 20);
+    const limit = +query.limit ? Math.min(+query.limit, 20) : 20;
     const skip = +query.skip || 0;
 
     return messages.slice(skip, limit + 1);

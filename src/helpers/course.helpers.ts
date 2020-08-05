@@ -19,13 +19,13 @@ export function configureCourseArrayResponseData(
             .filter((meeting) => meeting.end > now)
             .slice(0, 11),
         announcements: course.meta.instructors
-            .map((id) => id.toHexString())
+            .map((id) => id.toString())
             .includes(payload.user._id)
             ? []
             : course.announcements.filter(
                   (announcement) =>
                       !announcement.meta.readBy
-                          .map((id) => id.toHexString())
+                          .map((id) => id.toString())
                           .includes(payload.user._id)
               ),
     }));

@@ -31,7 +31,7 @@ export async function getMeeting(req: Request, res: Response) {
         }
         const meeting = course.meetings.find(
             (meeting: IMeeting) =>
-                meeting._id.toHexString() === meetingId.toHexString()
+                meeting._id.toString() === meetingId.toString()
         );
         if (!meeting) {
             errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);

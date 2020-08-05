@@ -86,7 +86,7 @@ export async function updateChatMessage(req: Request, res: Response) {
 
 export async function deleteChatMessage(req: Request, res: Response) {
     try {
-        const deletedMessage: IMessage = await chatService.setMessageDeletion({
+        const updatedMessage: IMessage = await chatService.setMessageDeletion({
             chatId: ObjectId(req.params.chatId),
             messageId: ObjectId(req.params.messageId),
             isDeleted: req.query.restore ? false : true,
@@ -94,7 +94,7 @@ export async function deleteChatMessage(req: Request, res: Response) {
 
         res.json({
             message: "Message successfully deleted",
-            data: deletedMessage,
+            data: updatedMessage,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
