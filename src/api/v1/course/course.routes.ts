@@ -3,6 +3,7 @@ import * as courseControllers from "./course.controllers";
 import { EUserRoles } from "../../../types";
 import { authMiddlewareService } from "../../../services";
 import meetingRouter from "./meeting/meeting.routes";
+import announcementsRouter from "./announcement/announcement.routes";
 
 const courseRouter = Router();
 
@@ -56,5 +57,6 @@ courseRouter.delete(
 );
 
 courseRouter.use("/:courseId/meetings", meetingRouter);
+courseRouter.use("/:courseId/announcements", announcementsRouter);
 
 export default courseRouter;

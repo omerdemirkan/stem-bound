@@ -29,8 +29,6 @@ export default class ChatService {
             }
         }
 
-        console.log(chatData);
-
         return await this.Chats.create(chatData);
     }
 
