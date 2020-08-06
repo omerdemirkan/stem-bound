@@ -141,10 +141,9 @@ export async function getUserChats(req: Request, res: Response) {
         }
         const chatIds = user.meta.chats;
         const chats: IChat[] = chatIds.length
-            ? await chatService.findChatsByIds({
-                  ids: chatIds,
+            ? await chatService.findChatsByIds(chatIds, {
                   sort: { updatedAt: -1 },
-                  // where: { messages: { $not: { $size: 0 } } },
+                  requestUserId: user._id,
               })
             : [];
 

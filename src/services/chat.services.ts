@@ -41,41 +41,64 @@ export default class ChatService {
         return query;
     }
 
-    async findChats(options: {
-        where: object;
-        limit?: number;
-        skip?: number;
-        sort?: object;
-    }): Promise<IChat[]> {
-        return await this.Chats.find(options.where)
+    async findChats(
+        where: any,
+        options: {
+            limit?: number;
+            skip?: number;
+            sort?: object;
+            requestUserId: Types.ObjectId;
+            overrideRequestUserIdValidation?: boolean;
+        }
+    ): Promise<IChat[]> {
+        if (!options.overrideRequestUserIdValidation) {
+            where["meta.users"] = options.requestUserId;
+        }
+        return await this.Chats.find(where)
             .sort(options.sort)
             .skip(options.skip || 0)
             .limit(Math.min(options.limit, 20));
     }
 
-    async findChatsByIds({
-        ids,
-        where,
-        ...options
-    }: {
-        ids: Types.ObjectId[];
-        where?: object;
-        limit?: number;
-        skip?: number;
-        sort?: object;
-    }): Promise<IChat[]> {
-        return await this.findChats({
-            where: { _id: { $in: ids }, ...where },
-            ...options,
+    async findChatsByIds(
+        ids: Types.ObjectId[],
+        {
+            where,
+            ...options
+        }: {
+            where?: object;
+            limit?: number;
+            skip?: number;
+            sort?: object;
+            requestUserId: Types.ObjectId;
+            overrideRequestUserIdValidation?: boolean;
+        }
+    ): Promise<IChat[]> {
+        return await this.findChats(
+            { _id: { $in: ids }, ...where },
+            {
+                ...options,
+            }
+        );
+    }
+
+    async findChat(
+        where: object,
+        { requestUserId }: { requestUserId: Types.ObjectId }
+    ): Promise<IChat> {
+        return await this.Chats.findOne({
+            ...where,
+            "meta.users": requestUserId,
         });
     }
 
-    async findChat(where: object): Promise<IChat> {
-        return await this.Chats.findOne(where);
-    }
-
-    async findChatById(id: Types.ObjectId): Promise<IChat> {
-        return await this.Chats.findById(id);
+    async findChatById(
+        id: Types.ObjectId,
+        { requestUserId }: { requestUserId: Types.ObjectId }
+    ): Promise<IChat> {
+        return await this.findChat(id, {
+            requestUserId: requestUserId,
+        });
     }
 
     async updateChat(where: object, chatData: Partial<IChat>): Promise<IChat> {
@@ -97,6 +120,41 @@ export default class ChatService {
 
     async deleteChatById(id: Types.ObjectId): Promise<IChat> {
         return await this.Chats.findByIdAndDelete(id);
+    }
+
+    async findMessages(
+        chatId: Types.ObjectId,
+        options: {
+            skip?: number;
+            limit?: number;
+            requestUserId: Types.ObjectId;
+        }
+    ): Promise<IMessage[]> {
+        const limit = +options?.limit ? Math.min(+options?.limit, 20) : 20;
+        const skip = +options?.skip || 0;
+
+        const chat = await this.findChatById(chatId, {
+            requestUserId: options.requestUserId,
+        });
+
+        if (!chat) {
+            throw new Error("Chat not found");
+        } else if (
+            !chat.meta.users.find(
+                (id) => id.toString() === options.requestUserId.toString()
+            )
+        ) {
+            throw new Error("Unauthorized request user id");
+        }
+
+        const messages = chat.messages.slice(skip, limit + 1);
+
+        messages.forEach(function (message) {
+            if (message.isDeleted) {
+                message.text = "This message was deleted";
+            }
+        });
+        return messages;
     }
 
     async createMessage({

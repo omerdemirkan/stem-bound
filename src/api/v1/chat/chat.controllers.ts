@@ -41,8 +41,11 @@ export async function createChat(req: Request, res: Response) {
 
 export async function getChat(req: Request, res: Response) {
     try {
+        const requestUserId = ObjectId((req as any).payload.user._id);
         const id = ObjectId(req.params.id);
-        const chat: IChat = await chatService.findChatById(id);
+        const chat: IChat = await chatService.findChatById(id, {
+            requestUserId,
+        });
         if (!chat) {
             errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
         } else if (!chat.meta.users.includes((req as any).payload.user._id)) {

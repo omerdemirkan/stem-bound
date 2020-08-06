@@ -61,10 +61,7 @@ export function configureMessageArrayResponseData(
     messages: IMessage[],
     { query }: { query: any }
 ): Partial<IMessage[]> {
-    const limit = +query.limit ? Math.min(+query.limit, 20) : 20;
-    const skip = +query.skip || 0;
-
-    return messages.slice(skip, limit + 1);
+    return messages;
 }
 
 export function configureMessageResponseData(

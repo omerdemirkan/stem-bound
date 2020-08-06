@@ -8,14 +8,14 @@ const { ObjectId } = Types;
 
 export async function getChatMessages(req: Request, res: Response) {
     try {
+        const requestUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
-        const chat: IChat = await chatService.findChatById(chatId);
-        if (!chat) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
-        }
+        const messages: IMessage[] = await chatService.findMessages(chatId, {
+            requestUserId,
+        });
         res.json({
             message: "Chat successfully fetched",
-            data: configureMessageArrayResponseData(chat.messages, {
+            data: configureMessageArrayResponseData(messages, {
                 query: req.query,
             }),
         });
@@ -26,11 +26,12 @@ export async function getChatMessages(req: Request, res: Response) {
 
 export async function createChatMessage(req: Request, res: Response) {
     try {
+        const senderId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
         const newMessage: IMessage = await chatService.createMessage({
             chatId,
+            senderId,
             text: req.body.text,
-            senderId: (req as any).payload.user._id,
         });
         res.json({
             message: "Chat message successfully created",
@@ -43,9 +44,12 @@ export async function createChatMessage(req: Request, res: Response) {
 
 export async function getChatMessage(req: Request, res: Response) {
     try {
+        const requestUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
         const messageId = ObjectId(req.params.messageId);
-        const chat: IChat = await chatService.findChatById(chatId);
+        const chat: IChat = await chatService.findChatById(chatId, {
+            requestUserId,
+        });
 
         if (!chat) {
             errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);

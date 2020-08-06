@@ -11,13 +11,22 @@ export default class BcryptService {
         return await this.bcrypt.compare(s, hash);
     }
 
-    async removePasswordAndInsertHash(obj: any): Promise<any> {
-        if (!obj.password)
+    async replaceKeyWithHash(
+        obj: any,
+        { key, newKey }: { key: string; newKey?: string }
+    ) {
+        if (!obj[key]) {
             throw new Error(
-                "Password not found in object passed into removePasswordAndInsertHash function in bcrypt service"
+                "Error in bcrypt service replaceKeyWithHash function, no key found."
             );
-        obj.hash = await this.hash(obj.password);
-        delete obj.password;
+        }
+
+        const hash = await this.hash(obj[key]);
+        obj[newKey || key] = hash;
+
+        if (newKey) {
+            delete obj[key];
+        }
         return obj;
     }
 }

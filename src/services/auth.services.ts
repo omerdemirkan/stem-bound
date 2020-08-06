@@ -26,14 +26,18 @@ export default class AuthService {
         private eventEmitter: EventEmitter
     ) {}
 
-    async userSignUp({
-        role,
+    async userSignUp(
         userData,
-    }: {
-        role: EUserRoles;
-        userData: IUser;
-    }): Promise<{ user: any; accessToken: string }> {
-        await this.bcryptService.removePasswordAndInsertHash(userData);
+        {
+            role,
+        }: {
+            role: EUserRoles;
+        }
+    ): Promise<{ user: any; accessToken: string }> {
+        await this.bcryptService.replaceKeyWithHash(userData, {
+            key: "password",
+            newKey: "hash",
+        });
 
         const newUser: any = await this.userService.createUser({
             role,
