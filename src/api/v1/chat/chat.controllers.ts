@@ -25,7 +25,10 @@ export async function createChat(req: Request, res: Response) {
                 }),
             });
         } else if (duplicateChat && !req.query.duplicate_fallback) {
-            errorService.throwError(EErrorTypes.CONFLICT);
+            errorService.throwError(
+                EErrorTypes.CONFLICT,
+                "Invalid chat: Duplication"
+            );
         }
 
         const newChat: IChat = await chatService.createChat(chatData);
@@ -47,7 +50,10 @@ export async function getChat(req: Request, res: Response) {
             requestUserId,
         });
         if (!chat) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Chat not found"
+            );
         } else if (!chat.meta.users.includes((req as any).payload.user._id)) {
             res.status(403);
         }

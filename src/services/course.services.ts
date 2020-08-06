@@ -67,29 +67,32 @@ export default class CourseService {
     }
 
     async createMeetings(
-        courseId: Types.ObjectId,
-        meetings: IMeeting[]
+        meetings: IMeeting[],
+        { courseId }: { courseId: Types.ObjectId }
     ): Promise<IMeeting[]> {
         let course = await this.Courses.findById(courseId);
         course.meetings = course.meetings.concat(meetings);
         await course.save();
-        const meetingStartDates = meetings.map((meeting) =>
-            new Date(meeting.start).toString()
-        );
-        return course.meetings.filter((meeting: IMeeting) =>
-            meetingStartDates.includes(meeting.start.toString())
+
+        const meetingDatesObj = {};
+        meetings.forEach(function (meeting) {
+            meetingDatesObj[new Date(meeting.start).toString()] = true;
+        });
+        return course.meetings.filter(
+            (meeting: IMeeting) => meetingDatesObj[meeting.start.toString()]
         );
     }
 
-    async updateMeeting({
-        courseId,
-        meetingId,
-        meetingData,
-    }: {
-        courseId: Types.ObjectId;
-        meetingId: Types.ObjectId;
-        meetingData: Partial<IMeeting>;
-    }): Promise<IMeeting> {
+    async updateMeeting(
+        meetingData: Partial<IMeeting>,
+        {
+            courseId,
+            meetingId,
+        }: {
+            courseId: Types.ObjectId;
+            meetingId: Types.ObjectId;
+        }
+    ): Promise<IMeeting> {
         const course = await this.findCourseById(courseId);
         const meetingIndex = course.meetings.findIndex(
             (meeting) => meeting._id.toString() === meetingId.toString()

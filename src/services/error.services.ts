@@ -16,9 +16,9 @@ export default class ErrorService {
         };
     }
 
-    throwError(errorType: EErrorTypes) {
+    throwError(errorType: EErrorTypes, message: string) {
         const errorData = errors[errorType];
-        const error = new Error(errorData.message);
+        const error = new Error(message || errorData.message);
         (error as any).status = errorData.status;
     }
 }

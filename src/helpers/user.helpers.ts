@@ -50,7 +50,7 @@ export function isValidUserRole(s: any) {
 
 export function toUserRole(s: any): EUserRoles {
     if (typeof s !== "string" || !isValidUserRole(s.toUpperCase()))
-        errorService.throwError(EErrorTypes.BAD_REQUEST);
+        errorService.throwError(EErrorTypes.BAD_REQUEST, "Invalid user role");
 
     return s.toUpperCase() as EUserRoles;
 }

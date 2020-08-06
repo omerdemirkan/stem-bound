@@ -50,7 +50,10 @@ export async function getSchool(req: Request, res: Response) {
         const school: ISchool = await schoolService.findSchoolById(id);
 
         if (!school) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "School not found"
+            );
         }
 
         res.json({
@@ -82,7 +85,10 @@ export async function getSchoolStudents(req: Request, res: Response) {
             ObjectId(req.params.id)
         );
         if (!school) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "School not found"
+            );
         }
         const studentIds = school.meta.students;
         const students = studentIds.length
@@ -104,7 +110,10 @@ export async function getSchoolOfficials(req: Request, res: Response) {
             ObjectId(req.params.id)
         );
         if (!school) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "School not found"
+            );
         }
         const schoolOfficialIds = school.meta.schoolOfficials;
         const schoolOfficials = schoolOfficialIds.length
@@ -126,7 +135,10 @@ export async function getSchoolCourses(req: Request, res: Response) {
             ObjectId(req.params.id)
         );
         if (!school) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "School not found"
+            );
         }
         const courseIds = school.meta.courses;
         const courses: ICourse[] = courseIds.length

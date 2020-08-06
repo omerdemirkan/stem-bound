@@ -9,7 +9,10 @@ export async function getLocations(req: Request, res: Response) {
         const locations = await locationService.findLocationsByText(text);
 
         if (!locations) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Locations not found"
+            );
         }
 
         res.json({

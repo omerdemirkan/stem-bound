@@ -11,13 +11,14 @@ export default class UserService {
         private locationService: LocationService
     ) {}
 
-    async createUser({
-        role,
+    async createUser(
         userData,
-    }: {
-        role: EUserRoles;
-        userData: IUser;
-    }): Promise<IUser> {
+        {
+            role,
+        }: {
+            role: EUserRoles;
+        }
+    ): Promise<IUser> {
         if ((userData as any).password)
             throw new Error("We don't store passwords around here kiddo");
 

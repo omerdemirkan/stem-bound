@@ -20,7 +20,6 @@ export default class JwtService {
         token: string,
         options?: VerifyOptions | undefined
     ): string | object {
-        console.log(config.accessTokenSecret);
         return this.jwt.verify(
             token,
             config.accessTokenSecret as string,

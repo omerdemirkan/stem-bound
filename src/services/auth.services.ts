@@ -1,17 +1,5 @@
-import {
-    EUserRoles,
-    ITokenPayload,
-    EUserEvents,
-    IUser,
-    EErrorTypes,
-} from "../types";
-import {
-    JwtService,
-    BcryptService,
-    UserService,
-    MetadataService,
-    errorService,
-} from ".";
+import { EUserRoles, ITokenPayload, EUserEvents } from "../types";
+import { JwtService, BcryptService, UserService, MetadataService } from ".";
 import { Types } from "mongoose";
 import { EventEmitter } from "events";
 
@@ -39,9 +27,8 @@ export default class AuthService {
             newKey: "hash",
         });
 
-        const newUser: any = await this.userService.createUser({
+        const newUser: any = await this.userService.createUser(userData, {
             role,
-            userData,
         });
 
         await this.metadataService.handleNewUserMetadataUpdate(newUser);
@@ -72,7 +59,7 @@ export default class AuthService {
         const user: any = await this.userService.findUserByEmail(email);
 
         if (!user) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            return null;
         }
 
         if (await this.bcryptService.compare(password, user.hash)) {

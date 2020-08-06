@@ -67,7 +67,10 @@ export async function getCourses(req: Request, res: Response) {
         const courses: ICourse[] = await courseService.findCourses({});
 
         if (!courses) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Courses not found"
+            );
         }
         res.json({
             message: "Courses successfully fetched",
@@ -87,7 +90,10 @@ export async function getCourse(req: Request, res: Response) {
         const course: ICourse = await courseService.findCourseById(id);
 
         if (!course) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
         }
         res.json({
             message: "Course successfully fetched",
@@ -145,7 +151,10 @@ export async function getCourseInstructors(req: Request, res: Response) {
         );
 
         if (!course) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
         }
         const instructorIds = course.meta.instructors;
         const instructors = await userService.findUsersByIds(instructorIds);
@@ -166,7 +175,10 @@ export async function getCourseStudents(req: Request, res: Response) {
         );
 
         if (!course) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
         }
         const studentIds = course.meta.students;
         const students: IUser[] = await userService.findUsersByIds(studentIds);
@@ -186,7 +198,10 @@ export async function getCourseSchool(req: Request, res: Response) {
         );
 
         if (!course) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
         }
         const schoolId = course.meta.school;
         const school = await schoolService.findSchoolById(schoolId);

@@ -1,6 +1,6 @@
 import { SchoolService, CourseService, UserService, ChatService } from ".";
 import { Types } from "mongoose";
-import { EUserRoles } from "../types";
+import { EUserRoles, IUser } from "../types";
 
 export default class MetadataService {
     constructor(
@@ -27,11 +27,11 @@ export default class MetadataService {
         }
     }
 
-    async handleDeletedUserMetadataUpdate(deletedUser: any) {
-        const { courses: courseIds, school: schoolId } = deletedUser.meta as {
-            courses: Types.ObjectId[];
-            school: Types.ObjectId;
-        };
+    async handleDeletedUserMetadataUpdate(deletedUser: IUser) {
+        const {
+            courses: courseIds,
+            school: schoolId,
+        } = deletedUser.meta as any;
 
         switch (deletedUser.role) {
             case EUserRoles.SCHOOL_OFFICIAL:

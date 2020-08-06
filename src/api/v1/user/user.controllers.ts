@@ -42,7 +42,10 @@ export async function getUser(req: Request, res: Response) {
         const id = ObjectId(req.params.id);
         const user: IUser = await userService.findUserById(id);
         if (!user) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "User not found"
+            );
         }
 
         res.json({
@@ -92,7 +95,10 @@ export async function getUserCourses(req: Request, res: Response) {
             ObjectId(req.params.id)
         );
         if (!user) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "User not found"
+            );
         }
         const courseIds = (user as IStudent | IInstructor).meta.courses;
         const courses: ICourse[] = courseIds.length
@@ -117,7 +123,10 @@ export async function getUserSchool(req: Request, res: Response) {
             ObjectId(req.params.id)
         );
         if (!user) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "User not found"
+            );
         }
         const schoolId = (user as IStudent | ISchoolOfficial).meta.school;
         const school = await schoolService.findSchoolById(schoolId);
@@ -137,7 +146,10 @@ export async function getUserChats(req: Request, res: Response) {
             ObjectId(req.params.id)
         );
         if (!user) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "User not found"
+            );
         }
         const chatIds = user.meta.chats;
         const chats: IChat[] = chatIds.length

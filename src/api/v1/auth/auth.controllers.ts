@@ -17,7 +17,10 @@ export async function me(req: Request, res: Response) {
         );
 
         if (!userData) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "User data not found"
+            );
         }
 
         res.json({

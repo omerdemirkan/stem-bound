@@ -10,7 +10,10 @@ export async function getMeetings(req: Request, res: Response) {
         const courseId = ObjectId(req.params.courseId);
         const course: ICourse = await courseService.findCourseById(courseId);
         if (!course) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
         }
         res.json({
             message: "Meetings successfully fetched",
@@ -27,14 +30,20 @@ export async function getMeeting(req: Request, res: Response) {
         const meetingId = ObjectId(req.params.meetingId);
         const course: ICourse = await courseService.findCourseById(courseId);
         if (!course) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
         }
         const meeting = course.meetings.find(
             (meeting: IMeeting) =>
                 meeting._id.toString() === meetingId.toString()
         );
         if (!meeting) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
         }
         res.json({
             message: "Meeting successfully found",
@@ -49,8 +58,8 @@ export async function createMeeting(req: Request, res: Response) {
     try {
         const courseId = ObjectId(req.params.courseId);
         const newMeetings: IMeeting[] = await courseService.createMeetings(
-            courseId,
-            req.body.meetings || [req.body]
+            req.body.meetings || [req.body],
+            { courseId }
         );
 
         res.json({
@@ -66,11 +75,13 @@ export async function updateMeeting(req: Request, res: Response) {
     try {
         const courseId = ObjectId(req.params.courseId);
         const meetingId = ObjectId(req.params.meetingId);
-        const updatedMeeting: IMeeting = await courseService.updateMeeting({
-            courseId,
-            meetingId,
-            meetingData: req.body,
-        });
+        const updatedMeeting: IMeeting = await courseService.updateMeeting(
+            req.body,
+            {
+                courseId,
+                meetingId,
+            }
+        );
         res.json({
             message: "Meeting successfully updated",
             data: updatedMeeting,

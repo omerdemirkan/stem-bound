@@ -52,7 +52,10 @@ export async function getChatMessage(req: Request, res: Response) {
         });
 
         if (!chat) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Chat not found"
+            );
         }
 
         const message = chat.messages.find(
@@ -60,7 +63,10 @@ export async function getChatMessage(req: Request, res: Response) {
         );
 
         if (!message) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Message not found"
+            );
         }
 
         res.json({

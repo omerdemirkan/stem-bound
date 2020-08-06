@@ -27,7 +27,10 @@ export async function getAnnouncements(req: Request, res: Response) {
         const courseId = ObjectId(req.params.courseId);
         const course = await courseService.findCourseById(courseId);
         if (!course) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
         }
         res.json({
             data: course.announcements,
@@ -44,14 +47,20 @@ export async function getAnnouncement(req: Request, res: Response) {
         const announcementId = ObjectId(req.params.announcementId);
         const course = await courseService.findCourseById(courseId);
         if (!course) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
         }
         const announcement = course.announcements.find(
             (announcement) =>
                 announcement._id.toString() === announcementId.toString()
         );
         if (!announcement) {
-            errorService.throwError(EErrorTypes.DOCUMENT_NOT_FOUND);
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Announcement not found"
+            );
         }
         res.json({
             data: announcement,
