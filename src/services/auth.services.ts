@@ -2,16 +2,19 @@ import { EUserRoles, ITokenPayload, EUserEvents } from "../types";
 import { JwtService, BcryptService, UserService, MetadataService } from ".";
 import { Types } from "mongoose";
 import { EventEmitter } from "events";
+import { emitter } from "../decorators";
 
 const { ObjectId } = Types;
 
 export default class AuthService {
+    @emitter()
+    private eventEmitter: EventEmitter;
+
     constructor(
         private jwtService: JwtService,
         private bcryptService: BcryptService,
         private userService: UserService,
-        private metadataService: MetadataService,
-        private eventEmitter: EventEmitter
+        private metadataService: MetadataService
     ) {}
 
     async userSignUp(

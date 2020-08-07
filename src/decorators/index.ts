@@ -1,2 +1,3 @@
 export * from "./model.decorators";
-export * from "./dependency.injectors";
+export * from "./dependency.decorators";
+export * from "./event.decorators";

@@ -7,13 +7,14 @@ import {
     IAnnouncement,
     EModels,
 } from "../types";
-import { model } from "../decorators";
+import { model, emitter } from "../decorators";
 
 export default class CourseService {
     @model(EModels.COURSE)
     private Course: Model<ICourse>;
 
-    constructor(private eventEmitter: EventEmitter) {}
+    @emitter()
+    private eventEmitter: EventEmitter;
 
     async createCourse(courseData: ICourse): Promise<ICourse> {
         const course: ICourse = await this.Course.create(courseData);
