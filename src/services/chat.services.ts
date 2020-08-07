@@ -1,12 +1,14 @@
 import { Model, Types } from "mongoose";
-import { IChat, IMessage, EChatEvents } from "../types";
+import { IChat, IMessage, EChatEvents, EModels } from "../types";
 import { EventEmitter } from "events";
+import { model } from "../decorators";
+import { Chat } from "../models";
 
 export default class ChatService {
-    constructor(
-        private Chats: Model<IChat>,
-        private eventEmitter: EventEmitter
-    ) {}
+    @model(EModels.CHAT)
+    private Chats: Model<IChat>;
+
+    constructor(private eventEmitter: EventEmitter) {}
 
     async createChat(
         chatData: IChat,

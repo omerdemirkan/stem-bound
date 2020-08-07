@@ -1,9 +1,9 @@
-export { default as Instructors } from "./instructor.model";
-export { default as Schools } from "./school.model";
-export { default as Courses } from "./course.model";
-export { default as Students } from "./student.model";
-export { default as SchoolOfficials } from "./school-official.model";
-export { default as Users } from "./user.model";
-export { default as Chats } from "./chat.model";
+export { default as Instructor } from "./instructor.model";
+export { default as School } from "./school.model";
+export { default as Course } from "./course.model";
+export { default as Student } from "./student.model";
+export { default as SchoolOfficial } from "./school-official.model";
+export { default as User } from "./user.model";
+export { default as Chat } from "./chat.model";
 export { default as MailingListSubscriber } from "./mailing-list-subscriber.model";
-export { default as Locations } from "./location.model";
+export { default as Location } from "./location.model";

@@ -8,3 +8,4 @@ export * from "./location.types";
 export * from "./chat.types";
 export * from "./error.types";
 export * from "./socket.types";
+export * from "./model.types";

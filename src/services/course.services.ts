@@ -66,6 +66,38 @@ export default class CourseService {
         return await this.Courses.findByIdAndDelete(id);
     }
 
+    async findMeetingsByCourseId(
+        courseId: Types.ObjectId,
+        {
+            skip,
+            limit,
+        }: {
+            skip?: number;
+            limit?: number;
+        } = {}
+    ) {
+        let { meetings } = await this.findCourseById(courseId);
+        limit = +limit ? Math.min(+limit, 20) : 20;
+        skip = +skip || 0;
+        meetings = meetings.slice(skip, limit + 1);
+        return meetings;
+    }
+
+    async findMeetingById({
+        courseId,
+        meetingId,
+    }: {
+        courseId: Types.ObjectId;
+        meetingId: Types.ObjectId;
+    }) {
+        const { meetings } = await this.findCourseById(courseId);
+        const meeting = meetings.find(
+            (meeting: IMeeting) =>
+                meeting._id.toString() === meetingId.toString()
+        );
+        return meeting;
+    }
+
     async createMeetings(
         meetings: IMeeting[],
         { courseId }: { courseId: Types.ObjectId }
@@ -119,6 +151,38 @@ export default class CourseService {
             (meeting: IMeeting) =>
                 meeting._id.toString() === meetingId.toString()
         );
+    }
+
+    async findAnnouncementsByCourseId(
+        courseId: Types.ObjectId,
+        {
+            skip,
+            limit,
+        }: {
+            skip?: number;
+            limit?: number;
+        } = {}
+    ) {
+        let { announcements } = await this.findCourseById(courseId);
+        limit = +limit ? Math.min(+limit, 20) : 20;
+        skip = +skip || 0;
+        announcements = announcements.slice(skip, limit + 1);
+        return announcements;
+    }
+
+    async findAnnouncementById({
+        courseId,
+        announcementId,
+    }: {
+        courseId: Types.ObjectId;
+        announcementId: Types.ObjectId;
+    }) {
+        const { announcements } = await this.findCourseById(courseId);
+        const announcement = announcements.find(
+            (announcement) =>
+                announcement._id.toString() === announcementId.toString()
+        );
+        return announcement;
     }
 
     async createAnnouncement(

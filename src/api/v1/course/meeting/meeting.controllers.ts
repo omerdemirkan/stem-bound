@@ -7,17 +7,15 @@ const { ObjectId } = Types;
 
 export async function getMeetings(req: Request, res: Response) {
     try {
+        const { limit, skip } = req.query;
         const courseId = ObjectId(req.params.courseId);
-        const course: ICourse = await courseService.findCourseById(courseId);
-        if (!course) {
-            errorService.throwError(
-                EErrorTypes.DOCUMENT_NOT_FOUND,
-                "Course not found"
-            );
-        }
+        const meetings: IMeeting[] = await courseService.findMeetingsByCourseId(
+            courseId,
+            { limit, skip } as any
+        );
         res.json({
             message: "Meetings successfully fetched",
-            data: course.meetings,
+            data: meetings,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -28,23 +26,10 @@ export async function getMeeting(req: Request, res: Response) {
     try {
         const courseId = ObjectId(req.params.courseId);
         const meetingId = ObjectId(req.params.meetingId);
-        const course: ICourse = await courseService.findCourseById(courseId);
-        if (!course) {
-            errorService.throwError(
-                EErrorTypes.DOCUMENT_NOT_FOUND,
-                "Course not found"
-            );
-        }
-        const meeting = course.meetings.find(
-            (meeting: IMeeting) =>
-                meeting._id.toString() === meetingId.toString()
-        );
-        if (!meeting) {
-            errorService.throwError(
-                EErrorTypes.DOCUMENT_NOT_FOUND,
-                "Course not found"
-            );
-        }
+        const meeting = await courseService.findMeetingById({
+            courseId,
+            meetingId,
+        });
         res.json({
             message: "Meeting successfully found",
             data: meeting,

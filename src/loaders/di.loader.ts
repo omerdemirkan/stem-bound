@@ -7,9 +7,9 @@ import { Model } from "mongoose";
 
 // Moved out of models.helpers.ts to avoid circular dependency
 const userModels = {
-    [EUserRoles.STUDENT]: models.Students,
-    [EUserRoles.INSTRUCTOR]: models.Instructors,
-    [EUserRoles.SCHOOL_OFFICIAL]: models.SchoolOfficials,
+    [EUserRoles.STUDENT]: models.Student,
+    [EUserRoles.INSTRUCTOR]: models.Instructor,
+    [EUserRoles.SCHOOL_OFFICIAL]: models.SchoolOfficial,
 };
 
 // Dependency Injection Loader
@@ -25,15 +25,15 @@ export const authMiddlewareService = new services.AuthMiddlewareService(
 );
 
 export const courseService = new services.CourseService(
-    models.Courses,
+    models.Course,
     eventEmitter
 );
 
-export const locationService = new services.LocationService(models.Locations);
+export const locationService = new services.LocationService(models.Location);
 
-export const schoolService = new services.SchoolService(models.Schools);
+export const schoolService = new services.SchoolService(models.School);
 
-export const chatService = new services.ChatService(models.Chats, eventEmitter);
+export const chatService = new services.ChatService(eventEmitter);
 
 export function getUserModelByRole(role: EUserRoles): Model<IUser> {
     return (userModels as any)[role];
@@ -41,7 +41,7 @@ export function getUserModelByRole(role: EUserRoles): Model<IUser> {
 
 export const userService = new services.UserService(
     getUserModelByRole,
-    models.Users,
+    models.User,
     locationService
 );
 

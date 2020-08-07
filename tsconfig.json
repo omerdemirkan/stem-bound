@@ -12,7 +12,8 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "rootDir": "src",
-    "outDir": "./build"
+    "outDir": "./build",
+    "experimentalDecorators": true
   },
   "include": ["./*", "src/**/*.ts"],
   "exclude": ["node_modules/**"]

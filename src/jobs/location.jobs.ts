@@ -1,7 +1,7 @@
 import { fetch, logger } from "../config";
 import { ILocationDataOriginal } from "../types";
 import { mapAndFilterLocationData } from "../helpers";
-import { Locations } from "../models";
+import { Location } from "../models";
 
 const defaultUrl =
     "https://public.opendatasoft.com/explore/dataset/us-zip-code-latitude-and-longitude/download/?format=json&timezone=America/Los_Angeles&lang=en";
@@ -14,7 +14,7 @@ export async function refreshLocationDatabase(options?: { url?: string }) {
     const locations = mapAndFilterLocationData(fetchedLocationData);
 
     const numLocations = locations.length;
-    const numDBLocations = await Locations.countDocuments();
+    const numDBLocations = await Location.countDocuments();
 
     if (numLocations === numDBLocations) {
         throw new Error(
@@ -22,8 +22,8 @@ export async function refreshLocationDatabase(options?: { url?: string }) {
         );
     }
 
-    const deletionData = await Locations.deleteMany({});
-    const insertionData = await Locations.insertMany(locations);
+    const deletionData = await Location.deleteMany({});
+    const insertionData = await Location.insertMany(locations);
     logger.info("Location db refreshed");
 
     return {

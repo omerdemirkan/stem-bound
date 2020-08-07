@@ -24,16 +24,17 @@ export async function createAnnouncement(req: Request, res: Response) {
 
 export async function getAnnouncements(req: Request, res: Response) {
     try {
+        const { skip, limit } = req.query;
         const courseId = ObjectId(req.params.courseId);
-        const course = await courseService.findCourseById(courseId);
-        if (!course) {
-            errorService.throwError(
-                EErrorTypes.DOCUMENT_NOT_FOUND,
-                "Course not found"
-            );
-        }
+        const announcements = await courseService.findAnnouncementsByCourseId(
+            courseId,
+            {
+                skip,
+                limit,
+            } as any
+        );
         res.json({
-            data: course.announcements,
+            data: announcements,
             message: "Course announcement successfully fetched",
         });
     } catch (e) {
