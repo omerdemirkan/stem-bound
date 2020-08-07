@@ -1,15 +1,40 @@
-import { EUserRoles, IUser, IUserQuery } from "../types";
+import {
+    EUserRoles,
+    IUser,
+    IUserQuery,
+    EModels,
+    IInstructor,
+    IStudent,
+    ISchoolOfficial,
+} from "../types";
 import { Model, Types } from "mongoose";
 import { LocationService } from ".";
+import { model } from "../decorators";
 
 const { ObjectId } = Types;
 
 export default class UserService {
-    constructor(
-        private getUserModelByRole: (role: EUserRoles) => Model<IUser>,
-        private Users: Model<IUser>,
-        private locationService: LocationService
-    ) {}
+    @model(EModels.USER)
+    private User: Model<IUser>;
+
+    @model(EModels.INSTRUCTOR)
+    private Instructor: Model<IInstructor>;
+    @model(EModels.SCHOOL_OFFICIAL)
+    private SchoolOfficial: Model<ISchoolOfficial>;
+    @model(EModels.STUDENT)
+    private Student: Model<IStudent>;
+
+    private userModelsByRole = {
+        [EUserRoles.STUDENT]: this.Student,
+        [EUserRoles.INSTRUCTOR]: this.Instructor,
+        [EUserRoles.SCHOOL_OFFICIAL]: this.SchoolOfficial,
+    };
+
+    private getUserModelByRole(role: EUserRoles): Model<IUser> {
+        return this.userModelsByRole[role];
+    }
+
+    constructor(private locationService: LocationService) {}
 
     async createUser(
         userData,
@@ -58,7 +83,7 @@ export default class UserService {
             limit ? { $limit: limit > 50 ? 50 : limit } : { $limit: 20 }
         );
 
-        let model = role ? this.getUserModelByRole(role) : this.Users;
+        let model = role ? this.getUserModelByRole(role) : this.User;
 
         return await model.aggregate(aggregateOptions);
     }
@@ -70,7 +95,7 @@ export default class UserService {
 
         const model = options.role
             ? this.getUserModelByRole(options.role)
-            : this.Users;
+            : this.User;
         let where: any = {};
 
         if (options.text) {
@@ -84,15 +109,15 @@ export default class UserService {
     }
 
     async findUsersByIds(ids: Types.ObjectId[]): Promise<IUser[]> {
-        return await this.Users.find({ _id: { $in: ids } });
+        return await this.User.find({ _id: { $in: ids } });
     }
 
     async findUser(where: object): Promise<IUser> {
-        return await this.Users.findOne(where);
+        return await this.User.findOne(where);
     }
 
     async findUserById(id: Types.ObjectId): Promise<IUser> {
-        return await this.Users.findById(id);
+        return await this.User.findById(id);
     }
 
     async findUserByEmail(email: string): Promise<IUser> {
@@ -106,7 +131,7 @@ export default class UserService {
         where: object;
         userData: object;
     }): Promise<IUser> {
-        return await this.Users.findOneAndUpdate(where, userData, {
+        return await this.User.findOneAndUpdate(where, userData, {
             new: true,
         });
     }
@@ -118,18 +143,18 @@ export default class UserService {
         id: Types.ObjectId;
         userData: object;
     }): Promise<IUser> {
-        return await this.Users.findByIdAndUpdate(id, userData, { new: true });
+        return await this.User.findByIdAndUpdate(id, userData, { new: true });
     }
 
     async deleteUser(where: {
         role: EUserRoles;
         where: object;
     }): Promise<IUser> {
-        return await this.Users.findOneAndDelete(where);
+        return await this.User.findOneAndDelete(where);
     }
 
     async deleteUserById(id: Types.ObjectId): Promise<IUser> {
-        return await this.Users.findByIdAndDelete(id);
+        return await this.User.findByIdAndDelete(id);
     }
 
     async addCourseMetadata({

@@ -24,14 +24,11 @@ export const authMiddlewareService = new services.AuthMiddlewareService(
     jwtService
 );
 
-export const courseService = new services.CourseService(
-    models.Course,
-    eventEmitter
-);
+export const courseService = new services.CourseService(eventEmitter);
 
-export const locationService = new services.LocationService(models.Location);
+export const locationService = new services.LocationService();
 
-export const schoolService = new services.SchoolService(models.School);
+export const schoolService = new services.SchoolService();
 
 export const chatService = new services.ChatService(eventEmitter);
 
@@ -39,11 +36,7 @@ export function getUserModelByRole(role: EUserRoles): Model<IUser> {
     return (userModels as any)[role];
 }
 
-export const userService = new services.UserService(
-    getUserModelByRole,
-    models.User,
-    locationService
-);
+export const userService = new services.UserService(locationService);
 
 export const metadataService = new services.MetadataService(
     schoolService,
@@ -60,6 +53,4 @@ export const authService = new services.AuthService(
     eventEmitter
 );
 
-export const mailingListService = new services.MailingListService(
-    models.MailingListSubscriber
-);
+export const mailingListService = new services.MailingListService();

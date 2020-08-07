@@ -2,11 +2,10 @@ import { Model, Types } from "mongoose";
 import { IChat, IMessage, EChatEvents, EModels } from "../types";
 import { EventEmitter } from "events";
 import { model } from "../decorators";
-import { Chat } from "../models";
 
 export default class ChatService {
     @model(EModels.CHAT)
-    private Chats: Model<IChat>;
+    private Chat: Model<IChat>;
 
     constructor(private eventEmitter: EventEmitter) {}
 
@@ -31,11 +30,11 @@ export default class ChatService {
             }
         }
 
-        return await this.Chats.create(chatData);
+        return await this.Chat.create(chatData);
     }
 
     findChatByUserIds(userIds, options?: { exact: boolean }) {
-        let query = this.Chats.findOne().all("meta.users", userIds);
+        let query = this.Chat.findOne().all("meta.users", userIds);
 
         if (options?.exact) {
             query = query.size("meta.users", userIds.length);
@@ -56,7 +55,7 @@ export default class ChatService {
         if (!options.overrideRequestUserIdValidation) {
             where["meta.users"] = options.requestUserId;
         }
-        return await this.Chats.find(where)
+        return await this.Chat.find(where)
             .sort(options.sort)
             .skip(options.skip || 0)
             .limit(Math.min(options.limit, 20));
@@ -88,7 +87,7 @@ export default class ChatService {
         where: object,
         { requestUserId }: { requestUserId: Types.ObjectId }
     ): Promise<IChat> {
-        return await this.Chats.findOne({
+        return await this.Chat.findOne({
             ...where,
             "meta.users": requestUserId,
         });
@@ -104,7 +103,7 @@ export default class ChatService {
     }
 
     async updateChat(where: object, chatData: Partial<IChat>): Promise<IChat> {
-        return await this.Chats.findOneAndUpdate(where, chatData, {
+        return await this.Chat.findOneAndUpdate(where, chatData, {
             new: true,
         });
     }
@@ -113,15 +112,15 @@ export default class ChatService {
         id: Types.ObjectId,
         chatData: Partial<IChat>
     ): Promise<IChat> {
-        return await this.Chats.findByIdAndUpdate(id, chatData, { new: true });
+        return await this.Chat.findByIdAndUpdate(id, chatData, { new: true });
     }
 
     async deleteChat(where: object): Promise<IChat> {
-        return await this.Chats.findOneAndDelete(where);
+        return await this.Chat.findOneAndDelete(where);
     }
 
     async deleteChatById(id: Types.ObjectId): Promise<IChat> {
-        return await this.Chats.findByIdAndDelete(id);
+        return await this.Chat.findByIdAndDelete(id);
     }
 
     async findMessages(
@@ -168,7 +167,7 @@ export default class ChatService {
         text: string;
         senderId: Types.ObjectId;
     }): Promise<IMessage> {
-        let updatedChat = await this.Chats.findById(chatId);
+        let updatedChat = await this.Chat.findById(chatId);
         updatedChat.messages.unshift({
             text,
             meta: { from: senderId, readBy: [] },
@@ -194,7 +193,7 @@ export default class ChatService {
         messageId: Types.ObjectId;
         text;
     }): Promise<IMessage> {
-        const updatedChat = await this.Chats.findOneAndUpdate(
+        const updatedChat = await this.Chat.findOneAndUpdate(
             { _id: chatId, "messages._id": messageId },
             { $set: { "messages.$.text": text } },
             { new: true }
@@ -221,7 +220,7 @@ export default class ChatService {
         messageId: Types.ObjectId;
         isDeleted: boolean;
     }): Promise<IMessage> {
-        const updatedChat = await this.Chats.findOneAndUpdate(
+        const updatedChat = await this.Chat.findOneAndUpdate(
             { _id: chatId, "messages._id": messageId },
             { $set: { "messages.$.isDeleted": isDeleted } },
             { new: true }

@@ -1,31 +1,34 @@
 import { Model, Document, Types } from "mongoose";
 import { mailClient } from "../config";
+import { model } from "../decorators";
+import { EModels } from "../types";
 
 export default class MailingListService {
-    constructor(private Subscribers: Model<Document>) {}
+    @model(EModels.MAILING_LIST_SUBSCRIBER)
+    private Subscriber: Model<Document>;
 
     async findSubscribers(where = {}) {
-        return await this.Subscribers.find(where);
+        return await this.Subscriber.find(where);
     }
 
     async findSubscriberByEmail(email: string) {
-        return await this.Subscribers.findOne({ email });
+        return await this.Subscriber.findOne({ email });
     }
 
     async findSubscriberById(id: Types.ObjectId) {
-        return await this.Subscribers.findById(id);
+        return await this.Subscriber.findById(id);
     }
 
     async createSubscriber(subscriberData: any) {
-        return await this.Subscribers.create(subscriberData);
+        return await this.Subscriber.create(subscriberData);
     }
 
     async deleteSubscriberById(id: Types.ObjectId) {
-        return await this.Subscribers.findByIdAndDelete(id);
+        return await this.Subscriber.findByIdAndDelete(id);
     }
 
     async deleteSubscriberByEmail(email: string) {
-        return await this.Subscribers.findOneAndDelete({ email });
+        return await this.Subscriber.findOneAndDelete({ email });
     }
 
     async sendEmail(emailData: any) {

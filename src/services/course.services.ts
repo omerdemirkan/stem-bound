@@ -1,15 +1,22 @@
 import { Model, Types } from "mongoose";
 import { EventEmitter } from "events";
-import { ECourseEvents, ICourse, IMeeting, IAnnouncement } from "../types";
+import {
+    ECourseEvents,
+    ICourse,
+    IMeeting,
+    IAnnouncement,
+    EModels,
+} from "../types";
+import { model } from "../decorators";
 
 export default class CourseService {
-    constructor(
-        private Courses: Model<ICourse>,
-        private eventEmitter: EventEmitter
-    ) {}
+    @model(EModels.COURSE)
+    private Course: Model<ICourse>;
+
+    constructor(private eventEmitter: EventEmitter) {}
 
     async createCourse(courseData: ICourse): Promise<ICourse> {
-        const course: ICourse = await this.Courses.create(courseData);
+        const course: ICourse = await this.Course.create(courseData);
         this.eventEmitter.emit(ECourseEvents.COURSE_CREATED, course);
         return course;
     }
@@ -22,29 +29,29 @@ export default class CourseService {
             limit?: number;
         }
     ): Promise<ICourse[]> {
-        return await this.Courses.find(where)
+        return await this.Course.find(where)
             .sort(options?.sort)
             .skip(options?.skip || 0)
             .limit(options?.limit ? Math.min(options?.limit, 20) : 20);
     }
 
     async findCoursesByIds(ids: Types.ObjectId[]): Promise<ICourse[]> {
-        return await this.Courses.find({ _id: { $in: ids } });
+        return await this.Course.find({ _id: { $in: ids } });
     }
 
     async findCourse(where: object): Promise<ICourse> {
-        return await this.Courses.findOne(where);
+        return await this.Course.findOne(where);
     }
 
     async findCourseById(id: Types.ObjectId): Promise<ICourse> {
-        return await this.Courses.findById(id);
+        return await this.Course.findById(id);
     }
 
     async updateCourse(
         where: object,
         newCourse: Partial<ICourse>
     ): Promise<ICourse> {
-        return await this.Courses.findOneAndUpdate(where, newCourse, {
+        return await this.Course.findOneAndUpdate(where, newCourse, {
             new: true,
         });
     }
@@ -53,17 +60,17 @@ export default class CourseService {
         id: Types.ObjectId,
         newCourse: object
     ): Promise<ICourse> {
-        return await this.Courses.findByIdAndUpdate(id, newCourse, {
+        return await this.Course.findByIdAndUpdate(id, newCourse, {
             new: true,
         });
     }
 
     async deleteCourse(where: object): Promise<ICourse> {
-        return await this.Courses.findOneAndDelete(where);
+        return await this.Course.findOneAndDelete(where);
     }
 
     async deleteCourseById(id: Types.ObjectId): Promise<ICourse> {
-        return await this.Courses.findByIdAndDelete(id);
+        return await this.Course.findByIdAndDelete(id);
     }
 
     async findMeetingsByCourseId(
@@ -102,7 +109,7 @@ export default class CourseService {
         meetings: IMeeting[],
         { courseId }: { courseId: Types.ObjectId }
     ): Promise<IMeeting[]> {
-        let course = await this.Courses.findById(courseId);
+        let course = await this.Course.findById(courseId);
         course.meetings = course.meetings.concat(meetings);
         await course.save();
 
@@ -141,7 +148,7 @@ export default class CourseService {
         courseId: Types.ObjectId;
         meetingId: Types.ObjectId;
     }): Promise<IMeeting> {
-        const course = await this.Courses.findOneAndUpdate(
+        const course = await this.Course.findOneAndUpdate(
             { _id: courseId },
             {
                 $pull: { meetings: { _id: meetingId } },
@@ -189,7 +196,7 @@ export default class CourseService {
         announcementData,
         { courseId }: { courseId: Types.ObjectId }
     ): Promise<IAnnouncement> {
-        const course = await this.Courses.findById(courseId);
+        const course = await this.Course.findById(courseId);
         course.announcements.unshift(announcementData);
         await course.save();
         return course.announcements[0];
@@ -202,7 +209,7 @@ export default class CourseService {
             announcementId,
         }: { courseId: Types.ObjectId; announcementId: Types.ObjectId }
     ): Promise<IAnnouncement> {
-        const course = await this.Courses.findById(courseId);
+        const course = await this.Course.findById(courseId);
         const announcementIndex = course.announcements.findIndex(
             (announcement) =>
                 announcement._id.toString() === announcementId.toString()
@@ -222,7 +229,7 @@ export default class CourseService {
         courseId: Types.ObjectId;
         announcementId: Types.ObjectId;
     }) {
-        const course = await this.Courses.findByIdAndUpdate(
+        const course = await this.Course.findByIdAndUpdate(
             courseId,
             {
                 $pull: { announcements: { _id: announcementId.toString() } },
@@ -242,7 +249,7 @@ export default class CourseService {
         instructorIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
     }): Promise<void> {
-        await this.Courses.updateMany(
+        await this.Course.updateMany(
             { _id: { $in: courseIds } },
             {
                 $addToSet: { "meta.instructors": { $each: instructorIds } },
@@ -257,7 +264,7 @@ export default class CourseService {
         instructorIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
     }): Promise<void> {
-        await this.Courses.updateMany(
+        await this.Course.updateMany(
             { _id: { $in: courseIds } },
             {
                 $pullAll: { "meta.instructors": instructorIds },
@@ -272,7 +279,7 @@ export default class CourseService {
         studentIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
     }): Promise<void> {
-        await this.Courses.updateMany(
+        await this.Course.updateMany(
             { _id: { $in: courseIds } },
             {
                 $addToSet: { "meta.students": { $each: studentIds } },
@@ -287,7 +294,7 @@ export default class CourseService {
         studentIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
     }): Promise<void> {
-        await this.Courses.updateMany(
+        await this.Course.updateMany(
             { _id: { $in: courseIds } },
             {
                 $pullAll: { "meta.students": studentIds },
