@@ -1,7 +1,10 @@
 import config from "../config";
+import { dependency } from "../decorators";
+import { IBcrypt, EDependencies } from "../types";
 
 export default class BcryptService {
-    constructor(private bcrypt: any) {}
+    @dependency(EDependencies.BCRYPT)
+    private bcrypt: IBcrypt;
 
     async hash(s: string): Promise<string> {
         return await this.bcrypt.hash(s, config.saltRounds);

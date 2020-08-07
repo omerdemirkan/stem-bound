@@ -1,5 +1,4 @@
 import * as services from "../services";
-import * as dependencies from "../config/dependency.config";
 import * as models from "../models";
 import { eventEmitter } from "../config";
 import { EUserRoles, IUser } from "../types";
@@ -16,9 +15,9 @@ const userModels = {
 
 export const errorService = new services.ErrorService();
 
-export const jwtService = new services.JwtService(dependencies.jwt);
+export const jwtService = new services.JwtService();
 
-export const bcryptService = new services.BcryptService(dependencies.bcrypt);
+export const bcryptService = new services.BcryptService();
 
 export const authMiddlewareService = new services.AuthMiddlewareService(
     jwtService

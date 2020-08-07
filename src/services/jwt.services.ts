@@ -1,9 +1,11 @@
 import { SignOptions, VerifyOptions } from "jsonwebtoken";
 import config from "../config";
-import { ITokenPayload } from "../types";
+import { ITokenPayload, IJwt, EDependencies } from "../types";
+import { dependency } from "../decorators";
 
 export default class JwtService {
-    constructor(private jwt: any) {}
+    @dependency(EDependencies.JWT)
+    private jwt: IJwt;
 
     sign(
         payload: ITokenPayload | object | Buffer,
