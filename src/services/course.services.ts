@@ -111,7 +111,9 @@ export default class CourseService {
         { courseId }: { courseId: Types.ObjectId }
     ): Promise<IMeeting[]> {
         let course = await this.Course.findById(courseId);
-        course.meetings = course.meetings.concat(meetings);
+        course.meetings = meetings.concat(course.meetings);
+        // @ts-ignore
+        course.meetings.sort((a, b) => new Date(b.start) - new Date(a.start));
         await course.save();
 
         const meetingDatesObj = {};
@@ -128,12 +130,17 @@ export default class CourseService {
         {
             courseId,
             meetingId,
+            requestUserId,
         }: {
             courseId: Types.ObjectId;
             meetingId: Types.ObjectId;
+            requestUserId: Types.ObjectId;
         }
     ): Promise<IMeeting> {
-        const course = await this.findCourseById(courseId);
+        const course = await this.Course.findOne({
+            _id: courseId,
+            "meta.instructors": requestUserId.toString(),
+        });
         const meetingIndex = course.meetings.findIndex(
             (meeting) => meeting._id.toString() === meetingId.toString()
         );
@@ -145,15 +152,18 @@ export default class CourseService {
     async deleteMeeting({
         courseId,
         meetingId,
+        requestUserId,
     }: {
         courseId: Types.ObjectId;
         meetingId: Types.ObjectId;
+        requestUserId: Types.ObjectId;
     }): Promise<IMeeting> {
         const course = await this.Course.findOneAndUpdate(
-            { _id: courseId },
+            { _id: courseId, "meta.instructors": requestUserId },
             {
                 $pull: { meetings: { _id: meetingId } },
-            }
+            },
+            { new: false }
         );
         return course.meetings.find(
             (meeting: IMeeting) =>

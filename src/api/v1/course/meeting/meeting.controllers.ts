@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { errorService, courseService } from "../../../../services";
 import { Types } from "mongoose";
-import { ICourse, IMeeting, EErrorTypes } from "../../../../types";
+import { IMeeting } from "../../../../types";
 
 const { ObjectId } = Types;
 
@@ -65,6 +65,7 @@ export async function updateMeeting(req: Request, res: Response) {
             {
                 courseId,
                 meetingId,
+                requestUserId: (req as any).payload.user._id,
             }
         );
         res.json({
@@ -83,6 +84,7 @@ export async function deleteMeeting(req: Request, res: Response) {
         const deletedMeeting: IMeeting = await courseService.deleteMeeting({
             courseId,
             meetingId,
+            requestUserId: (req as any).payload.user._id,
         });
 
         res.json({

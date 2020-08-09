@@ -1,8 +1,5 @@
 import { EUserRoles } from "./index";
 
-import { Types } from "mongoose";
-import { type } from "os";
-
 export interface ITokenPayload {
     role: EUserRoles | "ADMIN";
     user: {

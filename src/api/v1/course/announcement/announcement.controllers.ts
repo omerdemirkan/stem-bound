@@ -46,17 +46,10 @@ export async function getAnnouncement(req: Request, res: Response) {
     try {
         const courseId = ObjectId(req.params.courseId);
         const announcementId = ObjectId(req.params.announcementId);
-        const course = await courseService.findCourseById(courseId);
-        if (!course) {
-            errorService.throwError(
-                EErrorTypes.DOCUMENT_NOT_FOUND,
-                "Course not found"
-            );
-        }
-        const announcement = course.announcements.find(
-            (announcement) =>
-                announcement._id.toString() === announcementId.toString()
-        );
+        const announcement = await courseService.findAnnouncementById({
+            courseId,
+            announcementId,
+        });
         if (!announcement) {
             errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
@@ -67,6 +60,32 @@ export async function getAnnouncement(req: Request, res: Response) {
             data: announcement,
             message: "Announcement successfully fetched",
         });
+    } catch (e) {
+        res.status(errorService.status(e)).json(errorService.json(e));
+    }
+}
+
+export async function updateAnnouncement(req: Request, res: Response) {
+    try {
+        const announcementId = ObjectId(req.params.announcementId);
+        const courseId = ObjectId(req.params.courseId);
+        const updatedAnnouncement = await courseService.updateAnnouncement(
+            req.body,
+            { announcementId, courseId }
+        );
+        res.json({
+            data: updatedAnnouncement,
+            message: "Announcement successfully fetched",
+        });
+    } catch (e) {
+        res.status(errorService.status(e)).json(errorService.json(e));
+    }
+}
+
+export async function deleteAnnouncement(req: Request, res: Response) {
+    try {
+        const announcementId = ObjectId(req.params.announcementId);
+        const courseId = ObjectId(req.params.courseId);
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
     }
