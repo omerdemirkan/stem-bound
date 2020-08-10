@@ -36,6 +36,7 @@ const announcementMetaSchema = new Schema(
         readBy: {
             type: [Schema.Types.ObjectId],
             required: true,
+            default: [],
         },
     },
     {

@@ -12,8 +12,6 @@ export const authMiddlewareService = new services.AuthMiddlewareService(
     jwtService
 );
 
-export const courseService = new services.CourseService();
-
 export const locationService = new services.LocationService();
 
 export const schoolService = new services.SchoolService();
@@ -21,6 +19,8 @@ export const schoolService = new services.SchoolService();
 export const chatService = new services.ChatService();
 
 export const userService = new services.UserService(locationService);
+
+export const courseService = new services.CourseService(errorService);
 
 export const metadataService = new services.MetadataService(
     schoolService,

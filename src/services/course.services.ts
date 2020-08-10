@@ -6,8 +6,10 @@ import {
     IMeeting,
     IAnnouncement,
     EModels,
+    EErrorTypes,
 } from "../types";
 import { model, emitter } from "../decorators";
+import { ErrorService } from ".";
 
 export default class CourseService {
     @model(EModels.COURSE)
@@ -15,6 +17,8 @@ export default class CourseService {
 
     @emitter()
     private eventEmitter: EventEmitter;
+
+    constructor(private errorService: ErrorService) {}
 
     async createCourse(courseData: ICourse): Promise<ICourse> {
         const course: ICourse = await this.Course.create(courseData);
@@ -84,10 +88,16 @@ export default class CourseService {
             limit?: number;
         } = {}
     ) {
-        let { meetings } = await this.findCourseById(courseId);
+        let course = await this.findCourseById(courseId);
+        if (!course) {
+            this.errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
+        }
         limit = +limit ? Math.min(+limit, 20) : 20;
         skip = +skip || 0;
-        meetings = meetings.slice(skip, limit + 1);
+        const meetings = course.meetings.slice(skip, limit + 1);
         return meetings;
     }
 
@@ -98,8 +108,14 @@ export default class CourseService {
         courseId: Types.ObjectId;
         meetingId: Types.ObjectId;
     }) {
-        const { meetings } = await this.findCourseById(courseId);
-        const meeting = meetings.find(
+        const course = await this.findCourseById(courseId);
+        if (!course) {
+            this.errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
+        }
+        const meeting = course.meetings.find(
             (meeting: IMeeting) =>
                 meeting._id.toString() === meetingId.toString()
         );
@@ -111,6 +127,12 @@ export default class CourseService {
         { courseId }: { courseId: Types.ObjectId }
     ): Promise<IMeeting[]> {
         let course = await this.Course.findById(courseId);
+        if (!course) {
+            this.errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
+        }
         course.meetings = meetings.concat(course.meetings);
         // @ts-ignore
         course.meetings.sort((a, b) => new Date(b.start) - new Date(a.start));
@@ -141,6 +163,12 @@ export default class CourseService {
             _id: courseId,
             "meta.instructors": requestUserId.toString(),
         });
+        if (!course) {
+            this.errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
+        }
         const meetingIndex = course.meetings.findIndex(
             (meeting) => meeting._id.toString() === meetingId.toString()
         );
@@ -181,10 +209,16 @@ export default class CourseService {
             limit?: number;
         } = {}
     ) {
-        let { announcements } = await this.findCourseById(courseId);
+        let course = await this.findCourseById(courseId);
+        if (!course) {
+            this.errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
+        }
         limit = +limit ? Math.min(+limit, 20) : 20;
         skip = +skip || 0;
-        announcements = announcements.slice(skip, limit + 1);
+        const announcements = course.announcements.slice(skip, limit + 1);
         return announcements;
     }
 
@@ -195,8 +229,14 @@ export default class CourseService {
         courseId: Types.ObjectId;
         announcementId: Types.ObjectId;
     }) {
-        const { announcements } = await this.findCourseById(courseId);
-        const announcement = announcements.find(
+        const course = await this.findCourseById(courseId);
+        if (!course) {
+            this.errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
+        }
+        const announcement = course.announcements.find(
             (announcement) =>
                 announcement._id.toString() === announcementId.toString()
         );
@@ -207,7 +247,13 @@ export default class CourseService {
         announcementData,
         { courseId }: { courseId: Types.ObjectId }
     ): Promise<IAnnouncement> {
-        const course = await this.Course.findById(courseId);
+        const course = await this.findCourseById(courseId);
+        if (!course) {
+            this.errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
+        }
         course.announcements.unshift(announcementData);
         await course.save();
         return course.announcements[0];
@@ -221,6 +267,12 @@ export default class CourseService {
         }: { courseId: Types.ObjectId; announcementId: Types.ObjectId }
     ): Promise<IAnnouncement> {
         const course = await this.Course.findById(courseId);
+        if (!course) {
+            this.errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Course not found"
+            );
+        }
         const announcementIndex = course.announcements.findIndex(
             (announcement) =>
                 announcement._id.toString() === announcementId.toString()

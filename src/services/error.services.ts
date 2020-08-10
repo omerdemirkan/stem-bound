@@ -20,5 +20,6 @@ export default class ErrorService {
         const errorData = errors[errorType];
         const error = new Error(message || errorData.message);
         (error as any).status = errorData.status;
+        throw error;
     }
 }
