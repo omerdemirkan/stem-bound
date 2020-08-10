@@ -30,4 +30,10 @@ announcementsRouter.put(
     announcementControllers.updateAnnouncement
 );
 
+announcementsRouter.delete(
+    "/:announcementId",
+    authMiddlewareService.extractTokenPayload,
+    announcementControllers.deleteAnnouncement
+);
+
 export default announcementsRouter;

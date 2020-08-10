@@ -233,7 +233,7 @@ export default class CourseService {
         return course.announcements[announcementIndex];
     }
 
-    async deleteAnnouncement({
+    async deleteAnnouncementById({
         courseId,
         announcementId,
     }: {

@@ -86,6 +86,16 @@ export async function deleteAnnouncement(req: Request, res: Response) {
     try {
         const announcementId = ObjectId(req.params.announcementId);
         const courseId = ObjectId(req.params.courseId);
+
+        const deletedAnnouncement = await courseService.deleteAnnouncementById({
+            courseId,
+            announcementId,
+        });
+
+        res.json({
+            data: deletedAnnouncement,
+            message: "Announcement successfully deleted",
+        });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
     }
