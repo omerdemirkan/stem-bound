@@ -88,7 +88,7 @@ export default class CourseService {
             limit?: number;
         } = {}
     ) {
-        let course = await this.findCourseById(courseId);
+        const course = await this.findCourseById(courseId);
         if (!course) {
             this.errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
@@ -126,7 +126,7 @@ export default class CourseService {
         meetings: IMeeting[],
         { courseId }: { courseId: Types.ObjectId }
     ): Promise<IMeeting[]> {
-        let course = await this.Course.findById(courseId);
+        let course = await this.findCourseById(courseId);
         if (!course) {
             this.errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
@@ -247,7 +247,7 @@ export default class CourseService {
         announcementData,
         { courseId }: { courseId: Types.ObjectId }
     ): Promise<IAnnouncement> {
-        const course = await this.findCourseById(courseId);
+        const course = await this.Course.findById(courseId);
         if (!course) {
             this.errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,

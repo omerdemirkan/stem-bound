@@ -3,7 +3,7 @@ import * as announcementControllers from "./announcement.controllers";
 import { authMiddlewareService } from "../../../../services";
 import { EUserRoles } from "../../../../types";
 
-const announcementsRouter = Router();
+const announcementsRouter = Router({ mergeParams: true });
 
 announcementsRouter.post(
     "/",
