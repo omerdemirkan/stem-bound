@@ -24,7 +24,7 @@ announcementsRouter.get(
     announcementControllers.getAnnouncement
 );
 
-announcementsRouter.put(
+announcementsRouter.patch(
     "/:announcementId",
     authMiddlewareService.extractTokenPayload,
     announcementControllers.updateAnnouncement
