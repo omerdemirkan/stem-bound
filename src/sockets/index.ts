@@ -10,7 +10,7 @@ export function init(io: Server) {
         socket.on("disconnect", () => {
             console.log("User has disconnected");
         });
-        initializeChatSocket(socket, { eventEmitter });
-        initializeRoomSockets(socket, { eventEmitter });
+        initializeRoomSockets(socket, { eventEmitter, io });
+        initializeChatSocket(socket, { eventEmitter, io });
     });
 }
