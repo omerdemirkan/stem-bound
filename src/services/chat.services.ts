@@ -168,17 +168,17 @@ export default class ChatService {
         text: string;
         senderId: Types.ObjectId;
     }): Promise<IMessage> {
-        let updatedChat = await this.Chat.findById(chatId);
-        updatedChat.messages.unshift({
+        let chat = await this.Chat.findById(chatId);
+        chat.messages.unshift({
             text,
             meta: { from: senderId, readBy: [] },
             isDeleted: false,
         });
-        await updatedChat.save();
-        const message = updatedChat.messages[0];
+        await chat.save();
+        const message = chat.messages[0];
 
         this.eventEmitter.emit(EChatEvents.CHAT_MESSAGE_CREATED, {
-            chatId,
+            chat,
             message,
         });
 
@@ -194,18 +194,18 @@ export default class ChatService {
         messageId: Types.ObjectId;
         text;
     }): Promise<IMessage> {
-        const updatedChat = await this.Chat.findOneAndUpdate(
+        const chat = await this.Chat.findOneAndUpdate(
             { _id: chatId, "messages._id": messageId },
             { $set: { "messages.$.text": text } },
             { new: true }
         );
-        const message = updatedChat.messages.find(
+        const message = chat.messages.find(
             (message: IMessage) =>
                 message._id.toString() === messageId.toString()
         );
 
         this.eventEmitter.emit(EChatEvents.CHAT_MESSAGE_UPDATED, {
-            chatId,
+            chat,
             message,
         });
 
@@ -221,18 +221,18 @@ export default class ChatService {
         messageId: Types.ObjectId;
         isDeleted: boolean;
     }): Promise<IMessage> {
-        const updatedChat = await this.Chat.findOneAndUpdate(
+        const chat = await this.Chat.findOneAndUpdate(
             { _id: chatId, "messages._id": messageId },
             { $set: { "messages.$.isDeleted": isDeleted } },
             { new: true }
         );
-        const message = updatedChat.messages.find(
+        const message = chat.messages.find(
             (message: IMessage) =>
                 message._id.toString() === messageId.toString()
         );
 
         this.eventEmitter.emit(EChatEvents.CHAT_MESSAGE_DELETED, {
-            chatId,
+            chat,
             message,
         });
 

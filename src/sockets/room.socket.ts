@@ -1,10 +1,9 @@
-import { Socket } from "socket.io";
-import { ISocketOptions, ESocketEvents } from "../types";
+import { ESocketEvents, ISocketInitializer } from "../types";
 
-export default function initializeRoomSockets(
-    socket: Socket,
-    { eventEmitter }: ISocketOptions
-) {
+const initializeRoomSockets: ISocketInitializer = (
+    socket,
+    { eventEmitter }
+) => {
     // DEFAULT USER ROOM
     const userId = socket.request._query?.user_id;
 
@@ -24,4 +23,6 @@ export default function initializeRoomSockets(
             socket.leave(room);
         } catch (e) {}
     });
-}
+};
+
+export default initializeRoomSockets;
