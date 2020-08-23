@@ -167,22 +167,15 @@ export default class ChatService {
         chatId: Types.ObjectId;
         text: string;
         senderId: Types.ObjectId;
-    }): Promise<IMessage> {
+    }): Promise<IChat> {
         let chat = await this.Chat.findById(chatId);
         chat.messages.unshift({
             text,
             meta: { from: senderId, readBy: [] },
             isDeleted: false,
         });
-        await chat.save();
-        const message = chat.messages[0];
 
-        this.eventEmitter.emit(EChatEvents.CHAT_MESSAGE_CREATED, {
-            chat,
-            message,
-        });
-
-        return message;
+        return await chat.save();
     }
 
     async updateMessage({
@@ -193,23 +186,14 @@ export default class ChatService {
         chatId: Types.ObjectId;
         messageId: Types.ObjectId;
         text;
-    }): Promise<IMessage> {
+    }): Promise<IChat> {
         const chat = await this.Chat.findOneAndUpdate(
             { _id: chatId, "messages._id": messageId },
             { $set: { "messages.$.text": text } },
             { new: true }
         );
-        const message = chat.messages.find(
-            (message: IMessage) =>
-                message._id.toString() === messageId.toString()
-        );
 
-        this.eventEmitter.emit(EChatEvents.CHAT_MESSAGE_UPDATED, {
-            chat,
-            message,
-        });
-
-        return message;
+        return chat;
     }
 
     async setMessageDeletion({
@@ -220,22 +204,13 @@ export default class ChatService {
         chatId: Types.ObjectId;
         messageId: Types.ObjectId;
         isDeleted: boolean;
-    }): Promise<IMessage> {
+    }): Promise<IChat> {
         const chat = await this.Chat.findOneAndUpdate(
             { _id: chatId, "messages._id": messageId },
             { $set: { "messages.$.isDeleted": isDeleted } },
             { new: true }
         );
-        const message = chat.messages.find(
-            (message: IMessage) =>
-                message._id.toString() === messageId.toString()
-        );
 
-        this.eventEmitter.emit(EChatEvents.CHAT_MESSAGE_DELETED, {
-            chat,
-            message,
-        });
-
-        return message;
+        return chat;
     }
 }

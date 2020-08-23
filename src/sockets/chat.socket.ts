@@ -6,6 +6,9 @@ import {
     ISocketInitializer,
 } from "../types";
 import { Types } from "mongoose";
+import { chatService } from "../services";
+
+const { ObjectId } = Types;
 
 const initializeChatSocket: ISocketInitializer = (
     socket,
@@ -30,67 +33,54 @@ const initializeChatSocket: ISocketInitializer = (
         } catch (e) {}
     });
 
-    // socket.on(ESocketEvents.CHAT_MESSAGE_CREATED, function (data) {
-    //     try {
-    //         const { chatId } = data;
-    //         const
-    //     } catch (e) {}
-    // });
+    socket.on(ESocketEvents.CHAT_MESSAGE_CREATED, async function (data) {
+        try {
+            if (!user.meta.chats.includes(data.chatId)) return;
+            const senderId = user._id;
+            const chatId = ObjectId(data.chatId);
+            const text = data.text;
+            const chat = await chatService.createMessage({
+                chatId,
+                senderId,
+                text,
+            });
 
-    function newChatMessageListener({
-        chat,
-        message,
-    }: {
-        chat: IChat;
-        message: IMessage;
-    }) {
-        let messageEmitter = io.sockets.to(chat._id);
+            let messageEmitter = io.sockets.to(data.chatId);
 
-        chat.meta.users.forEach(function (userId: Types.ObjectId) {
-            messageEmitter = messageEmitter.to(userId.toString());
-        });
+            // chat.meta.users.forEach(function (userId: Types.ObjectId) {
+            //     messageEmitter = messageEmitter.to(userId.toString());
+            // });
 
-        messageEmitter.emit(ESocketEvents.CHAT_MESSAGE_CREATED, {
-            chatId: chat._id,
-            message,
-        });
-    }
+            messageEmitter.emit(ESocketEvents.CHAT_MESSAGE_CREATED, {
+                chatId: data.chatId,
+                message: chat.messages[0],
+            });
+        } catch (e) {}
+    });
 
-    function updatedChatMessageListener({
-        chat,
-        message,
-    }: {
-        chat: IChat;
-        message: IMessage;
-    }) {
-        let messageEmitter = io.sockets.to(chat._id);
+    socket.on(ESocketEvents.CHAT_MESSAGE_UPDATED, async function (data) {
+        try {
+            if (!user.meta.chats.includes(data.chatId)) return;
+            const chatId = ObjectId(data.chatId);
+            const messageId = ObjectId(data.messageId);
+            const text = data.text;
+            const message = await chatService.updateMessage({
+                chatId,
+                text,
+                messageId,
+            });
 
-        chat.meta.users.forEach(function (userId: Types.ObjectId) {
-            if (userId.equals(message.meta.from)) return;
-            messageEmitter = messageEmitter.to(userId.toString());
-        });
+            let messageEmitter = io.sockets.to(data.chatId);
 
-        messageEmitter.emit(ESocketEvents.CHAT_MESSAGE_UPDATED, {
-            chatId: chat._id,
-            message,
-        });
-    }
+            // chat.meta.users.forEach(function (userId: Types.ObjectId) {
+            //     messageEmitter = messageEmitter.to(userId.toString());
+            // });
 
-    eventEmitter.on(EChatEvents.CHAT_MESSAGE_CREATED, newChatMessageListener);
-    eventEmitter.on(
-        EChatEvents.CHAT_MESSAGE_UPDATED,
-        updatedChatMessageListener
-    );
-
-    socket.on("disconnect", function () {
-        eventEmitter.removeListener(
-            EChatEvents.CHAT_MESSAGE_CREATED,
-            newChatMessageListener
-        );
-        eventEmitter.removeListener(
-            EChatEvents.CHAT_MESSAGE_UPDATED,
-            updatedChatMessageListener
-        );
+            messageEmitter.emit(ESocketEvents.CHAT_MESSAGE_CREATED, {
+                chatId: data.chatId,
+                message,
+            });
+        } catch (e) {}
     });
 };
 

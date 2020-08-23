@@ -28,14 +28,14 @@ export async function createChatMessage(req: Request, res: Response) {
     try {
         const senderId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
-        const newMessage: IMessage = await chatService.createMessage({
+        const chat = await chatService.createMessage({
             chatId,
             senderId,
             text: req.body.text,
         });
         res.json({
             message: "Chat message successfully created",
-            data: newMessage,
+            data: chat.messages[0],
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -80,14 +80,16 @@ export async function getChatMessage(req: Request, res: Response) {
 
 export async function updateChatMessage(req: Request, res: Response) {
     try {
-        const updatedMessage: IMessage = await chatService.updateMessage({
+        const chat = await chatService.updateMessage({
             chatId: ObjectId(req.params.chatId),
             messageId: ObjectId(req.params.messageId),
             text: req.body.text,
         });
         res.json({
             message: "Message successfully updated",
-            data: updatedMessage,
+            data: chat.messages.find((message) =>
+                message._id.equals(req.params.messageId)
+            ),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -96,7 +98,7 @@ export async function updateChatMessage(req: Request, res: Response) {
 
 export async function deleteChatMessage(req: Request, res: Response) {
     try {
-        const updatedMessage: IMessage = await chatService.setMessageDeletion({
+        const chat = await chatService.setMessageDeletion({
             chatId: ObjectId(req.params.chatId),
             messageId: ObjectId(req.params.messageId),
             isDeleted: req.query.restore ? false : true,
@@ -104,7 +106,9 @@ export async function deleteChatMessage(req: Request, res: Response) {
 
         res.json({
             message: "Message successfully deleted",
-            data: updatedMessage,
+            data: chat.messages.find((message) =>
+                message._id.equals(req.params.messageId)
+            ),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
