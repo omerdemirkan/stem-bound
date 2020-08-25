@@ -129,25 +129,7 @@ export default class ChatService {
             limit?: number;
         }
     ): Promise<IMessage[]> {
-        const limit = +options?.limit ? Math.min(+options?.limit, 20) : 20;
-        const skip = +options?.skip || 0;
-
-        const chat = await this.Chat.findOneAndUpdate(
-            {
-                _id: chatId,
-                "messages.meta": {
-                    readBy: { $nin: [requestUserId] },
-                    from: { $ne: requestUserId },
-                },
-            },
-            {
-                $sort: { $each: { messages: { createdAt: -1 } } },
-                $addToSet: {
-                    $each: { "messages.$[].readBy": requestUserId },
-                },
-            },
-            { new: true }
-        );
+        const chat = await this.Chat.findById(chatId);
 
         if (!chat) {
             errorService.throwError(
@@ -161,22 +143,43 @@ export default class ChatService {
             );
         }
 
-        // chat.messages.slice(skip, limit + 1).forEach(function (message) {
-        //     if (
-        //         !requestUserId.equals(message.meta.from) &&
-        //         !message.meta.readBy.some((id) => requestUserId.equals(id))
-        //     ) {
-        //         message.meta.readBy;
-        //     }
-        // });
+        const limit = Math.min(
+            +options?.limit ? Math.min(+options?.limit, 20) : 20,
+            chat.messages.length
+        );
+        const skip = +options?.skip || 0;
+
+        for (let i = skip; i < limit; i++) {
+            if (
+                !requestUserId.equals(chat.messages[i].meta.from) &&
+                !chat.messages[i].meta.readBy.some((id) =>
+                    requestUserId.equals(id)
+                )
+            ) {
+                chat.messages[i].meta.readBy.push(requestUserId);
+            }
+        }
+
+        await chat.save();
 
         const messages = chat.messages.slice(skip, limit + 1);
+
+        // const messages = await this.Chat.aggregate([
+        //     { $match: { _id: chatId } },
+        //     {
+        //         $unwind: "$messages",
+        //     },
+        //     { $sort: { "messages.createdAt": -1 } },
+        //     { $skip: skip },
+        //     { $limit: limit },
+        // ])
 
         messages.forEach(function (message) {
             if (message.isDeleted) {
                 message.text = "This message was deleted";
             }
         });
+
         return messages;
     }
 
