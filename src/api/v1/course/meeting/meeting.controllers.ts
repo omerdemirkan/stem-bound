@@ -44,7 +44,7 @@ export async function createMeeting(req: Request, res: Response) {
         const courseId = ObjectId(req.params.courseId);
         const newMeetings: IMeeting[] = await courseService.createMeetings(
             req.body.meetings || [req.body],
-            { courseId }
+            courseId
         );
 
         res.json({
@@ -58,16 +58,12 @@ export async function createMeeting(req: Request, res: Response) {
 
 export async function updateMeeting(req: Request, res: Response) {
     try {
-        const courseId = ObjectId(req.params.courseId);
-        const meetingId = ObjectId(req.params.meetingId);
-        const updatedMeeting: IMeeting = await courseService.updateMeeting(
-            req.body,
-            {
-                courseId,
-                meetingId,
-                requestUserId: (req as any).payload.user._id,
-            }
-        );
+        const updatedMeeting: IMeeting = await courseService.updateMeeting({
+            courseId: ObjectId(req.params.courseId),
+            meetingId: ObjectId(req.params.meetingId),
+            requestUserId: (req as any).payload.user._id,
+            meetingData: req.body,
+        });
         res.json({
             message: "Meeting successfully updated",
             data: updatedMeeting,

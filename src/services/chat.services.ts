@@ -1,5 +1,5 @@
 import { Model, Types } from "mongoose";
-import { IChat, IMessage, EChatEvents, EModels, EErrorTypes } from "../types";
+import { IChat, IMessage, EModels, EErrorTypes } from "../types";
 import { EventEmitter } from "events";
 import { model, emitter } from "../decorators";
 import { ErrorService, errorService } from ".";
@@ -43,7 +43,7 @@ export default class ChatService {
         return await this.Chat.create(chatData);
     }
 
-    findChatByUserIds(userIds, options?: { exact: boolean }) {
+    findChatByUserIds(userIds, options?: { exact?: boolean }) {
         let query = this.Chat.findOne().all("meta.users", userIds);
 
         if (options?.exact) {
@@ -54,17 +54,13 @@ export default class ChatService {
 
     async findChats(
         where: any,
-        options: {
+        options?: {
             limit?: number;
             skip?: number;
             sort?: object;
-            requestUserId: Types.ObjectId;
             overrideRequestUserIdValidation?: boolean;
         }
     ): Promise<IChat[]> {
-        if (!options.overrideRequestUserIdValidation) {
-            where["meta.users"] = options.requestUserId;
-        }
         return await this.Chat.find(where)
             .sort(options.sort)
             .skip(options.skip || 0)
@@ -73,53 +69,30 @@ export default class ChatService {
 
     async findChatsByIds(
         ids: Types.ObjectId[],
-        {
-            where,
-            ...options
-        }: {
+        options?: {
             where?: object;
             limit?: number;
             skip?: number;
             sort?: object;
-            requestUserId: Types.ObjectId;
             overrideRequestUserIdValidation?: boolean;
         }
     ): Promise<IChat[]> {
-        return await this.findChats(
-            { _id: { $in: ids }, ...where },
-            {
-                ...options,
-            }
-        );
+        const where = { _id: { $in: ids }, ...options?.where };
+        return await this.findChats(where, {
+            ...options,
+        });
     }
 
-    async findChat(
-        where: object,
-        { requestUserId }: { requestUserId: Types.ObjectId }
-    ): Promise<IChat> {
-        return await this.Chat.findOneAndUpdate(
-            {
-                ...where,
-                "meta.users": requestUserId,
+    async findChat(where: object): Promise<IChat> {
+        return await this.Chat.findOneAndUpdate(where, {
+            $sort: {
+                $each: { messages: { createdAt: -1 } },
             },
-            {
-                $sort: {
-                    $each: { messages: { createdAt: -1 } },
-                },
-            }
-        );
+        });
     }
 
-    async findChatById(
-        id: Types.ObjectId,
-        { requestUserId }: { requestUserId: Types.ObjectId }
-    ): Promise<IChat> {
-        return await this.findChat(
-            { _id: id },
-            {
-                requestUserId: requestUserId,
-            }
-        );
+    async findChatById(chatId: Types.ObjectId): Promise<IChat> {
+        return await this.findChat({ _id: chatId });
     }
 
     async updateChat(where: object, chatData: Partial<IChat>): Promise<IChat> {
@@ -144,11 +117,16 @@ export default class ChatService {
     }
 
     async findMessages(
-        chatId: Types.ObjectId,
-        options: {
+        {
+            chatId,
+            requestUserId,
+        }: {
+            chatId: Types.ObjectId;
+            requestUserId: Types.ObjectId;
+        },
+        options?: {
             skip?: number;
             limit?: number;
-            requestUserId: Types.ObjectId;
         }
     ): Promise<IMessage[]> {
         const limit = +options?.limit ? Math.min(+options?.limit, 20) : 20;
@@ -157,16 +135,15 @@ export default class ChatService {
         const chat = await this.Chat.findOneAndUpdate(
             {
                 _id: chatId,
-                "meta.users": options.requestUserId,
+                "messages.meta": {
+                    readBy: { $nin: [requestUserId] },
+                    from: { $ne: requestUserId },
+                },
             },
             {
-                $sort: {
-                    $each: { messages: { createdAt: -1 } },
-                },
+                $sort: { $each: { messages: { createdAt: -1 } } },
                 $addToSet: {
-                    $each: {
-                        "messages.$[].meta.readBy": options.requestUserId,
-                    },
+                    $each: { "messages.$[].readBy": requestUserId },
                 },
             },
             { new: true }
@@ -177,16 +154,21 @@ export default class ChatService {
                 EErrorTypes.DOCUMENT_NOT_FOUND,
                 "Chat not found"
             );
-        } else if (
-            !chat.meta.users.find(
-                (id) => id.toString() === options.requestUserId.toString()
-            )
-        ) {
+        } else if (!chat.meta.users.some((id) => requestUserId.equals(id))) {
             errorService.throwError(
                 EErrorTypes.UNAUTHORIZED,
                 "Unauthorized request user id"
             );
         }
+
+        // chat.messages.slice(skip, limit + 1).forEach(function (message) {
+        //     if (
+        //         !requestUserId.equals(message.meta.from) &&
+        //         !message.meta.readBy.some((id) => requestUserId.equals(id))
+        //     ) {
+        //         message.meta.readBy;
+        //     }
+        // });
 
         const messages = chat.messages.slice(skip, limit + 1);
 
@@ -199,12 +181,12 @@ export default class ChatService {
     }
 
     async createMessage({
-        chatId,
         text,
+        chatId,
         requestUserId,
     }: {
-        chatId: Types.ObjectId;
         text: string;
+        chatId: Types.ObjectId;
         requestUserId: Types.ObjectId;
     }): Promise<IChat> {
         let chat = await this.Chat.findById(chatId);
@@ -218,13 +200,13 @@ export default class ChatService {
     }
 
     async updateMessage({
+        text,
         chatId,
         messageId,
-        text,
     }: {
+        text: string;
         chatId: Types.ObjectId;
         messageId: Types.ObjectId;
-        text;
     }): Promise<IChat> {
         const chat = await this.Chat.findOneAndUpdate(
             { _id: chatId, "messages._id": messageId },
@@ -238,8 +220,8 @@ export default class ChatService {
     async setMessageDeletion({
         chatId,
         messageId,
-        isDeleted,
         requestUserId,
+        isDeleted,
     }: {
         chatId: Types.ObjectId;
         messageId: Types.ObjectId;
@@ -247,7 +229,7 @@ export default class ChatService {
         isDeleted: boolean;
     }): Promise<IChat> {
         console.log(requestUserId);
-        const chat = await this.findChatById(chatId, { requestUserId });
+        const chat = await this.findChatById(chatId);
         const messageIndex = chat.messages.findIndex((message) =>
             messageId.equals(message._id)
         );

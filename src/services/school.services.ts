@@ -23,19 +23,15 @@ export default class SchoolService {
         return schools;
     }
 
-    async findSchoolsByCoordinates({
-        coordinates,
-        limit,
-        where,
-        skip,
-        text,
-    }: {
-        coordinates: number[];
-        limit?: number | null;
-        where?: MongooseFilterQuery<ISchool> | null;
-        skip?: number | null;
-        text?: string;
-    }): Promise<ISchool[]> {
+    async findSchoolsByCoordinates(
+        coordinates: number[],
+        options?: {
+            limit?: number | null;
+            where?: MongooseFilterQuery<ISchool> | null;
+            skip?: number | null;
+            text?: string;
+        }
+    ): Promise<ISchool[]> {
         const geoNearOptions: any = {
             $geoNear: {
                 near: {
@@ -48,18 +44,20 @@ export default class SchoolService {
         };
         const aggregateOptions: any[] = [geoNearOptions];
 
-        if (where && Object.keys(where).length) {
-            geoNearOptions.$geoNear.query = where;
+        if (options?.where && Object.keys(options.where).length) {
+            geoNearOptions.$geoNear.query = options.where;
         }
 
-        if (text) {
-            aggregateOptions.push({ $text: { $search: text } });
+        if (options?.text) {
+            aggregateOptions.push({ $text: { $search: options.text } });
         }
 
-        aggregateOptions.push({ $skip: skip || 0 });
+        aggregateOptions.push({ $skip: options?.skip || 0 });
 
         aggregateOptions.push(
-            limit ? { $limit: limit > 50 ? 50 : limit } : { $limit: 20 }
+            options?.limit
+                ? { $limit: options?.limit > 50 ? 50 : options?.limit }
+                : { $limit: 20 }
         );
 
         const schools = await this.School.aggregate(aggregateOptions);
@@ -171,7 +169,7 @@ export default class SchoolService {
         );
     }
 
-    async refreshDatabase({ url }: { url?: string }) {
-        return await refreshSchoolDatabase({ url });
+    async refreshDatabase(options: { url?: string }) {
+        return await refreshSchoolDatabase(options);
     }
 }

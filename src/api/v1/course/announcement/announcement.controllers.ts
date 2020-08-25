@@ -9,9 +9,10 @@ export async function createAnnouncement(req: Request, res: Response) {
     try {
         const announcementData: Partial<IAnnouncement> = req.body;
         const courseId = ObjectId(req.params.courseId);
+        announcementData.meta.from = (req as any).payload.user._id;
         const newAnouncement = await courseService.createAnnouncement(
             announcementData,
-            { courseId }
+            courseId
         );
         res.json({
             data: newAnouncement,
@@ -44,11 +45,9 @@ export async function getAnnouncements(req: Request, res: Response) {
 
 export async function getAnnouncement(req: Request, res: Response) {
     try {
-        const courseId = ObjectId(req.params.courseId);
-        const announcementId = ObjectId(req.params.announcementId);
         const announcement = await courseService.findAnnouncementById({
-            courseId,
-            announcementId,
+            courseId: ObjectId(req.params.courseId),
+            announcementId: ObjectId(req.params.announcementId),
         });
         if (!announcement) {
             errorService.throwError(
@@ -67,12 +66,11 @@ export async function getAnnouncement(req: Request, res: Response) {
 
 export async function updateAnnouncement(req: Request, res: Response) {
     try {
-        const announcementId = ObjectId(req.params.announcementId);
-        const courseId = ObjectId(req.params.courseId);
-        const updatedAnnouncement = await courseService.updateAnnouncement(
-            req.body,
-            { announcementId, courseId }
-        );
+        const updatedAnnouncement = await courseService.updateAnnouncement({
+            announcementId: ObjectId(req.params.announcementId),
+            courseId: ObjectId(req.params.courseId),
+            announcementData: req.body,
+        });
         res.json({
             data: updatedAnnouncement,
             message: "Announcement successfully fetched",
@@ -84,12 +82,9 @@ export async function updateAnnouncement(req: Request, res: Response) {
 
 export async function deleteAnnouncement(req: Request, res: Response) {
     try {
-        const announcementId = ObjectId(req.params.announcementId);
-        const courseId = ObjectId(req.params.courseId);
-
         const deletedAnnouncement = await courseService.deleteAnnouncementById({
-            courseId,
-            announcementId,
+            courseId: ObjectId(req.params.courseId),
+            announcementId: ObjectId(req.params.announcementId),
         });
 
         res.json({

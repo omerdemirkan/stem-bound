@@ -22,13 +22,15 @@ export async function getSchools(req: Request, res: Response) {
         } = configureFindSchoolsQuery(req.query, req.ip);
         let schools: ISchool[];
         if (coordinates) {
-            schools = await schoolService.findSchoolsByCoordinates({
+            schools = await schoolService.findSchoolsByCoordinates(
                 coordinates,
-                limit,
-                skip,
-                where,
-                text,
-            });
+                {
+                    limit,
+                    skip,
+                    where,
+                    text,
+                }
+            );
         } else if (text) {
             schools = await schoolService.findSchoolsByText(text);
         } else {

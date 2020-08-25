@@ -63,7 +63,7 @@ export default class CourseService {
 
     async updateCourseById(
         id: Types.ObjectId,
-        newCourse: object
+        newCourse: Partial<ICourse>
     ): Promise<ICourse> {
         return await this.Course.findByIdAndUpdate(id, newCourse, {
             new: true,
@@ -80,13 +80,10 @@ export default class CourseService {
 
     async findMeetingsByCourseId(
         courseId: Types.ObjectId,
-        {
-            skip,
-            limit,
-        }: {
+        options?: {
             skip?: number;
             limit?: number;
-        } = {}
+        }
     ) {
         const course = await this.findCourseById(courseId);
         if (!course) {
@@ -95,8 +92,8 @@ export default class CourseService {
                 "Course not found"
             );
         }
-        limit = +limit ? Math.min(+limit, 20) : 20;
-        skip = +skip || 0;
+        const limit = +options?.limit ? Math.min(+options.limit, 20) : 20;
+        const skip = +options?.skip || 0;
         const meetings = course.meetings.slice(skip, limit + 1);
         return meetings;
     }
@@ -124,7 +121,7 @@ export default class CourseService {
 
     async createMeetings(
         meetings: IMeeting[],
-        { courseId }: { courseId: Types.ObjectId }
+        courseId: Types.ObjectId
     ): Promise<IMeeting[]> {
         let course = await this.findCourseById(courseId);
         if (!course) {
@@ -147,18 +144,17 @@ export default class CourseService {
         );
     }
 
-    async updateMeeting(
-        meetingData: Partial<IMeeting>,
-        {
-            courseId,
-            meetingId,
-            requestUserId,
-        }: {
-            courseId: Types.ObjectId;
-            meetingId: Types.ObjectId;
-            requestUserId: Types.ObjectId;
-        }
-    ): Promise<IMeeting> {
+    async updateMeeting({
+        courseId,
+        meetingId,
+        requestUserId,
+        meetingData,
+    }: {
+        courseId: Types.ObjectId;
+        meetingId: Types.ObjectId;
+        requestUserId: Types.ObjectId;
+        meetingData: Partial<IMeeting>;
+    }): Promise<IMeeting> {
         const course = await this.Course.findOne({
             _id: courseId,
             "meta.instructors": requestUserId.toString(),
@@ -201,13 +197,10 @@ export default class CourseService {
 
     async findAnnouncementsByCourseId(
         courseId: Types.ObjectId,
-        {
-            skip,
-            limit,
-        }: {
+        options?: {
             skip?: number;
             limit?: number;
-        } = {}
+        }
     ) {
         let course = await this.findCourseById(courseId);
         if (!course) {
@@ -216,8 +209,8 @@ export default class CourseService {
                 "Course not found"
             );
         }
-        limit = +limit ? Math.min(+limit, 20) : 20;
-        skip = +skip || 0;
+        const limit = +options?.limit ? Math.min(+options.limit, 20) : 20;
+        const skip = +options?.skip || 0;
         const announcements = course.announcements.slice(skip, limit + 1);
         return announcements;
     }
@@ -244,28 +237,33 @@ export default class CourseService {
     }
 
     async createAnnouncement(
-        announcementData,
-        { courseId }: { courseId: Types.ObjectId }
+        announcementData: Partial<IAnnouncement>,
+        courseId: Types.ObjectId
     ): Promise<IAnnouncement> {
-        const course = await this.Course.findById(courseId);
+        const course = await this.Course.findOne({
+            _id: courseId,
+            "meta.instructors": { $in: announcementData.meta.from },
+        });
         if (!course) {
             this.errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
                 "Course not found"
             );
         }
-        course.announcements.unshift(announcementData);
+        course.announcements.unshift(announcementData as any);
         await course.save();
         return course.announcements[0];
     }
 
-    async updateAnnouncement(
+    async updateAnnouncement({
+        courseId,
+        announcementId,
         announcementData,
-        {
-            courseId,
-            announcementId,
-        }: { courseId: Types.ObjectId; announcementId: Types.ObjectId }
-    ): Promise<IAnnouncement> {
+    }: {
+        courseId: Types.ObjectId;
+        announcementId: Types.ObjectId;
+        announcementData: Partial<IAnnouncement>;
+    }): Promise<IAnnouncement> {
         const course = await this.Course.findById(courseId);
         if (!course) {
             this.errorService.throwError(

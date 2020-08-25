@@ -37,9 +37,10 @@ export async function me(req: Request, res: Response) {
 
 export async function signUp(req: Request, res: Response) {
     try {
-        const { user, accessToken } = await authService.userSignUp(req.body, {
-            role: req.query.role || req.body.role,
-        });
+        const { user, accessToken } = await authService.userSignUp(
+            req.body,
+            req.query.role || req.body.role
+        );
 
         res.json({
             message: "User sign up successful",
@@ -53,10 +54,7 @@ export async function signUp(req: Request, res: Response) {
 export async function logIn(req: Request, res: Response) {
     try {
         const { email, password } = req.body;
-        const loginResult = await authService.userLogin({
-            email,
-            password,
-        });
+        const loginResult = await authService.userLogin(email, password);
 
         if (!loginResult) {
             return res

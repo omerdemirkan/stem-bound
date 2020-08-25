@@ -1,11 +1,11 @@
-import { EUserRoles, IUserQuery, EErrorTypes } from "../types";
+import { EUserRoles, IUserQueryOptions, EErrorTypes } from "../types";
 import { errorService } from "../services";
 import { getCoordinatesByIp } from "./location.helpers";
 
 export function configureUsersQuery(
     requestQueries: any,
     ip: string
-): Partial<IUserQuery> {
+): Partial<IUserQueryOptions> {
     const {
         role,
         limit,
@@ -16,7 +16,7 @@ export function configureUsersQuery(
         lat,
         long,
     } = requestQueries;
-    let query: Partial<IUserQuery> = {};
+    let query: Partial<IUserQueryOptions> = {};
 
     if (isValidUserRole(role)) {
         query.role = role.toUpperCase();

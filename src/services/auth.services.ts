@@ -1,4 +1,4 @@
-import { EUserRoles, ITokenPayload, EUserEvents } from "../types";
+import { EUserRoles, ITokenPayload, EUserEvents, IUser } from "../types";
 import { JwtService, BcryptService, UserService, MetadataService } from ".";
 import { Types } from "mongoose";
 import { EventEmitter } from "events";
@@ -18,21 +18,14 @@ export default class AuthService {
     ) {}
 
     async userSignUp(
-        userData,
-        {
-            role,
-        }: {
-            role: EUserRoles;
-        }
+        userData: Partial<IUser>,
+        role: EUserRoles
     ): Promise<{ user: any; accessToken: string }> {
-        await this.bcryptService.replaceKeyWithHash(userData, {
-            key: "password",
+        await this.bcryptService.replaceKeyWithHash(userData, "password", {
             newKey: "hash",
         });
 
-        const newUser: any = await this.userService.createUser(userData, {
-            role,
-        });
+        const newUser: any = await this.userService.createUser(userData, role);
 
         await this.metadataService.handleNewUserMetadataUpdate(newUser);
 
@@ -52,13 +45,10 @@ export default class AuthService {
         return { user: newUser, accessToken };
     }
 
-    async userLogin({
-        email,
-        password,
-    }: {
-        email: string;
-        password: string;
-    }): Promise<{ user: any; accessToken: string } | null> {
+    async userLogin(
+        email: string,
+        password: string
+    ): Promise<{ user: any; accessToken: string } | null> {
         const user: any = await this.userService.findUserByEmail(email);
 
         if (!user) {

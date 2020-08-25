@@ -1,11 +1,11 @@
 import {
     EUserRoles,
     IUser,
-    IUserQuery,
     EModels,
     IInstructor,
     IStudent,
     ISchoolOfficial,
+    IUserQueryOptions,
 } from "../types";
 import { Model, Types } from "mongoose";
 import { LocationService } from ".";
@@ -36,14 +36,7 @@ export default class UserService {
 
     constructor(private locationService: LocationService) {}
 
-    async createUser(
-        userData,
-        {
-            role,
-        }: {
-            role: EUserRoles;
-        }
-    ): Promise<IUser> {
+    async createUser(userData, role: EUserRoles): Promise<IUser> {
         if ((userData as any).password)
             throw new Error("We don't store passwords around here kiddo");
 
@@ -55,7 +48,7 @@ export default class UserService {
 
     async findUsersByCoordinates(
         coordinates: number[],
-        { limit, where, skip, text, role }: IUserQuery
+        options: IUserQueryOptions
     ) {
         let aggregateOptions: any[] = [
             {
@@ -69,28 +62,35 @@ export default class UserService {
                 },
             },
         ];
-        if (where && Object.keys(where).length) {
-            (aggregateOptions[0].$geoNear as any).query = where;
+        if (options?.where && Object.keys(options.where).length) {
+            (aggregateOptions[0].$geoNear as any).query = options.where;
         }
 
-        if (text) {
-            aggregateOptions.push({ $text: { $search: text } });
+        if (options?.text) {
+            aggregateOptions.push({ $text: { $search: options.text } });
         }
 
-        aggregateOptions.push({ $skip: skip || 0 });
+        aggregateOptions.push({ $skip: options.skip || 0 });
 
         aggregateOptions.push(
-            limit ? { $limit: limit > 50 ? 50 : limit } : { $limit: 20 }
+            options?.limit
+                ? { $limit: options.limit > 50 ? 50 : options.limit }
+                : { $limit: 20 }
         );
 
-        let model = role ? this.getUserModelByRole(role) : this.User;
+        let model = options?.role
+            ? this.getUserModelByRole(options.role)
+            : this.User;
 
         return await model.aggregate(aggregateOptions);
     }
 
-    async findUsers({ coordinates, ...options }: IUserQuery): Promise<IUser[]> {
-        if (coordinates) {
-            return await this.findUsersByCoordinates(coordinates, options);
+    async findUsers(options: IUserQueryOptions): Promise<IUser[]> {
+        if (options?.coordinates) {
+            return await this.findUsersByCoordinates(
+                options.coordinates,
+                options
+            );
         }
 
         const model = options.role
@@ -146,10 +146,7 @@ export default class UserService {
         return await this.User.findByIdAndUpdate(id, userData, { new: true });
     }
 
-    async deleteUser(where: {
-        role: EUserRoles;
-        where: object;
-    }): Promise<IUser> {
+    async deleteUser(where: any): Promise<IUser> {
         return await this.User.findOneAndDelete(where);
     }
 
@@ -208,16 +205,19 @@ export default class UserService {
         );
     }
 
-    async addChatMetadata({
-        userIds,
-        chatIds,
-        roles,
-    }: {
-        userIds: Types.ObjectId[];
-        chatIds: Types.ObjectId[];
-        roles?: EUserRoles[];
-    }): Promise<void> {
-        roles = roles || Object.values(EUserRoles);
+    async addChatMetadata(
+        {
+            userIds,
+            chatIds,
+        }: {
+            userIds: Types.ObjectId[];
+            chatIds: Types.ObjectId[];
+        },
+        options?: {
+            roles?: EUserRoles[];
+        }
+    ): Promise<void> {
+        let roles = options?.roles || Object.values(EUserRoles);
         await Promise.all(
             roles.map((role: EUserRoles) => {
                 return this.getUserModelByRole(role).updateMany(
@@ -228,16 +228,19 @@ export default class UserService {
         );
     }
 
-    async removeChatMetadata({
-        userIds,
-        chatIds,
-        roles,
-    }: {
-        userIds: Types.ObjectId[];
-        chatIds: Types.ObjectId[];
-        roles?: EUserRoles[];
-    }): Promise<void> {
-        roles = roles || Object.values(EUserRoles);
+    async removeChatMetadata(
+        {
+            userIds,
+            chatIds,
+        }: {
+            userIds: Types.ObjectId[];
+            chatIds: Types.ObjectId[];
+        },
+        options?: {
+            roles?: EUserRoles[];
+        }
+    ): Promise<void> {
+        const roles = options?.roles || Object.values(EUserRoles);
         await Promise.all(
             roles.map((role: EUserRoles) => {
                 return this.getUserModelByRole(role).updateMany(

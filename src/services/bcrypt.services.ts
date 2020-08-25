@@ -16,7 +16,8 @@ export default class BcryptService {
 
     async replaceKeyWithHash(
         obj: any,
-        { key, newKey }: { key: string; newKey?: string }
+        key: string,
+        options?: { newKey?: string }
     ) {
         if (!obj[key]) {
             throw new Error(
@@ -25,9 +26,9 @@ export default class BcryptService {
         }
 
         const hash = await this.hash(obj[key]);
-        obj[newKey || key] = hash;
+        obj[options?.newKey || key] = hash;
 
-        if (newKey) {
+        if (options?.newKey) {
             delete obj[key];
         }
         return obj;

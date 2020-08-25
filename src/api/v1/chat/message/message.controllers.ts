@@ -10,7 +10,8 @@ export async function getChatMessages(req: Request, res: Response) {
     try {
         const requestUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
-        const messages: IMessage[] = await chatService.findMessages(chatId, {
+        const messages: IMessage[] = await chatService.findMessages({
+            chatId,
             requestUserId,
         });
         res.json({
@@ -47,7 +48,8 @@ export async function getChatMessage(req: Request, res: Response) {
         const requestUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
         const messageId = ObjectId(req.params.messageId);
-        const messages = await chatService.findMessages(chatId, {
+        const messages = await chatService.findMessages({
+            chatId,
             requestUserId,
         });
 

@@ -15,7 +15,7 @@ import {
     IInstructor,
     ISchoolOfficial,
     ICourse,
-    IUserQuery,
+    IUserQueryOptions,
     IChat,
     EErrorTypes,
 } from "../../../types";
@@ -26,7 +26,7 @@ const { ObjectId } = Types;
 
 export async function getUsers(req: Request, res: Response) {
     try {
-        const query: IUserQuery = configureUsersQuery(req.query, req.ip);
+        const query: IUserQueryOptions = configureUsersQuery(req.query, req.ip);
         let users: IUser[] = await userService.findUsers(query);
         res.json({
             message: "Users successfully found",
@@ -155,7 +155,6 @@ export async function getUserChats(req: Request, res: Response) {
         const chats: IChat[] = chatIds.length
             ? await chatService.findChatsByIds(chatIds, {
                   sort: { updatedAt: -1 },
-                  requestUserId: user._id,
               })
             : [];
 

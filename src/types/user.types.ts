@@ -53,7 +53,7 @@ export interface IStudent extends IBaseUser, Document {
 
 export type IUser = IInstructor | ISchoolOfficial | IStudent;
 
-export interface IUserQuery {
+export interface IUserQueryOptions {
     limit?: number;
     skip?: number;
     sort?: object;
