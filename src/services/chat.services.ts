@@ -1,7 +1,8 @@
 import { Model, Types } from "mongoose";
-import { IChat, IMessage, EChatEvents, EModels } from "../types";
+import { IChat, IMessage, EChatEvents, EModels, EErrorTypes } from "../types";
 import { EventEmitter } from "events";
 import { model, emitter } from "../decorators";
+import { ErrorService, errorService } from ".";
 
 export default class ChatService {
     @model(EModels.CHAT)
@@ -9,6 +10,8 @@ export default class ChatService {
 
     @emitter()
     private eventEmitter: EventEmitter;
+
+    constructor(private errorService: ErrorService) {}
 
     async createChat(
         chatData: IChat,
@@ -18,7 +21,10 @@ export default class ChatService {
         }
     ): Promise<IChat> {
         if (options?.preventEmptyMessages && !chatData.messages.length) {
-            throw new Error("Initial messages Required");
+            errorService.throwError(
+                EErrorTypes.BAD_REQUEST,
+                "Initial messages Required"
+            );
         }
 
         if (options?.preventDuplicationByUserIds) {
@@ -27,7 +33,10 @@ export default class ChatService {
                 exact: true,
             });
             if (duplicateChat) {
-                throw new Error("This chat is a duplicate of another chat.");
+                errorService.throwError(
+                    EErrorTypes.CONFLICT,
+                    "This chat is a duplicate of another chat"
+                );
             }
         }
 
@@ -88,19 +97,29 @@ export default class ChatService {
         where: object,
         { requestUserId }: { requestUserId: Types.ObjectId }
     ): Promise<IChat> {
-        return await this.Chat.findOne({
-            ...where,
-            "meta.users": requestUserId,
-        });
+        return await this.Chat.findOneAndUpdate(
+            {
+                ...where,
+                "meta.users": requestUserId,
+            },
+            {
+                $sort: {
+                    $each: { messages: { createdAt: -1 } },
+                },
+            }
+        );
     }
 
     async findChatById(
         id: Types.ObjectId,
         { requestUserId }: { requestUserId: Types.ObjectId }
     ): Promise<IChat> {
-        return await this.findChat(id, {
-            requestUserId: requestUserId,
-        });
+        return await this.findChat(
+            { _id: id },
+            {
+                requestUserId: requestUserId,
+            }
+        );
     }
 
     async updateChat(where: object, chatData: Partial<IChat>): Promise<IChat> {
@@ -135,18 +154,38 @@ export default class ChatService {
         const limit = +options?.limit ? Math.min(+options?.limit, 20) : 20;
         const skip = +options?.skip || 0;
 
-        const chat = await this.findChatById(chatId, {
-            requestUserId: options.requestUserId,
-        });
+        const chat = await this.Chat.findOneAndUpdate(
+            {
+                _id: chatId,
+                "meta.users": options.requestUserId,
+            },
+            {
+                $sort: {
+                    $each: { messages: { createdAt: -1 } },
+                },
+                $addToSet: {
+                    $each: {
+                        "messages.$[].meta.readBy": options.requestUserId,
+                    },
+                },
+            },
+            { new: true }
+        );
 
         if (!chat) {
-            throw new Error("Chat not found");
+            errorService.throwError(
+                EErrorTypes.DOCUMENT_NOT_FOUND,
+                "Chat not found"
+            );
         } else if (
             !chat.meta.users.find(
                 (id) => id.toString() === options.requestUserId.toString()
             )
         ) {
-            throw new Error("Unauthorized request user id");
+            errorService.throwError(
+                EErrorTypes.UNAUTHORIZED,
+                "Unauthorized request user id"
+            );
         }
 
         const messages = chat.messages.slice(skip, limit + 1);
@@ -162,16 +201,16 @@ export default class ChatService {
     async createMessage({
         chatId,
         text,
-        senderId,
+        requestUserId,
     }: {
         chatId: Types.ObjectId;
         text: string;
-        senderId: Types.ObjectId;
+        requestUserId: Types.ObjectId;
     }): Promise<IChat> {
         let chat = await this.Chat.findById(chatId);
         chat.messages.unshift({
             text,
-            meta: { from: senderId, readBy: [] },
+            meta: { from: requestUserId, readBy: [] },
             isDeleted: false,
         });
 
@@ -200,17 +239,25 @@ export default class ChatService {
         chatId,
         messageId,
         isDeleted,
+        requestUserId,
     }: {
         chatId: Types.ObjectId;
         messageId: Types.ObjectId;
+        requestUserId: Types.ObjectId;
         isDeleted: boolean;
     }): Promise<IChat> {
-        const chat = await this.Chat.findOneAndUpdate(
-            { _id: chatId, "messages._id": messageId },
-            { $set: { "messages.$.isDeleted": isDeleted } },
-            { new: true }
+        console.log(requestUserId);
+        const chat = await this.findChatById(chatId, { requestUserId });
+        const messageIndex = chat.messages.findIndex((message) =>
+            messageId.equals(message._id)
         );
-
-        return chat;
+        const message = chat.messages[messageIndex];
+        if (!requestUserId.equals(message.meta.from))
+            errorService.throwError(
+                EErrorTypes.FORBIDDEN,
+                "You cannot delete/restore others' messages"
+            );
+        message.isDeleted = isDeleted;
+        return await chat.save();
     }
 }

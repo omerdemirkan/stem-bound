@@ -32,14 +32,13 @@ const initializeChatSocket: ISocketInitializer = (socket, { io, user }) => {
     socket.on(ESocketEvents.CHAT_MESSAGE_CREATED, async function (data: {
         chatId: string;
         text: string;
-        messageId: string;
     }) {
         try {
             if (!user.meta.chats.find((chatId) => chatId.equals(chatId)))
                 throw new Error("chatId not found in user metadata");
             const chat = await chatService.createMessage({
                 chatId: ObjectId(data.chatId),
-                senderId: user._id,
+                requestUserId: user._id,
                 text: data.text,
             });
 
@@ -52,9 +51,7 @@ const initializeChatSocket: ISocketInitializer = (socket, { io, user }) => {
 
             messageEmitter.emit(ESocketEvents.CHAT_MESSAGE_CREATED, {
                 chatId: data.chatId,
-                message: chat.messages.find(
-                    (message) => message._id.toString() === data.messageId
-                ),
+                message: chat.messages[0],
             });
         } catch (e) {
             logger.error(e);
@@ -108,6 +105,7 @@ const initializeChatSocket: ISocketInitializer = (socket, { io, user }) => {
                 chatId: ObjectId(data.chatId),
                 messageId: ObjectId(data.messageId),
                 isDeleted: true,
+                requestUserId: user._id,
             });
 
             let messageEmitter = io.sockets.to(data.chatId);
@@ -140,6 +138,7 @@ const initializeChatSocket: ISocketInitializer = (socket, { io, user }) => {
                 chatId: ObjectId(data.chatId),
                 messageId: ObjectId(data.messageId),
                 isDeleted: false,
+                requestUserId: user._id,
             });
 
             let messageEmitter = io.sockets.to(data.chatId);

@@ -26,11 +26,11 @@ export async function getChatMessages(req: Request, res: Response) {
 
 export async function createChatMessage(req: Request, res: Response) {
     try {
-        const senderId = ObjectId((req as any).payload.user._id);
+        const requestUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
         const chat = await chatService.createMessage({
             chatId,
-            senderId,
+            requestUserId,
             text: req.body.text,
         });
         res.json({
@@ -47,18 +47,18 @@ export async function getChatMessage(req: Request, res: Response) {
         const requestUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
         const messageId = ObjectId(req.params.messageId);
-        const chat: IChat = await chatService.findChatById(chatId, {
+        const messages = await chatService.findMessages(chatId, {
             requestUserId,
         });
 
-        if (!chat) {
+        if (!messages) {
             errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
                 "Chat not found"
             );
         }
 
-        const message = chat.messages.find(
+        const message = messages.find(
             (message) => message._id.toString() === messageId.toString()
         );
 
@@ -102,6 +102,7 @@ export async function deleteChatMessage(req: Request, res: Response) {
             chatId: ObjectId(req.params.chatId),
             messageId: ObjectId(req.params.messageId),
             isDeleted: req.query.restore ? false : true,
+            requestUserId: ObjectId((req as any).payload.user._id),
         });
 
         res.json({
