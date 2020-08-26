@@ -143,13 +143,18 @@ export default class ChatService {
             );
         }
 
+        chat.messages.sort(
+            (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
+        );
+
+        const skip = +options?.skip || 0;
         const limit = Math.min(
             +options?.limit ? Math.min(+options?.limit, 20) : 20,
             chat.messages.length
         );
-        const skip = +options?.skip || 0;
+        const limitIndex = limit + skip;
 
-        for (let i = skip; i < limit; i++) {
+        for (let i = skip; i < limitIndex; i++) {
             if (
                 !requestUserId.equals(chat.messages[i].meta.from) &&
                 !chat.messages[i].meta.readBy.some((id) =>
