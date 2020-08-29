@@ -169,3 +169,11 @@ export async function getUserChats(req: Request, res: Response) {
         res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
+
+export async function saveUserProfilePicture(req: Request, res: Response) {
+    try {
+        const rawImage: string = req.params.rawImage;
+    } catch (e) {
+        res.status(errorService.status(e)).json(errorService.json(e));
+    }
+}

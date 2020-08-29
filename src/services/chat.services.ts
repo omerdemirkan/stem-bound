@@ -169,6 +169,9 @@ export default class ChatService {
 
         const messages = chat.messages.slice(skip, limit + 1);
 
+        // const skip = +options?.skip || 0;
+        // const limit = +options?.limit ? Math.min(+options?.limit, 20) : 20;
+
         // const messages = await this.Chat.aggregate([
         //     { $match: { _id: chatId } },
         //     {
@@ -236,7 +239,6 @@ export default class ChatService {
         requestUserId: Types.ObjectId;
         isDeleted: boolean;
     }): Promise<IChat> {
-        console.log(requestUserId);
         const chat = await this.findChatById(chatId);
         const messageIndex = chat.messages.findIndex((message) =>
             messageId.equals(message._id)
@@ -248,6 +250,13 @@ export default class ChatService {
                 "You cannot delete/restore others' messages"
             );
         message.isDeleted = isDeleted;
-        return await chat.save();
+        await chat.save();
+
+        chat.messages.forEach(function (message) {
+            if (message.isDeleted) {
+                message.text = "This message was deleted";
+            }
+        });
+        return chat;
     }
 }

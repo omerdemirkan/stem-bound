@@ -48,6 +48,10 @@ const userSchema = new Schema(
             type: String,
             maxlength: 2000,
         },
+        profilePictureUrl: {
+            type: String,
+            required: false,
+        },
         location: {
             type: locationSchema,
             required: true,

@@ -4,7 +4,7 @@ import { logger } from "./global.config";
 const envFound = dotenv.config();
 
 if (envFound.error) {
-    logger.error("!!! env file not found !!!");
+    throw new Error("!!! env file not found !!!");
 }
 
 const config = Object.freeze({
@@ -21,6 +21,8 @@ const config = Object.freeze({
         process.env.NODE_ENV === "production"
             ? "https://stembound.education"
             : "http://localhost:3000",
+    projectId: process.env.PROJECT_ID,
+    assetsBucketName: process.env.ASSETS_BUCKET_NAME,
 });
 
 if (Object.values(config).includes(undefined)) {
@@ -31,3 +33,4 @@ export default config;
 
 export * from "./dependency.config";
 export * from "./global.config";
+export * from "./assets.config";

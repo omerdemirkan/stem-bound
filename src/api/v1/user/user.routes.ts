@@ -53,4 +53,11 @@ userRouter.delete(
     userControllers.deleteUser
 );
 
+userRouter.post(
+    "/:id/profile-picture",
+    authMiddlewareService.extractTokenPayload,
+    authMiddlewareService.matchParamIdToPayloadUserId,
+    userControllers.saveUserProfilePicture
+);
+
 export default userRouter;
