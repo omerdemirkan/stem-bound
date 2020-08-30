@@ -1,4 +1,9 @@
-import { EUserRoles, IUserQueryOptions, EErrorTypes } from "../types";
+import {
+    EUserRoles,
+    IUserQueryOptions,
+    EErrorTypes,
+    ITokenPayload,
+} from "../types";
 import { errorService } from "../services";
 import { getCoordinatesByIp } from "./location.helpers";
 
@@ -15,6 +20,7 @@ export function configureUsersQuery(
         geo_ip,
         lat,
         long,
+        exclude,
     } = requestQueries;
     let query: Partial<IUserQueryOptions> = {};
 
@@ -39,6 +45,10 @@ export function configureUsersQuery(
         query.coordinates = [longitude, latitude];
     } else if (+lat & +long) {
         query.coordinates = [+long, +lat];
+    }
+
+    if (exclude) {
+        query.excludedUserIds = exclude.split(",");
     }
 
     return query;

@@ -50,18 +50,26 @@ export default class UserService {
         coordinates: number[],
         options: IUserQueryOptions
     ) {
-        let aggregateOptions: any[] = [
-            {
-                $geoNear: {
-                    near: {
-                        type: "Point",
-                        coordinates,
-                    },
-                    distanceField: "distance.calculated",
-                    key: "location.geoJSON",
+        let aggregateOptions: any[] = [];
+
+        console.log(options.excludedUserIds);
+        if (options.excludedUserIds) {
+            aggregateOptions.push({
+                $match: { _id: { $nin: options.excludedUserIds } },
+            });
+        }
+
+        aggregateOptions.push({
+            $geoNear: {
+                near: {
+                    type: "Point",
+                    coordinates,
                 },
+                distanceField: "distance.calculated",
+                key: "location.geoJSON",
             },
-        ];
+        });
+
         if (options?.where && Object.keys(options.where).length) {
             (aggregateOptions[0].$geoNear as any).query = options.where;
         }
@@ -100,6 +108,12 @@ export default class UserService {
 
         if (options.text) {
             where.$text = { $search: options.text };
+        }
+
+        if (options.excludedUserIds) {
+            where._id = {
+                $nin: options.excludedUserIds,
+            };
         }
         return await model
             .find(where)

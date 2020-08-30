@@ -174,18 +174,15 @@ export async function getUserChats(req: Request, res: Response) {
 export async function saveUserProfilePicture(req: Request, res: Response) {
     try {
         const file: any = req.files.file;
-        console.log(file);
         const profilePictureUrl = await saveFileToBucket(file);
 
-        await userService.updateUserProfilePictureUrl(
+        const user = await userService.updateUserProfilePictureUrl(
             ObjectId(req.params.id),
             profilePictureUrl
         );
 
         res.json({
-            data: {
-                profilePictureUrl,
-            },
+            data: user,
             message: "User profile picture successfully updated",
         });
     } catch (e) {

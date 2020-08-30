@@ -62,4 +62,5 @@ export interface IUserQueryOptions {
     where?: MongooseFilterQuery<IUser>;
     coordinates?: number[];
     text?: string;
+    excludedUserIds?: string[];
 }
