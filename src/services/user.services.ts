@@ -154,6 +154,17 @@ export default class UserService {
         return await this.User.findByIdAndDelete(id);
     }
 
+    async updateUserProfilePictureUrl(
+        userId: Types.ObjectId,
+        profilePictureUrl: string
+    ): Promise<IUser> {
+        const user = await this.findUserById(userId);
+
+        user.profilePictureUrl = profilePictureUrl;
+        // @ts-ignore
+        return await user.save();
+    }
+
     async addCourseMetadata({
         userIds,
         courseIds,

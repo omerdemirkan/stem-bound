@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, json } from "express";
 import {
     errorService,
     userService,
@@ -21,6 +21,7 @@ import {
 } from "../../../types";
 import { configureChatArrayResponseData } from "../../../helpers/chat.helpers";
 import { configureCourseArrayResponseData } from "../../../helpers";
+import { saveFileToBucket } from "../../../jobs";
 
 const { ObjectId } = Types;
 
@@ -172,7 +173,21 @@ export async function getUserChats(req: Request, res: Response) {
 
 export async function saveUserProfilePicture(req: Request, res: Response) {
     try {
-        const rawImage: string = req.params.rawImage;
+        const file: any = req.files.file;
+        console.log(file);
+        const profilePictureUrl = await saveFileToBucket(file);
+
+        await userService.updateUserProfilePictureUrl(
+            ObjectId(req.params.id),
+            profilePictureUrl
+        );
+
+        res.json({
+            data: {
+                profilePictureUrl,
+            },
+            message: "User profile picture successfully updated",
+        });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
     }

@@ -14,7 +14,8 @@ interface IBaseUser extends Document {
     email: string;
     hash: string;
     shortDescription: string;
-    longDescription: string;
+    longDescription?: string;
+    profilePictureUrl: string;
     location: {
         zip: string;
         city: string;

@@ -1,10 +1,11 @@
 import config, { storage } from "../config";
+import { UploadedFile } from "express-fileupload";
 
 const bucket = storage.bucket(config.assetsBucketName);
 
-export function saveFileToBucket(file: File): Promise<string> {
+export function saveFileToBucket(file: UploadedFile): Promise<string> {
     return new Promise((resolve, reject) => {
-        const { name, arrayBuffer } = file;
+        const { name, data } = file;
 
         const blob = bucket.file(name.replace(/ /g, "_"));
         const blobStream = blob.createWriteStream({
@@ -19,6 +20,6 @@ export function saveFileToBucket(file: File): Promise<string> {
             .on("error", () => {
                 reject(`Unable to upload image, something went wrong`);
             })
-            .end(arrayBuffer);
+            .end(data);
     });
 }
