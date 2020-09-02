@@ -138,16 +138,12 @@ export default class UserService {
         return await this.findUser({ email });
     }
 
-    async updateUser({
-        where,
-        userData,
-    }: {
-        where: object;
-        userData: object;
-    }): Promise<IUser> {
-        return await this.User.findOneAndUpdate(where, userData, {
-            new: true,
-        });
+    async updateUser(where: object, userData: object): Promise<IUser> {
+        const user = await this.findUser(where);
+        Object.assign(user, userData);
+
+        // @ts-ignore
+        return await user.save();
     }
 
     async updateUserById({
@@ -157,7 +153,7 @@ export default class UserService {
         id: Types.ObjectId;
         userData: object;
     }): Promise<IUser> {
-        return await this.User.findByIdAndUpdate(id, userData, { new: true });
+        return await this.updateUser({ _id: id }, userData);
     }
 
     async deleteUser(where: any): Promise<IUser> {
