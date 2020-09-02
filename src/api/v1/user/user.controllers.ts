@@ -171,7 +171,7 @@ export async function getUserChats(req: Request, res: Response) {
     }
 }
 
-export async function saveUserProfilePicture(req: Request, res: Response) {
+export async function updateUserProfilePicture(req: Request, res: Response) {
     try {
         const file: any = req.files.file;
         const profilePictureUrl = await saveFileToBucket(file);
@@ -184,6 +184,23 @@ export async function saveUserProfilePicture(req: Request, res: Response) {
         res.json({
             data: user,
             message: "User profile picture successfully updated",
+        });
+    } catch (e) {
+        res.status(errorService.status(e)).json(errorService.json(e));
+    }
+}
+
+export async function updateUserLocation(req: Request, res: Response) {
+    try {
+        const userId = ObjectId(req.params.id);
+        const updatedUser = await userService.updateUserLocationByZip(
+            userId,
+            req.body.zip as string
+        );
+
+        res.json({
+            message: "User location successfully updated",
+            data: updatedUser,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

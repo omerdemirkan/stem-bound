@@ -179,6 +179,20 @@ export default class UserService {
         return await user.save();
     }
 
+    async updateUserLocationByZip(
+        userId: Types.ObjectId,
+        zip: string
+    ): Promise<IUser> {
+        const location = await this.locationService.findLocationByZip(zip);
+        return await this.User.findByIdAndUpdate(
+            userId,
+            {
+                $set: { location },
+            },
+            { new: true }
+        );
+    }
+
     async addCourseMetadata({
         userIds,
         courseIds,
