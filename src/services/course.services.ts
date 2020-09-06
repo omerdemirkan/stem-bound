@@ -244,6 +244,7 @@ export default class CourseService {
             _id: courseId,
             "meta.instructors": { $in: announcementData.meta.from },
         });
+
         if (!course) {
             this.errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
@@ -252,7 +253,15 @@ export default class CourseService {
         }
         course.announcements.unshift(announcementData as any);
         await course.save();
-        return course.announcements[0];
+
+        const announcement = course.announcements[0];
+
+        this.eventEmitter.emit(ECourseEvents.COURSE_ANNOUNCEMENT_CREATED, {
+            announcement,
+            course,
+        });
+
+        return announcement;
     }
 
     async updateAnnouncement({

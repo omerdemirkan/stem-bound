@@ -4,6 +4,7 @@ export enum EUserEvents {
 
 export enum ECourseEvents {
     COURSE_CREATED = "COURSE_CREATED",
+    COURSE_ANNOUNCEMENT_CREATED = "COURSE_ANNOUNCEMENT_CREATED",
 }
 
 export enum EChatEvents {

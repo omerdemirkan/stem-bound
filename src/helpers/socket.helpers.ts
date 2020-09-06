@@ -13,9 +13,7 @@ export function constructClientChatEvent({
     return `chats/${chatId}/${event}`;
 }
 
-export async function findUserFromSocket(
-    socket: Socket
-): Promise<IUser | null> {
+export async function findUserFromSocket(socket: Socket): Promise<IUser> {
     try {
         const accessToken = socket.request._query["authorization"];
         const payload = (await jwtService.verify(accessToken)) as ITokenPayload;

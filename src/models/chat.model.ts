@@ -79,6 +79,14 @@ const chatSchema = new Schema(
             type: chatMetaSchema,
             required: true,
         },
+        isGroupChat: {
+            type: Boolean,
+            required: true,
+            default: false,
+        },
+        name: {
+            type: String,
+        },
     },
     {
         timestamps: {

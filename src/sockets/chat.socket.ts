@@ -52,6 +52,7 @@ const initializeChatSocket: ISocketInitializer = (socket, { io, user }) => {
             messageEmitter.emit(ESocketEvents.CHAT_MESSAGE_CREATED, {
                 chatId: data.chatId,
                 message: chat.messages[0],
+                user,
             });
         } catch (e) {
             logger.error(e);

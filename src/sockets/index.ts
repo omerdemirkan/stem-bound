@@ -1,10 +1,18 @@
-export { default as initializeChatSocket } from "./chat.socket";
-
 import initializeChatSocket from "./chat.socket";
-import initializeRoomSockets from "./room.socket";
+import initializeRoomSocket from "./room.socket";
+import initializeCourseSocket from "./course.socket";
 import { eventEmitter, logger } from "../config";
 import { Server, Socket } from "socket.io";
 import { findUserFromSocket } from "../helpers/socket.helpers";
+import { ISocketInitializer } from "../types";
+
+const socketInitializers: ISocketInitializer[] = [
+    initializeChatSocket,
+    initializeCourseSocket,
+    initializeRoomSocket,
+];
+
+export default socketInitializers;
 
 export function init(io: Server) {
     io.on("connection", async function (socket: Socket) {
@@ -13,7 +21,10 @@ export function init(io: Server) {
         if (!user)
             return logger.error("Cannot find user from socket connection");
 
-        initializeRoomSockets(socket, { eventEmitter, io, user });
-        initializeChatSocket(socket, { eventEmitter, io, user });
+        socket.join(user._id.toString());
+
+        socketInitializers.forEach(function (initializer) {
+            initializer(socket, { eventEmitter, io, user });
+        });
     });
 }
