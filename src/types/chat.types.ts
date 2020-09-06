@@ -17,6 +17,9 @@ export interface IChat extends Document {
     meta: {
         users: Types.ObjectId[];
     };
+    isGroupChat: boolean;
+    name?: string;
+    pictureUrl?: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

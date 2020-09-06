@@ -1,8 +1,9 @@
 import { Model, Types } from "mongoose";
-import { IChat, IMessage, EModels, EErrorTypes } from "../types";
+import { IChat, IMessage, EModels, EErrorTypes, IUser } from "../types";
 import { EventEmitter } from "events";
 import { model, emitter } from "../decorators";
 import { ErrorService, errorService } from ".";
+import UserService from "./user.services";
 
 export default class ChatService {
     @model(EModels.CHAT)
@@ -11,7 +12,10 @@ export default class ChatService {
     @emitter()
     private eventEmitter: EventEmitter;
 
-    constructor(private errorService: ErrorService) {}
+    constructor(
+        private userService: UserService,
+        private errorService: ErrorService
+    ) {}
 
     async createChat(
         chatData: IChat,
@@ -54,6 +58,7 @@ export default class ChatService {
 
     async findChats(
         where: any,
+        requestUserId: Types.ObjectId,
         options?: {
             limit?: number;
             skip?: number;
@@ -61,14 +66,51 @@ export default class ChatService {
             overrideRequestUserIdValidation?: boolean;
         }
     ): Promise<IChat[]> {
-        return await this.Chat.find(where)
+        const chats = await this.Chat.find(where)
             .sort(options.sort)
             .skip(options.skip || 0)
             .limit(Math.min(options.limit, 20));
+
+        let userHashTable: { [key: string]: IUser } = {};
+
+        chats.forEach(function (chat) {
+            chat.meta.users.forEach(function (userId) {
+                // @ts-ignore
+                userHashTable[userId.toHexString()] = userId;
+            });
+        });
+
+        delete userHashTable[requestUserId.toHexString()];
+
+        const users = await this.userService.findUsersByIds(
+            Object.values(userHashTable) as any
+        );
+
+        users.forEach(function (user) {
+            userHashTable[user._id.toHexString()] = user;
+        });
+
+        let i = chats.length;
+        while (i--) {
+            if (!chats[i].isGroupChat) {
+                const user =
+                    userHashTable[
+                        chats[i].meta.users
+                            .find((u) => !requestUserId.equals(u))
+                            .toHexString()
+                    ];
+
+                chats[i].pictureUrl = user.profilePictureUrl;
+                chats[i].name = `${user.firstName} ${user.lastName}`;
+            }
+        }
+
+        return chats;
     }
 
     async findChatsByIds(
         ids: Types.ObjectId[],
+        requestUserId: Types.ObjectId,
         options?: {
             where?: object;
             limit?: number;
@@ -78,7 +120,7 @@ export default class ChatService {
         }
     ): Promise<IChat[]> {
         const where = { _id: { $in: ids }, ...options?.where };
-        return await this.findChats(where, {
+        return await this.findChats(where, requestUserId, {
             ...options,
         });
     }

@@ -87,6 +87,12 @@ const chatSchema = new Schema(
         name: {
             type: String,
         },
+        pictureUrl: {
+            type: String,
+        },
+        pictureUrls: {
+            type: [String],
+        },
     },
     {
         timestamps: {
