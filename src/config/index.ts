@@ -1,11 +1,7 @@
 import dotenv from "dotenv";
 import { logger } from "./global.config";
 
-const envFound = dotenv.config();
-
-if (envFound.error) {
-    throw new Error("!!! env file not found !!!");
-}
+dotenv.config();
 
 const config = Object.freeze({
     port: process.env.PORT,

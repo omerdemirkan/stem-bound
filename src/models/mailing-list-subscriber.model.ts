@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
+import { EUserRoles } from "../types";
 
 // A subscriber is someone who signs up to the mailing list.
 
@@ -13,6 +14,11 @@ const subscriberSchema = new Schema({
         unique: true,
     },
     affiliate: String,
+    role: {
+        type: String,
+        enum: Object.values(EUserRoles),
+        required: true,
+    },
 });
 
 const MailingListSubscriber = mongoose.model("subscriber", subscriberSchema);
