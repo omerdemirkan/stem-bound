@@ -3,8 +3,15 @@ import { mailingListService, errorService } from "../../../services";
 
 export async function createMailingListSubscriber(req: Request, res: Response) {
     try {
+        let { email, a, affiliate } = req.body;
+        let subscriber: any = { email };
+
+        affiliate = affiliate || a;
+        if (affiliate) {
+            subscriber.affiliate = affiliate;
+        }
         const mailingListSubscriber = await mailingListService.createSubscriber(
-            req.body
+            { email, affiliate }
         );
 
         res.json({

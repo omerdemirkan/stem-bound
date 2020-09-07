@@ -12,6 +12,7 @@ const subscriberSchema = new Schema({
         },
         unique: true,
     },
+    affiliate: String,
 });
 
 const MailingListSubscriber = mongoose.model("subscriber", subscriberSchema);
