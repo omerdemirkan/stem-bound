@@ -32,6 +32,7 @@ export interface IAnnouncement {
 
 export interface ICourse extends Document {
     title: string;
+    verified: boolean;
     shortDescription: string;
     longDescription: string;
     type: string;

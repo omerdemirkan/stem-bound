@@ -8,11 +8,11 @@ const { ObjectId } = Types;
 
 export async function getChatMessages(req: Request, res: Response) {
     try {
-        const requestUserId = ObjectId((req as any).payload.user._id);
+        const requestingUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
         const messages: IMessage[] = await chatService.findMessages({
             chatId,
-            requestUserId,
+            requestingUserId,
         });
         res.json({
             message: "Chat successfully fetched",
@@ -27,11 +27,11 @@ export async function getChatMessages(req: Request, res: Response) {
 
 export async function createChatMessage(req: Request, res: Response) {
     try {
-        const requestUserId = ObjectId((req as any).payload.user._id);
+        const requestingUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
         const chat = await chatService.createMessage({
             chatId,
-            requestUserId,
+            requestingUserId,
             text: req.body.text,
         });
         res.json({
@@ -45,12 +45,12 @@ export async function createChatMessage(req: Request, res: Response) {
 
 export async function getChatMessage(req: Request, res: Response) {
     try {
-        const requestUserId = ObjectId((req as any).payload.user._id);
+        const requestingUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
         const messageId = ObjectId(req.params.messageId);
         const messages = await chatService.findMessages({
             chatId,
-            requestUserId,
+            requestingUserId,
         });
 
         if (!messages) {
@@ -104,7 +104,7 @@ export async function deleteChatMessage(req: Request, res: Response) {
             chatId: ObjectId(req.params.chatId),
             messageId: ObjectId(req.params.messageId),
             isDeleted: req.query.restore ? false : true,
-            requestUserId: ObjectId((req as any).payload.user._id),
+            requestingUserId: ObjectId((req as any).payload.user._id),
         });
 
         res.json({

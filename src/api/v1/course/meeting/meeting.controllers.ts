@@ -61,7 +61,7 @@ export async function updateMeeting(req: Request, res: Response) {
         const updatedMeeting: IMeeting = await courseService.updateMeeting({
             courseId: ObjectId(req.params.courseId),
             meetingId: ObjectId(req.params.meetingId),
-            requestUserId: (req as any).payload.user._id,
+            requestingUserId: (req as any).payload.user._id,
             meetingData: req.body,
         });
         res.json({
@@ -80,7 +80,7 @@ export async function deleteMeeting(req: Request, res: Response) {
         const deletedMeeting: IMeeting = await courseService.deleteMeeting({
             courseId,
             meetingId,
-            requestUserId: (req as any).payload.user._id,
+            requestingUserId: (req as any).payload.user._id,
         });
 
         res.json({

@@ -7,8 +7,11 @@ import {
     userService,
     schoolService,
 } from "../../../services";
-import { ICourse, IUser, EErrorTypes } from "../../../types";
-import { configureCourseArrayResponseData } from "../../../helpers";
+import { ICourse, IUser, EErrorTypes, ISchoolOfficial } from "../../../types";
+import {
+    configureCourseArrayResponseData,
+    configureCourseResponseData,
+} from "../../../helpers";
 
 const { ObjectId } = Types;
 
@@ -208,6 +211,40 @@ export async function getCourseSchool(req: Request, res: Response) {
         res.json({
             message: "Course school successfully fetched",
             data: school,
+        });
+    } catch (e) {
+        res.status(errorService.status(e)).json(errorService.json(e));
+    }
+}
+
+export async function verifyCourse(req: Request, res: Response) {
+    try {
+        const courseId = ObjectId(req.params.id);
+        const schoolOfficialId = ObjectId((req as any).payload.user._id);
+
+        const [course, schoolOfficial] = await Promise.all([
+            courseService.findCourseById(courseId),
+            userService.findUserById(schoolOfficialId) as Promise<
+                ISchoolOfficial
+            >,
+        ]);
+
+        if (!schoolOfficial.meta.school.equals(course.meta.school))
+            errorService.throwError(
+                EErrorTypes.FORBIDDEN,
+                "Only school officials from the school at which the course is taught can verify"
+            );
+
+        course.verified = req.body.verified;
+
+        await course.save();
+
+        res.json({
+            message: "Course verification successfully updated",
+            data: configureCourseResponseData(course, {
+                payload: (req as any).payload,
+                query: req.query,
+            }),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

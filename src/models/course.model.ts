@@ -112,6 +112,11 @@ const courseSchema = new Schema({
         required: [true, "Course title is required."],
         trim: true,
     },
+    verified: {
+        type: Boolean,
+        required: true,
+        default: false,
+    },
     shortDescription: {
         type: String,
         required: true,

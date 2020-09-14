@@ -58,12 +58,12 @@ export default class ChatService {
 
     async findChats(
         where: any,
-        requestUserId: Types.ObjectId,
+        requestingUserId: Types.ObjectId,
         options?: {
             limit?: number;
             skip?: number;
             sort?: object;
-            overrideRequestUserIdValidation?: boolean;
+            overriderequestingUserIdValidation?: boolean;
         }
     ): Promise<IChat[]> {
         const chats = await this.Chat.find(where)
@@ -80,7 +80,7 @@ export default class ChatService {
             });
         });
 
-        delete userHashTable[requestUserId.toHexString()];
+        delete userHashTable[requestingUserId.toHexString()];
 
         const users = await this.userService.findUsersByIds(
             Object.values(userHashTable) as any
@@ -96,7 +96,7 @@ export default class ChatService {
                 const user =
                     userHashTable[
                         chats[i].meta.users
-                            .find((u) => !requestUserId.equals(u))
+                            .find((u) => !requestingUserId.equals(u))
                             .toHexString()
                     ];
 
@@ -110,17 +110,17 @@ export default class ChatService {
 
     async findChatsByIds(
         ids: Types.ObjectId[],
-        requestUserId: Types.ObjectId,
+        requestingUserId: Types.ObjectId,
         options?: {
             where?: object;
             limit?: number;
             skip?: number;
             sort?: object;
-            overrideRequestUserIdValidation?: boolean;
+            overriderequestingUserIdValidation?: boolean;
         }
     ): Promise<IChat[]> {
         const where = { _id: { $in: ids }, ...options?.where };
-        return await this.findChats(where, requestUserId, {
+        return await this.findChats(where, requestingUserId, {
             ...options,
         });
     }
@@ -161,10 +161,10 @@ export default class ChatService {
     async findMessages(
         {
             chatId,
-            requestUserId,
+            requestingUserId,
         }: {
             chatId: Types.ObjectId;
-            requestUserId: Types.ObjectId;
+            requestingUserId: Types.ObjectId;
         },
         options?: {
             skip?: number;
@@ -178,7 +178,7 @@ export default class ChatService {
                 EErrorTypes.DOCUMENT_NOT_FOUND,
                 "Chat not found"
             );
-        } else if (!chat.meta.users.some((id) => requestUserId.equals(id))) {
+        } else if (!chat.meta.users.some((id) => requestingUserId.equals(id))) {
             errorService.throwError(
                 EErrorTypes.UNAUTHORIZED,
                 "Unauthorized request user id"
@@ -198,12 +198,12 @@ export default class ChatService {
 
         for (let i = skip; i < limitIndex; i++) {
             if (
-                !requestUserId.equals(chat.messages[i].meta.from) &&
+                !requestingUserId.equals(chat.messages[i].meta.from) &&
                 !chat.messages[i].meta.readBy.some((id) =>
-                    requestUserId.equals(id)
+                    requestingUserId.equals(id)
                 )
             ) {
-                chat.messages[i].meta.readBy.push(requestUserId);
+                chat.messages[i].meta.readBy.push(requestingUserId);
             }
         }
 
@@ -236,16 +236,16 @@ export default class ChatService {
     async createMessage({
         text,
         chatId,
-        requestUserId,
+        requestingUserId,
     }: {
         text: string;
         chatId: Types.ObjectId;
-        requestUserId: Types.ObjectId;
+        requestingUserId: Types.ObjectId;
     }): Promise<IChat> {
         let chat = await this.Chat.findById(chatId);
         chat.messages.unshift({
             text,
-            meta: { from: requestUserId, readBy: [] },
+            meta: { from: requestingUserId, readBy: [] },
             isDeleted: false,
         });
 
@@ -273,12 +273,12 @@ export default class ChatService {
     async setMessageDeletion({
         chatId,
         messageId,
-        requestUserId,
+        requestingUserId,
         isDeleted,
     }: {
         chatId: Types.ObjectId;
         messageId: Types.ObjectId;
-        requestUserId: Types.ObjectId;
+        requestingUserId: Types.ObjectId;
         isDeleted: boolean;
     }): Promise<IChat> {
         const chat = await this.findChatById(chatId);
@@ -286,7 +286,7 @@ export default class ChatService {
             messageId.equals(message._id)
         );
         const message = chat.messages[messageIndex];
-        if (!requestUserId.equals(message.meta.from))
+        if (!requestingUserId.equals(message.meta.from))
             errorService.throwError(
                 EErrorTypes.FORBIDDEN,
                 "You cannot delete/restore others' messages"

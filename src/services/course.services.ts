@@ -147,17 +147,17 @@ export default class CourseService {
     async updateMeeting({
         courseId,
         meetingId,
-        requestUserId,
+        requestingUserId,
         meetingData,
     }: {
         courseId: Types.ObjectId;
         meetingId: Types.ObjectId;
-        requestUserId: Types.ObjectId;
+        requestingUserId: Types.ObjectId;
         meetingData: Partial<IMeeting>;
     }): Promise<IMeeting> {
         const course = await this.Course.findOne({
             _id: courseId,
-            "meta.instructors": requestUserId.toString(),
+            "meta.instructors": requestingUserId.toString(),
         });
         if (!course) {
             this.errorService.throwError(
@@ -176,14 +176,14 @@ export default class CourseService {
     async deleteMeeting({
         courseId,
         meetingId,
-        requestUserId,
+        requestingUserId,
     }: {
         courseId: Types.ObjectId;
         meetingId: Types.ObjectId;
-        requestUserId: Types.ObjectId;
+        requestingUserId: Types.ObjectId;
     }): Promise<IMeeting> {
         const course = await this.Course.findOneAndUpdate(
-            { _id: courseId, "meta.instructors": requestUserId },
+            { _id: courseId, "meta.instructors": requestingUserId },
             {
                 $pull: { meetings: { _id: meetingId } },
             },

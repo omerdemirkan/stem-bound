@@ -44,7 +44,7 @@ export async function createChat(req: Request, res: Response) {
 
 export async function getChat(req: Request, res: Response) {
     try {
-        const requestUserId = ObjectId((req as any).payload.user._id);
+        const requestingUserId = ObjectId((req as any).payload.user._id);
         const id = ObjectId(req.params.id);
         const chat: IChat = await chatService.findChatById(id);
         if (!chat) {
@@ -52,7 +52,7 @@ export async function getChat(req: Request, res: Response) {
                 EErrorTypes.DOCUMENT_NOT_FOUND,
                 "Chat not found"
             );
-        } else if (!chat.meta.users.some((id) => requestUserId.equals(id))) {
+        } else if (!chat.meta.users.some((id) => requestingUserId.equals(id))) {
             res.status(403);
         }
         res.json({

@@ -38,7 +38,7 @@ const initializeChatSocket: ISocketInitializer = (socket, { io, user }) => {
                 throw new Error("chatId not found in user metadata");
             const chat = await chatService.createMessage({
                 chatId: ObjectId(data.chatId),
-                requestUserId: user._id,
+                requestingUserId: user._id,
                 text: data.text,
             });
 
@@ -106,7 +106,7 @@ const initializeChatSocket: ISocketInitializer = (socket, { io, user }) => {
                 chatId: ObjectId(data.chatId),
                 messageId: ObjectId(data.messageId),
                 isDeleted: true,
-                requestUserId: user._id,
+                requestingUserId: user._id,
             });
 
             let messageEmitter = io.sockets.to(data.chatId);
@@ -139,7 +139,7 @@ const initializeChatSocket: ISocketInitializer = (socket, { io, user }) => {
                 chatId: ObjectId(data.chatId),
                 messageId: ObjectId(data.messageId),
                 isDeleted: false,
-                requestUserId: user._id,
+                requestingUserId: user._id,
             });
 
             let messageEmitter = io.sockets.to(data.chatId);
