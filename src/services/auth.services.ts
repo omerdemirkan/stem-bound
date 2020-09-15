@@ -3,6 +3,7 @@ import { JwtService, BcryptService, UserService, MetadataService } from ".";
 import { Types } from "mongoose";
 import { EventEmitter } from "events";
 import { emitter } from "../decorators";
+import { configureTokenPayload } from "../helpers";
 
 const { ObjectId } = Types;
 
@@ -29,15 +30,7 @@ export default class AuthService {
 
         await this.metadataService.handleNewUserMetadataUpdate(newUser);
 
-        const payload: ITokenPayload = {
-            role: newUser.role,
-            user: {
-                _id: newUser._id,
-                firstName: newUser.firstName,
-                lastName: newUser.lastName,
-                email: newUser.email,
-            },
-        };
+        const payload: ITokenPayload = configureTokenPayload(newUser);
 
         const accessToken = await this.jwtService.sign(payload);
 
@@ -49,22 +42,14 @@ export default class AuthService {
         email: string,
         password: string
     ): Promise<{ user: any; accessToken: string } | null> {
-        const user: any = await this.userService.findUserByEmail(email);
+        const user = await this.userService.findUserByEmail(email);
 
         if (!user) {
             return null;
         }
 
         if (await this.bcryptService.compare(password, user.hash)) {
-            const payload: ITokenPayload = {
-                role: user.role,
-                user: {
-                    _id: user._id,
-                    firstName: user.firstName,
-                    lastName: user.lastName,
-                    email: user.email,
-                },
-            };
+            const payload: ITokenPayload = configureTokenPayload(user);
 
             const accessToken = await this.jwtService.sign(payload);
             return { user, accessToken };

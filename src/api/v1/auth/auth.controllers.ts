@@ -7,6 +7,7 @@ import {
 } from "../../../services";
 import { Types } from "mongoose";
 import { EErrorTypes } from "../../../types";
+import { configureTokenPayload } from "../../../helpers";
 
 const { ObjectId } = Types;
 
@@ -27,7 +28,7 @@ export async function me(req: Request, res: Response) {
             message: "Access token successfully refreshed",
             data: {
                 user: userData,
-                accessToken: jwtService.sign((req as any).payload),
+                accessToken: jwtService.sign(configureTokenPayload(userData)),
             },
         });
     } catch (e) {

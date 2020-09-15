@@ -1,12 +1,12 @@
 import { EUserRoles } from "./index";
 
 export interface ITokenPayload {
-    role: EUserRoles | "ADMIN";
     user: {
         _id: string;
         firstName: string;
         lastName: string;
         email: string;
+        role: EUserRoles | "ADMIN";
     };
 }
 
