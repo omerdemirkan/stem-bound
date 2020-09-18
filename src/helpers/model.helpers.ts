@@ -1,6 +1,8 @@
 // Because this function may be used for intensive operations,
 // performance is a priority.
 
+import { passwordRegex, urlRegex } from "../constants";
+
 export const schemaValidators = {
     uniqueStringArray(values: string[]): boolean {
         let obj: any = {};
@@ -14,7 +16,11 @@ export const schemaValidators = {
     },
 
     email(email: string) {
-        return /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/.test(email);
+        return passwordRegex.test(email);
+    },
+
+    url(url) {
+        return urlRegex.test(url);
     },
 
     arrayLength({ min, max }: { min: number; max: number }) {

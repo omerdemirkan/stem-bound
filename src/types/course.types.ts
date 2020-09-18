@@ -13,7 +13,8 @@ export enum EMeetingTypes {
 
 export interface IMeeting {
     type: string;
-    roomNum: string;
+    roomNum?: string;
+    url?: string;
     start: Date;
     end: Date;
     message: string;

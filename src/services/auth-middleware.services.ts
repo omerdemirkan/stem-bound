@@ -42,9 +42,7 @@ export default class AuthMiddlewareService {
             res: Response,
             next: NextFunction
         ) {
-            const { role } = (req as any).payload;
-
-            if (allowedRoles.includes(role)) {
+            if (allowedRoles.includes((req as any).payload.user.role)) {
                 next();
             } else {
                 res.sendStatus(403);

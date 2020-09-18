@@ -1,4 +1,5 @@
 import mongoose, { Schema, Types } from "mongoose";
+import { urlRegex } from "../constants";
 import { schemaValidators } from "../helpers/model.helpers";
 import { ECourseTypes, EMeetingTypes, ICourse } from "../types";
 
@@ -83,6 +84,19 @@ const meetingSchema = new Schema(
                     return this.type === EMeetingTypes.IN_PERSON;
                 },
                 "In person meetings require a room number",
+            ],
+        },
+        url: {
+            type: String,
+            validate: {
+                validator: schemaValidators.url,
+                message: "Invalid url for meeting type",
+            },
+            required: [
+                function () {
+                    return this.type === EMeetingTypes.REMOTE;
+                },
+                "Remote meetings require meetings urls",
             ],
         },
         start: {
