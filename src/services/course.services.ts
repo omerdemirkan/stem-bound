@@ -75,7 +75,8 @@ export default class CourseService {
     }
 
     async deleteCourseById(id: Types.ObjectId): Promise<ICourse> {
-        return await this.Course.findByIdAndDelete(id);
+        console.log("Inside deleteCourseById");
+        return await this.deleteCourse({ _id: id });
     }
 
     async findMeetingsByCourseId(

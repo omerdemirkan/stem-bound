@@ -33,10 +33,10 @@ export default class ChatService {
 
         if (options?.preventDuplicationByUserIds) {
             const chatUsers: any = chatData.meta.users;
-            const duplicateChat: any = await this.findChatByUserIds(chatUsers, {
+            const duplicateChat = await this.findChatsByUserIds(chatUsers, {
                 exact: true,
             });
-            if (duplicateChat) {
+            if (duplicateChat.length) {
                 errorService.throwError(
                     EErrorTypes.CONFLICT,
                     "This chat is a duplicate of another chat"
@@ -47,8 +47,8 @@ export default class ChatService {
         return await this.Chat.create(chatData);
     }
 
-    findChatByUserIds(userIds, options?: { exact?: boolean }) {
-        let query = this.Chat.findOne().all("meta.users", userIds);
+    findChatsByUserIds(userIds, options?: { exact?: boolean }) {
+        let query = this.Chat.find().all("meta.users", userIds);
 
         if (options?.exact) {
             query = query.size("meta.users", userIds.length);

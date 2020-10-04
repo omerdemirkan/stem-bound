@@ -12,7 +12,7 @@ export async function createChat(req: Request, res: Response) {
         chatData.meta.users = chatData.meta.users.map((id) =>
             ObjectId(id as any)
         );
-        const duplicateChat = await chatService.findChatByUserIds(
+        const [duplicateChat] = await chatService.findChatsByUserIds(
             chatData.meta.users,
             { exact: true }
         );

@@ -143,15 +143,35 @@ export async function getUserSchool(req: Request, res: Response) {
 
 export async function getUserChats(req: Request, res: Response) {
     try {
-        const user: IUser = await userService.findUserById(
-            ObjectId(req.params.id)
-        );
+        const userId = ObjectId(req.params.id);
+        if (req.query.user_ids) {
+            const chats = await chatService.findChatsByUserIds(
+                [
+                    ...req.params.user_ids.split(",").map((id) => ObjectId(id)),
+                    userId,
+                ],
+                {
+                    exact: !!req.query.exact,
+                }
+            );
+            return res.json({
+                message: "Chat messages successfully fetched",
+                data: configureChatArrayResponseData(chats, {
+                    query: req.query,
+                    payload: (req as any).payload,
+                }),
+            });
+        }
+
+        const user: IUser = await userService.findUserById(userId);
+
         if (!user) {
             errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
                 "User not found"
             );
         }
+
         const chatIds = user.meta.chats;
         const chats: IChat[] = chatIds.length
             ? await chatService.findChatsByIds(chatIds, user._id, {
