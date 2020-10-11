@@ -47,6 +47,7 @@ export function configureCourseResponseData(
         meetings: course.meetings
             .filter((meeting) => meeting.end > now)
             .slice(0, 11),
+        announcements: course.announcements.slice(0, 5),
     };
 }
 
