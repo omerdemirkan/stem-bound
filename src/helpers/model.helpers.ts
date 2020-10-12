@@ -26,4 +26,15 @@ export const schemaValidators = {
     arrayLength({ min, max }: { min: number; max: number }) {
         return (array: any[]) => array.length <= max && array.length >= min;
     },
+
+    uniqueKeyMapping(mapFuncion: (any) => string) {
+        return function (array: any[]) {
+            let valuesHashTable = {};
+            let i = array.length;
+            while (i--) {
+                valuesHashTable[mapFuncion(array[i])] = true;
+            }
+            return array.length === Object.keys(valuesHashTable).length;
+        };
+    },
 };

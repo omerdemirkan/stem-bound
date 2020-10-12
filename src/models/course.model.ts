@@ -1,7 +1,7 @@
 import mongoose, { Schema, Types } from "mongoose";
 import { urlRegex } from "../constants";
 import { schemaValidators } from "../helpers/model.helpers";
-import { ECourseTypes, EMeetingTypes, ICourse } from "../types";
+import { ECourseTypes, EMeetingTypes, ICourse, IMeeting } from "../types";
 
 const courseMetaSchema = new Schema(
     {
@@ -153,6 +153,17 @@ const courseSchema = new Schema({
         type: [meetingSchema],
         required: true,
         default: [],
+        validate: {
+            validator: schemaValidators.uniqueKeyMapping(function (
+                meeting: IMeeting
+            ) {
+                const date = new Date(meeting.start);
+                date.setHours(0, 0, 0, 0);
+                return date.toString();
+            }),
+            message:
+                "Meeting dates for a course must be unique, cannot have two meetings on the same day!",
+        },
     },
     announcements: {
         type: [announcementSchema],

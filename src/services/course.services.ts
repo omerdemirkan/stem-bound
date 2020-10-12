@@ -56,18 +56,17 @@ export default class CourseService {
         where: object,
         newCourse: Partial<ICourse>
     ): Promise<ICourse> {
-        return await this.Course.findOneAndUpdate(where, newCourse, {
-            new: true,
-        });
+        const course = await this.findCourse(where);
+        Object.assign(course, newCourse);
+        await course.save();
+        return course;
     }
 
     async updateCourseById(
         id: Types.ObjectId,
         newCourse: Partial<ICourse>
     ): Promise<ICourse> {
-        return await this.Course.findByIdAndUpdate(id, newCourse, {
-            new: true,
-        });
+        return await this.updateCourse({ _id: id }, newCourse);
     }
 
     async deleteCourse(where: object): Promise<ICourse> {
@@ -75,7 +74,6 @@ export default class CourseService {
     }
 
     async deleteCourseById(id: Types.ObjectId): Promise<ICourse> {
-        console.log("Inside deleteCourseById");
         return await this.deleteCourse({ _id: id });
     }
 
