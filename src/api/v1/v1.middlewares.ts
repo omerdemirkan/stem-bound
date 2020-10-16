@@ -16,5 +16,5 @@ export function requestLogger(
 // Allowing for 200 requests for any 30 minute window
 export const apiRateLimiter = rateLimiter({
     windowMs: 30 * 60 * 1000,
-    max: 200,
+    max: 1000,
 });
