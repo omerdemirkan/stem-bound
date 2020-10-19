@@ -2,20 +2,21 @@ import { Request, Response } from "express";
 import { errorService, courseService } from "../../../../services";
 import { Types } from "mongoose";
 import { IMeeting } from "../../../../types";
+import { configureMeetingArrayResponseData } from "../../../../helpers";
 
 const { ObjectId } = Types;
 
 export async function getMeetings(req: Request, res: Response) {
     try {
-        const { limit, skip } = req.query;
+        const { limit, skip, before, after } = req.query;
         const courseId = ObjectId(req.params.courseId);
         const meetings: IMeeting[] = await courseService.findMeetingsByCourseId(
             courseId,
-            { limit, skip } as any
+            { limit, skip, before, after } as any
         );
         res.json({
             message: "Meetings successfully fetched",
-            data: meetings,
+            data: configureMeetingArrayResponseData(meetings),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

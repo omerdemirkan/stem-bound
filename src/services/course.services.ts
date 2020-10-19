@@ -82,6 +82,8 @@ export default class CourseService {
         options?: {
             skip?: number;
             limit?: number;
+            before?: Date;
+            after?: Date;
         }
     ) {
         const course = await this.findCourseById(courseId);
@@ -93,7 +95,22 @@ export default class CourseService {
         }
         const limit = +options?.limit ? Math.min(+options.limit, 20) : 20;
         const skip = +options?.skip || 0;
+
+        if (options?.before) {
+            const before = new Date(options.before);
+            course.meetings = course.meetings.filter(
+                (meeting) => new Date(meeting.start) < before
+            );
+        }
+        if (options?.after) {
+            const after = new Date(options.after);
+            course.meetings = course.meetings.filter(
+                (meeting) => new Date(meeting.start) > after
+            );
+        }
+
         const meetings = course.meetings.slice(skip, limit + 1);
+
         return meetings;
     }
 

@@ -57,14 +57,22 @@ export function configureChatResponseData(
     };
 }
 
-export function configureMessageArrayResponseData(
-    messages: IMessage[],
-    { query }: { query: any }
-): Partial<IMessage[]> {
-    return messages;
-}
-
 export function configureMessageResponseData(
     message: IMessage,
     { query }: { query: any }
 ) {}
+
+export function configureMessageArrayResponseData(
+    messages: IMessage[],
+    {
+        query,
+    }: {
+        query: any;
+    }
+) {
+    const limit = Math.min(+query.limit || 20, 20);
+    const skip = +query.skip || 0;
+    const configuredMessages = messages.slice(skip, limit + 1);
+
+    return configuredMessages;
+}

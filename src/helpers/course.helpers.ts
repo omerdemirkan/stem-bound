@@ -1,4 +1,4 @@
-import { ICourse, ITokenPayload, IMessage } from "../types";
+import { ICourse, ITokenPayload, IMessage, IMeeting } from "../types";
 
 export function configureCourseQuery(queryParams: {}) {}
 
@@ -51,16 +51,10 @@ export function configureCourseResponseData(
     };
 }
 
-export function configureMessageArrayResponse(
-    messages: IMessage[],
-    {
-        query,
-    }: {
-        query: any;
-    }
-) {
-    const limit = Math.min(+query.limit, 20);
-    const skip = +query.skip || 0;
-
-    return messages.slice(skip, limit + 1);
+export function configureMeetingArrayResponseData(meetings: IMeeting[]) {
+    let configuredMeetings = [...meetings];
+    configuredMeetings.sort(
+        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
+    );
+    return configuredMeetings;
 }
