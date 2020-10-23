@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://media-exp1.licdn.com/dms/image/C560BAQEU7cx1-IKgOA/company-logo_200_200/0?e=1602115200&v=beta&t=uC6aI2RMZR-X6cmNJUZh6YCuqDOH2qzb3lNbJV3-mro" title="Logo">
+  <img src="/assets/stem-bound-logo-4.png" alt="Logo">
 </p>
 
 # Stem-bound API V1
