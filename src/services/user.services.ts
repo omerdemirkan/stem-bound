@@ -25,8 +25,11 @@ export default class UserService {
     private Student: Model<IStudent>;
 
     private userModelsByRole = {
+        // @ts-ignore
         [EUserRoles.STUDENT]: this.Student,
+        // @ts-ignore
         [EUserRoles.INSTRUCTOR]: this.Instructor,
+        // @ts-ignore
         [EUserRoles.SCHOOL_OFFICIAL]: this.SchoolOfficial,
     };
 
@@ -98,6 +101,12 @@ export default class UserService {
             return await this.findUsersByCoordinates(
                 options.coordinates,
                 options
+            );
+        }
+
+        if (options.userIds) {
+            return this.findUsersByIds(
+                options.userIds.map((id) => ObjectId(id))
             );
         }
 

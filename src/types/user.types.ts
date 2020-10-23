@@ -62,4 +62,5 @@ export interface IUserQueryOptions {
     coordinates?: number[];
     text?: string;
     excludedUserIds?: string[];
+    userIds?: string[];
 }

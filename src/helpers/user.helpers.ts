@@ -21,11 +21,16 @@ export function configureUsersQuery(
         lat,
         long,
         exclude,
+        userIds,
     } = requestQueries;
     let query: Partial<IUserQueryOptions> = {};
 
     if (isValidUserRole(role)) {
         query.role = role.toUpperCase();
+    }
+
+    if (userIds) {
+        query.userIds = userIds.split(",");
     }
 
     if (sort_field && sort_direction && typeof +sort_direction === "number") {
