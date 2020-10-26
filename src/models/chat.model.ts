@@ -57,6 +57,10 @@ const messageSchema = new Schema(
             type: Boolean,
             default: false,
         },
+        isEdited: {
+            type: Boolean,
+            default: false,
+        },
     },
     {
         // I want users to be able to alter messages by id.

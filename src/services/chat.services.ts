@@ -247,6 +247,7 @@ export default class ChatService {
             text,
             meta: { from: requestingUserId, readBy: [] },
             isDeleted: false,
+            isEdited: false,
         });
 
         return await chat.save();
@@ -263,7 +264,7 @@ export default class ChatService {
     }): Promise<IChat> {
         const chat = await this.Chat.findOneAndUpdate(
             { _id: chatId, "messages._id": messageId },
-            { $set: { "messages.$.text": text } },
+            { $set: { "messages.$.text": text, "messages.$.isEdited": true } },
             { new: true }
         );
 
