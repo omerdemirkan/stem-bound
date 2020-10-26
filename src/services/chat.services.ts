@@ -224,12 +224,6 @@ export default class ChatService {
         //     { $limit: limit },
         // ])
 
-        messages.forEach(function (message) {
-            if (message.isDeleted) {
-                message.text = "This message was deleted";
-            }
-        });
-
         return messages;
     }
 
@@ -295,11 +289,6 @@ export default class ChatService {
         message.isDeleted = isDeleted;
         await chat.save();
 
-        chat.messages.forEach(function (message) {
-            if (message.isDeleted) {
-                message.text = "This message was deleted";
-            }
-        });
         return chat;
     }
 }

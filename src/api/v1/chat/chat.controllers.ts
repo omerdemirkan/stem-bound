@@ -22,6 +22,7 @@ export async function createChat(req: Request, res: Response) {
                 message: "Duplicate chat found",
                 data: configureChatResponseData(duplicateChat, {
                     query: req.query,
+                    senderUserId: (req as any).payload.user._id,
                 }),
             });
         } else if (duplicateChat && !req.query.duplicate_fallback) {
@@ -35,7 +36,10 @@ export async function createChat(req: Request, res: Response) {
         await metadataService.handleNewChatMetadataUpdate(newChat);
         res.json({
             message: "Chat successfully created",
-            data: configureChatResponseData(newChat, { query: req.query }),
+            data: configureChatResponseData(newChat, {
+                query: req.query,
+                senderUserId: (req as any).payload.user._id,
+            }),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -57,7 +61,10 @@ export async function getChat(req: Request, res: Response) {
         }
         res.json({
             message: "Chat successfully fetched",
-            data: configureChatResponseData(chat, { query: req.query }),
+            data: configureChatResponseData(chat, {
+                query: req.query,
+                senderUserId: (req as any).payload.user._id,
+            }),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -74,7 +81,10 @@ export async function updateChat(req: Request, res: Response) {
 
         res.json({
             message: "Chat successfully updated",
-            data: configureChatResponseData(updatedChat, { query: req.query }),
+            data: configureChatResponseData(updatedChat, {
+                query: req.query,
+                senderUserId: (req as any).payload.user._id,
+            }),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -90,7 +100,10 @@ export async function deleteChat(req: Request, res: Response) {
         await metadataService.handleDeletedChatMetadataUpdate(deletedChat);
         res.json({
             message: "Chat successfully deleted",
-            data: configureChatResponseData(deletedChat, { query: req.query }),
+            data: configureChatResponseData(deletedChat, {
+                query: req.query,
+                senderUserId: (req as any).payload.user._id,
+            }),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

@@ -40,17 +40,17 @@ export function configureChatArrayResponseData(
 
 export function configureChatResponseData(
     chat: IChat,
-    { query }: { query: any }
+    { query, senderUserId }: { query: any; senderUserId: Types.ObjectId }
 ): Partial<IChat> {
     const limit = +query.limit ? Math.min(+query.limit, 20) : 20;
     const skip = +query.skip || 0;
-    const messages = chat.messages.slice(skip, limit + 1);
+    const messages = chat.messages
+        .filter(
+            (message) =>
+                !message.isDeleted && !senderUserId.equals(message.meta.from)
+        )
+        .slice(skip, limit + 1);
 
-    messages.forEach(function (message) {
-        if (message.isDeleted) {
-            message.text = "This message was deleted";
-        }
-    });
     return {
         ...chat.toObject(),
         messages,
