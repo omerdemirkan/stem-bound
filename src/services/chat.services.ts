@@ -67,7 +67,7 @@ export default class ChatService {
         }
     ): Promise<IChat[]> {
         const chats = await this.Chat.find(where)
-            .sort(options.sort)
+            .sort(options.sort || { lastMessageSentAt: -1 })
             .skip(options.skip || 0)
             .limit(Math.min(options.limit, 20));
 
@@ -126,11 +126,15 @@ export default class ChatService {
     }
 
     async findChat(where: object): Promise<IChat> {
-        return await this.Chat.findOneAndUpdate(where, {
-            $sort: {
-                $each: { messages: { createdAt: -1 } },
+        return await this.Chat.findOneAndUpdate(
+            where,
+            {
+                $sort: {
+                    $each: { messages: { createdAt: -1 } },
+                },
             },
-        });
+            { new: true }
+        );
     }
 
     async findChatById(chatId: Types.ObjectId): Promise<IChat> {
@@ -171,23 +175,14 @@ export default class ChatService {
             limit?: number;
         }
     ): Promise<IMessage[]> {
-        const chat = await this.Chat.findById(chatId);
+        const chat = await this.findChatById(chatId);
 
         if (!chat) {
             errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
                 "Chat not found"
             );
-        } else if (!chat.meta.users.some((id) => requestingUserId.equals(id))) {
-            errorService.throwError(
-                EErrorTypes.UNAUTHORIZED,
-                "Unauthorized request user id"
-            );
         }
-
-        chat.messages.sort(
-            (a, b) => b.createdAt.getTime() - a.createdAt.getTime()
-        );
 
         const skip = +options?.skip || 0;
         const limit = Math.min(
@@ -243,6 +238,8 @@ export default class ChatService {
             isDeleted: false,
             isEdited: false,
         });
+
+        chat.lastMessageSentAt = new Date();
 
         return await chat.save();
     }

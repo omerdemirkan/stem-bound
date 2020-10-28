@@ -97,11 +97,16 @@ const chatSchema = new Schema(
         pictureUrls: {
             type: [String],
         },
+        lastMessageSentAt: {
+            type: Date,
+            required: true,
+            default: new Date(),
+        },
     },
     {
         timestamps: {
             createdAt: true,
-            updatedAt: true,
+            updatedAt: false,
         },
     }
 );

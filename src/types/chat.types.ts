@@ -22,5 +22,5 @@ export interface IChat extends Document {
     name?: string;
     pictureUrl?: string;
     createdAt?: Date;
-    updatedAt?: Date;
+    lastMessageSentAt?: Date;
 }
