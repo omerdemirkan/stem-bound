@@ -56,7 +56,7 @@ courseRouter.delete(
     courseControllers.deleteCourse
 );
 
-courseRouter.post(
+courseRouter.put(
     "/:id/verified",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([EUserRoles.SCHOOL_OFFICIAL]),

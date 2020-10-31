@@ -45,6 +45,7 @@ export default class AuthMiddlewareService {
             if (allowedRoles.includes((req as any).payload.user.role)) {
                 next();
             } else {
+                logger.error("Invalid user role");
                 res.sendStatus(403);
             }
         };
