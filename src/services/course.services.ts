@@ -21,9 +21,18 @@ export default class CourseService {
     constructor(private errorService: ErrorService) {}
 
     async createCourse(courseData: ICourse): Promise<ICourse> {
+        courseData.verified = false;
         const course: ICourse = await this.Course.create(courseData);
         this.eventEmitter.emit(ECourseEvents.COURSE_CREATED, course);
         return course;
+    }
+
+    async verifyCourse(where: object) {
+        return await this.updateCourse(where, { verified: true });
+    }
+
+    async verifyCourseById(courseId: Types.ObjectId) {
+        return await this.verifyCourse({ _id: courseId });
     }
 
     async findCourses(
@@ -34,14 +43,20 @@ export default class CourseService {
             limit?: number;
         }
     ): Promise<ICourse[]> {
-        return await this.Course.find(where)
+        return await this.Course.find({ verified: true, ...where })
             .sort(options?.sort)
             .skip(options?.skip || 0)
             .limit(options?.limit ? Math.min(options?.limit, 20) : 20);
     }
 
-    async findCoursesByIds(ids: Types.ObjectId[]): Promise<ICourse[]> {
-        return await this.Course.find({ _id: { $in: ids } });
+    async findCoursesByIds(
+        ids: Types.ObjectId[],
+        options?: { unverified: boolean }
+    ): Promise<ICourse[]> {
+        return await this.findCourses({
+            _id: { $in: ids },
+            verified: !options?.unverified,
+        });
     }
 
     async findCourse(where: object): Promise<ICourse> {
@@ -49,7 +64,7 @@ export default class CourseService {
     }
 
     async findCourseById(id: Types.ObjectId): Promise<ICourse> {
-        return await this.Course.findById(id);
+        return await this.findCourse({ _id: id });
     }
 
     async updateCourse(

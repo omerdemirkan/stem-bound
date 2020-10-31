@@ -144,7 +144,9 @@ export async function getSchoolCourses(req: Request, res: Response) {
         }
         const courseIds = school.meta.courses;
         const courses: ICourse[] = courseIds.length
-            ? await courseService.findCoursesByIds(courseIds)
+            ? await courseService.findCoursesByIds(courseIds, {
+                  unverified: !!req.query.unverified,
+              })
             : [];
 
         res.json({
