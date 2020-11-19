@@ -8,7 +8,7 @@ import {
     IUserQueryOptions,
 } from "../types";
 import { Model, Types } from "mongoose";
-import { LocationService } from ".";
+import { LocationService, SchoolService } from ".";
 import { model } from "../decorators";
 
 const { ObjectId } = Types;
@@ -37,15 +37,24 @@ export default class UserService {
         return this.userModelsByRole[role];
     }
 
-    constructor(private locationService: LocationService) {}
+    constructor(
+        private locationService: LocationService,
+        private schoolService: SchoolService
+    ) {}
 
     async createUser(userData, role: EUserRoles): Promise<IUser> {
         if ((userData as any).password)
             throw new Error("We don't store passwords around here kiddo");
 
-        userData.location = ((await this.locationService.findLocationByZip(
-            (userData as any).zip
-        )) as any)._doc;
+        userData.location = (userData as any).zip
+            ? (
+                  await this.locationService.findLocationByZip(
+                      (userData as any).zip
+                  )
+              ).toObject()
+            : (
+                  await this.schoolService.findSchoolById(userData.meta.school)
+              ).toObject().location;
         return await this.getUserModelByRole(role).create(userData);
     }
 

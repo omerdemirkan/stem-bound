@@ -4,7 +4,8 @@ import { errors } from "../constants";
 
 export default class ErrorService {
     status(error: Error) {
-        logger.error("%j" + error);
+        logger.error("%j" + error, error.stack);
+
         return (error as any).status || 400;
     }
 

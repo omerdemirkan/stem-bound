@@ -16,7 +16,10 @@ export const locationService = new services.LocationService();
 
 export const schoolService = new services.SchoolService();
 
-export const userService = new services.UserService(locationService);
+export const userService = new services.UserService(
+    locationService,
+    schoolService
+);
 
 export const chatService = new services.ChatService(userService, errorService);
 
