@@ -42,14 +42,17 @@ const userSchema = new Schema(
             required: true,
             minlength: 4,
             maxlength: 60,
+            trim: true,
             default: "Hi! I'm a Stem-bound™ user!",
         },
         longDescription: {
             type: String,
+            trim: true,
             maxlength: 2000,
         },
         profilePictureUrl: {
             type: String,
+            trim: true,
             required: false,
         },
         location: {

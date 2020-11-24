@@ -64,7 +64,6 @@ export default class UserService {
     ) {
         let aggregateOptions: any[] = [];
 
-        console.log(options.excludedUserIds);
         if (options.excludedUserIds) {
             aggregateOptions.push({
                 $match: { _id: { $nin: options.excludedUserIds } },
@@ -133,6 +132,8 @@ export default class UserService {
                 $nin: options.excludedUserIds,
             };
         }
+
+        console.log(where);
         return await model
             .find(where)
             .sort(options.sort)

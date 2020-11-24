@@ -22,28 +22,20 @@ export function configureUsersQuery(
         long,
         exclude,
         userIds,
+        text,
     } = requestQueries;
     let query: Partial<IUserQueryOptions> = {};
 
-    if (isValidUserRole(role)) {
-        query.role = role.toUpperCase();
-    }
+    if (isValidUserRole(role)) query.role = role.toUpperCase();
 
-    if (userIds) {
-        query.userIds = userIds.split(",");
-    }
+    if (userIds) query.userIds = userIds.split(",");
 
-    if (sort_field && sort_direction && typeof +sort_direction === "number") {
+    if (sort_field && sort_direction && typeof +sort_direction === "number")
         query.sort = { [sort_field]: +sort_direction };
-    }
 
-    if (+limit) {
-        query.limit = +limit;
-    }
+    if (+limit) query.limit = +limit;
 
-    if (+skip) {
-        query.skip = +skip;
-    }
+    if (+skip) query.skip = +skip;
 
     if (geo_ip) {
         const { latitude, longitude } = getCoordinatesByIp(ip);
@@ -52,9 +44,9 @@ export function configureUsersQuery(
         query.coordinates = [+long, +lat];
     }
 
-    if (exclude) {
-        query.excludedUserIds = exclude.split(",");
-    }
+    if (exclude) query.excludedUserIds = exclude.split(",");
+
+    if (text) query.text = text;
 
     return query;
 }
