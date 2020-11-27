@@ -150,6 +150,7 @@ export async function getUserChats(req: Request, res: Response) {
                     ...req.params.user_ids.split(",").map((id) => ObjectId(id)),
                     userId,
                 ],
+                await userService.findUserById(userId),
                 {
                     exact: !!req.query.exact,
                 }

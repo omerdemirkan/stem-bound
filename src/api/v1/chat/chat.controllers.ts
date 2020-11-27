@@ -1,5 +1,10 @@
 import { Request, Response } from "express";
-import { errorService, chatService, metadataService } from "../../../services";
+import {
+    errorService,
+    chatService,
+    metadataService,
+    userService,
+} from "../../../services";
 import { Types } from "mongoose";
 import { IChat, EErrorTypes } from "../../../types";
 import { configureChatResponseData } from "../../../helpers/chat.helpers";
@@ -14,6 +19,9 @@ export async function createChat(req: Request, res: Response) {
         );
         const [duplicateChat] = await chatService.findChatsByUserIds(
             chatData.meta.users,
+            await userService.findUserById(
+                ObjectId((req as any).payload.user._id)
+            ),
             { exact: true }
         );
 
@@ -22,7 +30,7 @@ export async function createChat(req: Request, res: Response) {
                 message: "Duplicate chat found",
                 data: configureChatResponseData(duplicateChat, {
                     query: req.query,
-                    senderUserId: (req as any).payload.user._id,
+                    requestingUserId: (req as any).payload.user._id,
                 }),
             });
         } else if (duplicateChat && !req.query.duplicate_fallback) {
@@ -38,7 +46,7 @@ export async function createChat(req: Request, res: Response) {
             message: "Chat successfully created",
             data: configureChatResponseData(newChat, {
                 query: req.query,
-                senderUserId: (req as any).payload.user._id,
+                requestingUserId: (req as any).payload.user._id,
             }),
         });
     } catch (e) {
@@ -63,8 +71,32 @@ export async function getChat(req: Request, res: Response) {
             message: "Chat successfully fetched",
             data: configureChatResponseData(chat, {
                 query: req.query,
-                senderUserId: (req as any).payload.user._id,
+                requestingUserId: (req as any).payload.user._id,
             }),
+        });
+    } catch (e) {
+        res.status(errorService.status(e)).json(errorService.json(e));
+    }
+}
+
+export async function getChats(req: Request, res: Response) {
+    try {
+        const user = await userService.findUserById(
+            ObjectId((req as any).payload.user._id)
+        );
+        const { user_ids } = req.query;
+        let chats = user_ids
+            ? await chatService.findChatsByUserIds(
+                  [
+                      (req as any).payload.user._id,
+                      ...(user_ids as string).split(","),
+                  ].map((s) => ObjectId(s)),
+                  user
+              )
+            : await chatService.findChatsByIds(user.meta.chats, user._id);
+        res.json({
+            data: chats,
+            message: "User chats successfully found",
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -83,7 +115,7 @@ export async function updateChat(req: Request, res: Response) {
             message: "Chat successfully updated",
             data: configureChatResponseData(updatedChat, {
                 query: req.query,
-                senderUserId: (req as any).payload.user._id,
+                requestingUserId: (req as any).payload.user._id,
             }),
         });
     } catch (e) {
@@ -102,7 +134,7 @@ export async function deleteChat(req: Request, res: Response) {
             message: "Chat successfully deleted",
             data: configureChatResponseData(deletedChat, {
                 query: req.query,
-                senderUserId: (req as any).payload.user._id,
+                requestingUserId: (req as any).payload.user._id,
             }),
         });
     } catch (e) {

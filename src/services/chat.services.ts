@@ -20,7 +20,6 @@ export default class ChatService {
     async createChat(
         chatData: IChat,
         options?: {
-            preventDuplicationByUserIds?: boolean;
             preventEmptyMessages?: boolean;
         }
     ): Promise<IChat> {
@@ -31,29 +30,26 @@ export default class ChatService {
             );
         }
 
-        if (options?.preventDuplicationByUserIds) {
-            const chatUsers: any = chatData.meta.users;
-            const duplicateChat = await this.findChatsByUserIds(chatUsers, {
-                exact: true,
-            });
-            if (duplicateChat.length) {
-                errorService.throwError(
-                    EErrorTypes.CONFLICT,
-                    "This chat is a duplicate of another chat"
-                );
-            }
-        }
-
         return await this.Chat.create(chatData);
     }
 
-    findChatsByUserIds(userIds, options?: { exact?: boolean }) {
-        let query = this.Chat.find().all("meta.users", userIds);
+    async findChatsByUserIds(
+        userIds: Types.ObjectId[],
+        requestingUser: IUser,
+        options?: { exact?: boolean }
+    ) {
+        userIds = userIds.find((id) => id.equals(requestingUser._id))
+            ? userIds
+            : [...userIds, requestingUser._id];
+        let query = this.Chat.find({
+            _id: { $in: requestingUser.meta.chats },
+            "meta.users": { $all: userIds },
+        });
 
         if (options?.exact) {
             query = query.size("meta.users", userIds.length);
         }
-        return query;
+        return await query;
     }
 
     async findChats(

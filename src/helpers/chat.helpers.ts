@@ -40,14 +40,18 @@ export function configureChatArrayResponseData(
 
 export function configureChatResponseData(
     chat: IChat,
-    { query, senderUserId }: { query: any; senderUserId: Types.ObjectId }
+    {
+        query,
+        requestingUserId,
+    }: { query: any; requestingUserId: Types.ObjectId }
 ): Partial<IChat> {
     const limit = +query.limit ? Math.min(+query.limit, 20) : 20;
     const skip = +query.skip || 0;
     const messages = chat.messages
         .filter(
             (message) =>
-                !message.isDeleted && !senderUserId.equals(message.meta.from)
+                !message.isDeleted &&
+                !requestingUserId.equals(message.meta.from)
         )
         .slice(skip, limit + 1);
 

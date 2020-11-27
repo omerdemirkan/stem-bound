@@ -6,6 +6,12 @@ import { authMiddlewareService } from "../../../services";
 const chatRouter = Router();
 
 chatRouter.get(
+    "/",
+    authMiddlewareService.extractTokenPayload,
+    chatControllers.getChats
+);
+
+chatRouter.get(
     "/:id",
     authMiddlewareService.extractTokenPayload,
     chatControllers.getChat

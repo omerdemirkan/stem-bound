@@ -133,7 +133,6 @@ export default class UserService {
             };
         }
 
-        console.log(where);
         return await model
             .find(where)
             .sort(options.sort)
