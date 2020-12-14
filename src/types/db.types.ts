@@ -1,3 +1,3 @@
 import { MongooseFilterQuery } from "mongoose";
 
-export type IFindQuery<T> = MongooseFilterQuery<Pick<T, keyof T>>;
+export type IQuery<T> = MongooseFilterQuery<Pick<T, keyof T>>;

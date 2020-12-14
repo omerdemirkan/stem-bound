@@ -1,6 +1,6 @@
-import { Model, Types, MongooseFilterQuery } from "mongoose";
+import { Model, Types } from "mongoose";
 import { refreshSchoolDatabase } from "../jobs";
-import { ISchool, EModels } from "../types";
+import { ISchool, EModels, IQuery } from "../types";
 import { model } from "../decorators";
 
 export default class SchoolService {
@@ -8,14 +8,14 @@ export default class SchoolService {
     private School: Model<ISchool>;
 
     async findSchools(
-        where: object = {},
+        where: IQuery<ISchool> = {},
         options?: {
             sort?: object;
             skip?: number;
             limit?: number;
         }
     ): Promise<ISchool[]> {
-        const schools = await this.School.find(where || {})
+        const schools = await this.School.find(where)
             .sort(options?.sort)
             .skip(options?.skip || 0)
             .limit(options?.limit ? Math.min(options?.limit, 20) : 20);
@@ -27,7 +27,7 @@ export default class SchoolService {
         coordinates: number[],
         options?: {
             limit?: number | null;
-            where?: MongooseFilterQuery<ISchool> | null;
+            where?: IQuery<ISchool> | null;
             skip?: number | null;
             text?: string;
         }
@@ -69,7 +69,7 @@ export default class SchoolService {
         return await this.School.find({ $text: { $search: text } });
     }
 
-    async findSchool(where: object): Promise<ISchool> {
+    async findSchool(where: IQuery<ISchool>): Promise<ISchool> {
         return await this.School.findOne(where);
     }
 

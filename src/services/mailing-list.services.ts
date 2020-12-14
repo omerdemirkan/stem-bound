@@ -1,13 +1,13 @@
 import { Model, Document, Types } from "mongoose";
 import { mailClient } from "../config";
 import { model } from "../decorators";
-import { EModels } from "../types";
+import { EModels, IQuery } from "../types";
 
 export default class MailingListService {
     @model(EModels.MAILING_LIST_SUBSCRIBER)
     private Subscriber: Model<Document>;
 
-    async findSubscribers(where = {}) {
+    async findSubscribers(where: IQuery<any> = {}) {
         return await this.Subscriber.find(where);
     }
 

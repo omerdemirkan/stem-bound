@@ -7,6 +7,7 @@ import {
     IAnnouncement,
     EModels,
     EErrorTypes,
+    IQuery,
 } from "../types";
 import { model, emitter } from "../decorators";
 import { ErrorService } from ".";
@@ -27,7 +28,7 @@ export default class CourseService {
         return course;
     }
 
-    async verifyCourse(where: object) {
+    async verifyCourse(where: IQuery<ICourse>) {
         return await this.updateCourse(where, { verified: true });
     }
 
@@ -36,7 +37,7 @@ export default class CourseService {
     }
 
     async findCourses(
-        where: object = {},
+        where: IQuery<ICourse> = {},
         options?: {
             sort?: object;
             skip?: number;
@@ -59,7 +60,7 @@ export default class CourseService {
         });
     }
 
-    async findCourse(where: object): Promise<ICourse> {
+    async findCourse(where: IQuery<ICourse>): Promise<ICourse> {
         return await this.Course.findOne(where);
     }
 
@@ -68,7 +69,7 @@ export default class CourseService {
     }
 
     async updateCourse(
-        where: object,
+        where: IQuery<ICourse>,
         newCourse: Partial<ICourse>
     ): Promise<ICourse> {
         const course = await this.findCourse(where);
@@ -84,7 +85,7 @@ export default class CourseService {
         return await this.updateCourse({ _id: id }, newCourse);
     }
 
-    async deleteCourse(where: object): Promise<ICourse> {
+    async deleteCourse(where: IQuery<ICourse>): Promise<ICourse> {
         return await this.Course.findOneAndDelete(where);
     }
 

@@ -6,6 +6,7 @@ import {
     IStudent,
     ISchoolOfficial,
     IUserQueryOptions,
+    IQuery,
 } from "../types";
 import { Model, Types } from "mongoose";
 import { LocationService, SchoolService } from ".";
@@ -121,7 +122,7 @@ export default class UserService {
         const model = options.role
             ? this.getUserModelByRole(options.role)
             : this.User;
-        let where: any = {};
+        let where: IQuery<IUser> = {};
 
         if (options.text) {
             where.$text = { $search: options.text };
@@ -144,7 +145,7 @@ export default class UserService {
         return await this.User.find({ _id: { $in: ids } });
     }
 
-    async findUser(where: object): Promise<IUser> {
+    async findUser(where: IQuery<IUser>): Promise<IUser> {
         return await this.User.findOne(where);
     }
 
@@ -156,7 +157,10 @@ export default class UserService {
         return await this.findUser({ email });
     }
 
-    async updateUser(where: object, userData: object): Promise<IUser> {
+    async updateUser(
+        where: IQuery<IUser>,
+        userData: Partial<IUser>
+    ): Promise<IUser> {
         const user = await this.findUser(where);
         Object.assign(user, userData);
 
@@ -174,7 +178,7 @@ export default class UserService {
         return await this.updateUser({ _id: id }, userData);
     }
 
-    async deleteUser(where: any): Promise<IUser> {
+    async deleteUser(where: IQuery<IUser>): Promise<IUser> {
         return await this.User.findOneAndDelete(where);
     }
 

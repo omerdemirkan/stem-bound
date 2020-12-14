@@ -1,5 +1,5 @@
 import { Model, Types } from "mongoose";
-import { IChat, IMessage, EModels, EErrorTypes, IUser } from "../types";
+import { IChat, IMessage, EModels, EErrorTypes, IUser, IQuery } from "../types";
 import { EventEmitter } from "events";
 import { model, emitter } from "../decorators";
 import { ErrorService, errorService } from ".";
@@ -53,7 +53,7 @@ export default class ChatService {
     }
 
     async findChats(
-        where: any,
+        where: IQuery<IChat>,
         requestingUserId: Types.ObjectId,
         options?: {
             limit?: number;
@@ -108,7 +108,7 @@ export default class ChatService {
         ids: Types.ObjectId[],
         requestingUserId: Types.ObjectId,
         options?: {
-            where?: object;
+            where?: IQuery<IChat>;
             limit?: number;
             skip?: number;
             sort?: object;
@@ -121,7 +121,7 @@ export default class ChatService {
         });
     }
 
-    async findChat(where: object): Promise<IChat> {
+    async findChat(where: IQuery<IChat>): Promise<IChat> {
         return await this.Chat.findOneAndUpdate(
             where,
             {
@@ -137,7 +137,10 @@ export default class ChatService {
         return await this.findChat({ _id: chatId });
     }
 
-    async updateChat(where: object, chatData: Partial<IChat>): Promise<IChat> {
+    async updateChat(
+        where: IQuery<IChat>,
+        chatData: Partial<IChat>
+    ): Promise<IChat> {
         return await this.Chat.findOneAndUpdate(where, chatData, {
             new: true,
         });
