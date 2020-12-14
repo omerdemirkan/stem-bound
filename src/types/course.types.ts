@@ -45,3 +45,8 @@ export interface ICourse extends Document {
         school: Types.ObjectId;
     };
 }
+
+export interface IMeetingsQuery {
+    after?: Date | string;
+    before?: Date | string;
+}

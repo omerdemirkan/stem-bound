@@ -1,6 +1,10 @@
-import { ICourse, ITokenPayload, IMessage, IMeeting } from "../types";
-
-export function configureCourseQuery(queryParams: {}) {}
+import {
+    ICourse,
+    ITokenPayload,
+    IMessage,
+    IMeeting,
+    IMeetingsQuery,
+} from "../types";
 
 export function configureCourseArrayResponseData(
     courses: ICourse[],
@@ -57,4 +61,14 @@ export function configureMeetingArrayResponseData(meetings: IMeeting[]) {
         (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
     );
     return configuredMeetings;
+}
+
+export function configureMeetingArrayQuery(
+    requestQuery: any
+): Partial<IMeetingsQuery> {
+    let { after, before } = requestQuery,
+        query: IMeetingsQuery = {};
+    if (after && (after = new Date(after))) query.after = after;
+    if (before && (before = new Date(before))) query.before = before;
+    return query;
 }
