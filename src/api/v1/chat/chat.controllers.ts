@@ -19,9 +19,6 @@ export async function createChat(req: Request, res: Response) {
         );
         const [duplicateChat] = await chatService.findChatsByUserIds(
             chatData.meta.users,
-            await userService.findUserById(
-                ObjectId((req as any).payload.user._id)
-            ),
             { exact: true }
         );
 
@@ -90,8 +87,7 @@ export async function getChats(req: Request, res: Response) {
                   [
                       (req as any).payload.user._id,
                       ...(user_ids as string).split(","),
-                  ].map((s) => ObjectId(s)),
-                  user
+                  ].map((s) => ObjectId(s))
               )
             : await chatService.findChatsByIds(user.meta.chats, user._id);
         res.json({

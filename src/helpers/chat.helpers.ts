@@ -1,5 +1,22 @@
-import { IChat, ITokenPayload, IMessage } from "../types";
+import {
+    IChat,
+    ITokenPayload,
+    IMessage,
+    IUser,
+    EChatTypes,
+    IQuery,
+} from "../types";
 import { Types } from "mongoose";
+
+export function configureMessageArrayQuery(
+    requestQuery: any
+): IQuery<IMessage> {
+    return {};
+}
+
+export function configureMessageQuery(requestQuery: any): IQuery<IMessage> {
+    return {};
+}
 
 export function configureChatArrayResponseData(
     chats: IChat[],
@@ -9,32 +26,6 @@ export function configureChatArrayResponseData(
         ...chat.toObject(),
         messages: chat.messages.slice(0, 21),
     }));
-
-    const userId = Types.ObjectId(payload.user._id);
-    const { include_unread_messages } = query;
-
-    // if (include_unread_messages) {
-    //     let readMessageFound;
-    //     let messageIndex;
-    //     chats.forEach(function (chat, chatIndex) {
-    //         readMessageFound = false;
-    //         messageIndex = 0;
-    //         while (!readMessageFound && messageIndex < chat.messages.length) {
-    //             if (
-    //                 chat.messages[messageIndex].meta.from.toString() ===
-    //                     userId.toString() ||
-    //                 !chat.messages[messageIndex].meta.readBy.includes(userId)
-    //             ) {
-    //                 configuredChats[chatIndex].messages.push(
-    //                     chat.messages[messageIndex]
-    //                 );
-    //                 messageIndex++;
-    //             } else {
-    //                 readMessageFound = true;
-    //             }
-    //         }
-    //     });
-    // }
     return configuredChats;
 }
 
@@ -79,4 +70,46 @@ export function configureMessageArrayResponseData(
     const configuredMessages = messages.slice(skip, limit + 1);
 
     return configuredMessages;
+}
+
+export async function configureChatPictureUrls(
+    chats: IChat[],
+    requestingUserId: Types.ObjectId
+) {
+    let userHashTable: { [key: string]: IUser } = {};
+
+    chats.forEach(function (chat) {
+        if (chat.type !== EChatTypes.PRIVATE) return;
+        chat.meta.users.forEach(function (userId) {
+            // @ts-ignore
+            userHashTable[userId.toHexString()] = userId;
+        });
+    });
+
+    delete userHashTable[requestingUserId.toHexString()];
+
+    const users = await this.userService.findUsersByIds(
+        Object.values(userHashTable) as any
+    );
+
+    users.forEach(function (user) {
+        userHashTable[user._id.toHexString()] = user;
+    });
+
+    let i = chats.length;
+    while (i--) {
+        if (chats[i].type === EChatTypes.PRIVATE) {
+            const user =
+                userHashTable[
+                    chats[i].meta.users
+                        .find((u) => !requestingUserId.equals(u))
+                        .toHexString()
+                ];
+
+            chats[i].pictureUrl = user.profilePictureUrl;
+            chats[i].name = `${user.firstName} ${user.lastName}`;
+        }
+    }
+
+    return chats;
 }

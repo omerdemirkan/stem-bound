@@ -12,6 +12,7 @@ const modelsByKey = {
     [EModels.SCHOOL_OFFICIAL]: models.SchoolOfficial,
     [EModels.STUDENT]: models.Student,
     [EModels.USER]: models.User,
+    [EModels.MESSAGE]: models.Message,
 };
 
 export function model(modelKey: EModels) {

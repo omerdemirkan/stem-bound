@@ -26,6 +26,7 @@ const userSchema = new Schema(
             required: [true, "Email name required"],
             unique: [true, "Email already in use"],
             trim: true,
+            index: true,
             validate: {
                 validator: schemaValidators.email,
                 message: (props) => `${props.value} is not a valid email`,

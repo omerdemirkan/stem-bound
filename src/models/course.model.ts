@@ -1,5 +1,4 @@
-import mongoose, { Schema, Types } from "mongoose";
-import { urlRegex } from "../constants";
+import mongoose, { Schema } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
 import { ECourseTypes, EMeetingTypes, ICourse, IMeeting } from "../types";
 

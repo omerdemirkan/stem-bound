@@ -2,18 +2,22 @@ import { Types } from "mongoose";
 import { Request, Response } from "express";
 import { chatService, errorService } from "../../../../services";
 import { IChat, IMessage, EErrorTypes } from "../../../../types";
-import { configureMessageArrayResponseData } from "../../../../helpers/chat.helpers";
+import {
+    configureMessageArrayQuery,
+    configureMessageArrayResponseData,
+    configureMessageQuery,
+} from "../../../../helpers/chat.helpers";
 
 const { ObjectId } = Types;
 
 export async function getChatMessages(req: Request, res: Response) {
     try {
-        const requestingUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
-        const messages: IMessage[] = await chatService.findMessages({
+        const query = configureMessageArrayQuery(req.query);
+        const messages: IMessage[] = await chatService.findMessagesByChatId(
             chatId,
-            requestingUserId,
-        });
+            query
+        );
         res.json({
             message: "Chat successfully fetched",
             data: configureMessageArrayResponseData(messages, {
@@ -29,14 +33,11 @@ export async function createChatMessage(req: Request, res: Response) {
     try {
         const requestingUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
-        const chat = await chatService.createMessage({
-            chatId,
-            requestingUserId,
-            text: req.body.text,
-        });
+        let messageData: Partial<IMessage> = req.body;
+        const message = await chatService.createMessage(messageData, chatId);
         res.json({
             message: "Chat message successfully created",
-            data: chat.messages[0],
+            data: message,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -48,10 +49,8 @@ export async function getChatMessage(req: Request, res: Response) {
         const requestingUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
         const messageId = ObjectId(req.params.messageId);
-        const messages = await chatService.findMessages({
-            chatId,
-            requestingUserId,
-        });
+        const query = configureMessageQuery(req.query);
+        const messages = await chatService.findMessages(query);
 
         if (!messages) {
             errorService.throwError(
@@ -82,16 +81,14 @@ export async function getChatMessage(req: Request, res: Response) {
 
 export async function updateChatMessage(req: Request, res: Response) {
     try {
-        const chat = await chatService.updateMessage({
-            chatId: ObjectId(req.params.chatId),
-            messageId: ObjectId(req.params.messageId),
-            text: req.body.text,
-        });
+        const messageData: Partial<IMessage> = req.body;
+        const message = await chatService.updateMessageById(
+            messageData,
+            ObjectId(req.params.messageId)
+        );
         res.json({
             message: "Message successfully updated",
-            data: chat.messages.find((message) =>
-                message._id.equals(req.params.messageId)
-            ),
+            data: message,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -100,18 +97,14 @@ export async function updateChatMessage(req: Request, res: Response) {
 
 export async function deleteChatMessage(req: Request, res: Response) {
     try {
-        const chat = await chatService.setMessageDeletion({
-            chatId: ObjectId(req.params.chatId),
-            messageId: ObjectId(req.params.messageId),
-            isDeleted: req.query.restore ? false : true,
-            requestingUserId: ObjectId((req as any).payload.user._id),
-        });
+        const message = await chatService.setMessageDeletionById(
+            true,
+            ObjectId(req.params.messageId)
+        );
 
         res.json({
             message: "Message successfully deleted",
-            data: chat.messages.find((message) =>
-                message._id.equals(req.params.messageId)
-            ),
+            data: message,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

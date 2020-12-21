@@ -7,3 +7,4 @@ export { default as User } from "./user.model";
 export { default as Chat } from "./chat.model";
 export { default as MailingListSubscriber } from "./mailing-list-subscriber.model";
 export { default as Location } from "./location.model";
+export { default as Message } from "./message.model";

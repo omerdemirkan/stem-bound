@@ -8,6 +8,7 @@ import {
     EModels,
     EErrorTypes,
     IQuery,
+    IFilterQuery,
 } from "../types";
 import { model, emitter } from "../decorators";
 import { ErrorService } from ".";
@@ -28,26 +29,19 @@ export default class CourseService {
         return course;
     }
 
-    async verifyCourse(where: IQuery<ICourse>) {
-        return await this.updateCourse(where, { verified: true });
+    async verifyCourse(filter: IFilterQuery<ICourse>) {
+        return await this.updateCourse(filter, { verified: true });
     }
 
     async verifyCourseById(courseId: Types.ObjectId) {
         return await this.verifyCourse({ _id: courseId });
     }
 
-    async findCourses(
-        where: IQuery<ICourse> = {},
-        options?: {
-            sort?: object;
-            skip?: number;
-            limit?: number;
-        }
-    ): Promise<ICourse[]> {
-        return await this.Course.find({ verified: true, ...where })
-            .sort(options?.sort)
-            .skip(options?.skip || 0)
-            .limit(options?.limit ? Math.min(options?.limit, 20) : 20);
+    async findCourses(query: IQuery<ICourse> = {}): Promise<ICourse[]> {
+        return await this.Course.find({ verified: true, ...query.filter })
+            .sort(query.sort)
+            .skip(query.skip || 0)
+            .limit(query.limit ? Math.min(query.limit, 20) : 20);
     }
 
     async findCoursesByIds(
@@ -55,13 +49,15 @@ export default class CourseService {
         options?: { unverified: boolean }
     ): Promise<ICourse[]> {
         return await this.findCourses({
-            _id: { $in: ids },
-            verified: !options?.unverified,
+            filter: {
+                _id: { $in: ids },
+                verified: !options?.unverified,
+            },
         });
     }
 
-    async findCourse(where: IQuery<ICourse>): Promise<ICourse> {
-        return await this.Course.findOne(where);
+    async findCourse(filter: IFilterQuery<ICourse>): Promise<ICourse> {
+        return await this.Course.findOne(filter);
     }
 
     async findCourseById(id: Types.ObjectId): Promise<ICourse> {
@@ -69,10 +65,10 @@ export default class CourseService {
     }
 
     async updateCourse(
-        where: IQuery<ICourse>,
+        filter: IFilterQuery<ICourse>,
         newCourse: Partial<ICourse>
     ): Promise<ICourse> {
-        const course = await this.findCourse(where);
+        const course = await this.findCourse(filter);
         Object.assign(course, newCourse);
         await course.save();
         return course;
@@ -85,8 +81,8 @@ export default class CourseService {
         return await this.updateCourse({ _id: id }, newCourse);
     }
 
-    async deleteCourse(where: IQuery<ICourse>): Promise<ICourse> {
-        return await this.Course.findOneAndDelete(where);
+    async deleteCourse(filter: IFilterQuery<ICourse>): Promise<ICourse> {
+        return await this.Course.findOneAndDelete(filter);
     }
 
     async deleteCourseById(id: Types.ObjectId): Promise<ICourse> {

@@ -1,5 +1,15 @@
 import { Model, Types } from "mongoose";
-import { IChat, IMessage, EModels, EErrorTypes, IUser, IQuery } from "../types";
+import {
+    IChat,
+    IMessage,
+    EModels,
+    EErrorTypes,
+    IUser,
+    IQuery,
+    EChatTypes,
+    IFilterQuery,
+    IUpdateQuery,
+} from "../types";
 import { EventEmitter } from "events";
 import { model, emitter } from "../decorators";
 import { ErrorService, errorService } from ".";
@@ -8,6 +18,8 @@ import UserService from "./user.services";
 export default class ChatService {
     @model(EModels.CHAT)
     private Chat: Model<IChat>;
+    @model(EModels.MESSAGE)
+    private Message: Model<IMessage>;
 
     @emitter()
     private eventEmitter: EventEmitter;
@@ -17,131 +29,68 @@ export default class ChatService {
         private errorService: ErrorService
     ) {}
 
-    async createChat(
-        chatData: IChat,
-        options?: {
-            preventEmptyMessages?: boolean;
-        }
-    ): Promise<IChat> {
-        if (options?.preventEmptyMessages && !chatData.messages.length) {
-            errorService.throwError(
-                EErrorTypes.BAD_REQUEST,
-                "Initial messages Required"
-            );
-        }
+    private configurePrivateChatKey(userIds: Types.ObjectId[]): string {
+        const stringUserIds = userIds.map((u) => u.toString());
+        stringUserIds.sort();
+        return stringUserIds.join("-");
+    }
 
+    async createChat(chatData: IChat): Promise<IChat> {
+        if (chatData.type === EChatTypes.PRIVATE)
+            chatData.privateChatKey = this.configurePrivateChatKey(
+                chatData.meta.users
+            );
         return await this.Chat.create(chatData);
+    }
+
+    async findPrivateChatByUserIds(userIds: Types.ObjectId[]) {
+        return await this.Chat.findOne({
+            privateChatKey: this.configurePrivateChatKey(userIds),
+        });
     }
 
     async findChatsByUserIds(
         userIds: Types.ObjectId[],
-        requestingUser: IUser,
         options?: { exact?: boolean }
     ) {
-        userIds = userIds.find((id) => id.equals(requestingUser._id))
-            ? userIds
-            : [...userIds, requestingUser._id];
         let query = this.Chat.find({
-            _id: { $in: requestingUser.meta.chats },
             "meta.users": { $all: userIds },
         });
 
-        if (options?.exact) {
-            query = query.size("meta.users", userIds.length);
-        }
+        if (options?.exact) query = query.size("meta.users", userIds.length);
+
         return await query;
     }
 
-    async findChats(
-        where: IQuery<IChat>,
-        requestingUserId: Types.ObjectId,
-        options?: {
-            limit?: number;
-            skip?: number;
-            sort?: object;
-            overriderequestingUserIdValidation?: boolean;
-        }
-    ): Promise<IChat[]> {
-        const chats = await this.Chat.find(where)
-            .sort(options.sort || { lastMessageSentAt: -1 })
-            .skip(options.skip || 0)
-            .limit(Math.min(options.limit, 20));
-
-        let userHashTable: { [key: string]: IUser } = {};
-
-        chats.forEach(function (chat) {
-            chat.meta.users.forEach(function (userId) {
-                // @ts-ignore
-                userHashTable[userId.toHexString()] = userId;
-            });
-        });
-
-        delete userHashTable[requestingUserId.toHexString()];
-
-        const users = await this.userService.findUsersByIds(
-            Object.values(userHashTable) as any
-        );
-
-        users.forEach(function (user) {
-            userHashTable[user._id.toHexString()] = user;
-        });
-
-        let i = chats.length;
-        while (i--) {
-            if (!chats[i].isGroupChat) {
-                const user =
-                    userHashTable[
-                        chats[i].meta.users
-                            .find((u) => !requestingUserId.equals(u))
-                            .toHexString()
-                    ];
-
-                chats[i].pictureUrl = user.profilePictureUrl;
-                chats[i].name = `${user.firstName} ${user.lastName}`;
-            }
-        }
-
+    async findChats(query: IQuery<IChat>): Promise<IChat[]> {
+        const chats = await this.Chat.find(query.filter)
+            .sort(query.sort || { lastMessageSentAt: -1 })
+            .skip(query.skip || 0)
+            .limit(Math.min(query.limit, 20));
         return chats;
     }
 
     async findChatsByIds(
         ids: Types.ObjectId[],
-        requestingUserId: Types.ObjectId,
-        options?: {
-            where?: IQuery<IChat>;
-            limit?: number;
-            skip?: number;
-            sort?: object;
-            overriderequestingUserIdValidation?: boolean;
-        }
+        query: IQuery<IChat> = { filter: {} }
     ): Promise<IChat[]> {
-        const where = { _id: { $in: ids }, ...options?.where };
-        return await this.findChats(where, requestingUserId, {
-            ...options,
-        });
+        query.filter = { ...query.filter, _id: { $in: ids } };
+        return await this.findChats(query);
     }
 
-    async findChat(where: IQuery<IChat>): Promise<IChat> {
-        return await this.Chat.findOneAndUpdate(
-            where,
-            {
-                $sort: {
-                    $each: { messages: { createdAt: -1 } },
-                },
-            },
-            { new: true }
-        );
+    async findChat(query: IQuery<IChat>): Promise<IChat> {
+        return await this.Chat.findOne(query.filter).sort(query.sort);
     }
 
     async findChatById(chatId: Types.ObjectId): Promise<IChat> {
-        return await this.findChat({ _id: chatId });
+        return await this.findChatById(chatId);
     }
 
     async updateChat(
-        where: IQuery<IChat>,
-        chatData: Partial<IChat>
+        filter: IFilterQuery<IChat>,
+        chatData: IUpdateQuery<IChat>
     ): Promise<IChat> {
-        return await this.Chat.findOneAndUpdate(where, chatData, {
+        return await this.Chat.findOneAndUpdate(filter, chatData, {
             new: true,
         });
     }
@@ -150,7 +99,7 @@ export default class ChatService {
         id: Types.ObjectId,
         chatData: Partial<IChat>
     ): Promise<IChat> {
-        return await this.Chat.findByIdAndUpdate(id, chatData, { new: true });
+        return await this.updateChat({ _id: id }, chatData);
     }
 
     async deleteChat(where: object): Promise<IChat> {
@@ -161,130 +110,58 @@ export default class ChatService {
         return await this.Chat.findByIdAndDelete(id);
     }
 
-    async findMessages(
-        {
-            chatId,
-            requestingUserId,
-        }: {
-            chatId: Types.ObjectId;
-            requestingUserId: Types.ObjectId;
-        },
-        options?: {
-            skip?: number;
-            limit?: number;
-        }
+    async findMessages(query: IQuery<IMessage>) {
+        return await this.Message.find(query.filter)
+            .sort(query.sort || { lastMessageSentAt: -1 })
+            .skip(query.skip || 0)
+            .limit(Math.min(query.limit, 20));
+    }
+
+    async findMessagesByChatId(
+        chatId: Types.ObjectId,
+        query: IQuery<IMessage> = { filter: {} }
     ): Promise<IMessage[]> {
-        const chat = await this.findChatById(chatId);
-
-        if (!chat) {
-            errorService.throwError(
-                EErrorTypes.DOCUMENT_NOT_FOUND,
-                "Chat not found"
-            );
-        }
-
-        const skip = +options?.skip || 0;
-        const limit = Math.min(
-            +options?.limit ? Math.min(+options?.limit, 20) : 20,
-            chat.messages.length
-        );
-        const limitIndex = limit + skip;
-
-        for (let i = skip; i < limitIndex; i++) {
-            if (
-                !requestingUserId.equals(chat.messages[i].meta.from) &&
-                !chat.messages[i].meta.readBy.some((id) =>
-                    requestingUserId.equals(id)
-                )
-            ) {
-                chat.messages[i].meta.readBy.push(requestingUserId);
-            }
-        }
-
-        await chat.save();
-
-        const messages = chat.messages.slice(skip, limit + 1);
-
-        // const skip = +options?.skip || 0;
-        // const limit = +options?.limit ? Math.min(+options?.limit, 20) : 20;
-
-        // const messages = await this.Chat.aggregate([
-        //     { $match: { _id: chatId } },
-        //     {
-        //         $unwind: "$messages",
-        //     },
-        //     { $sort: { "messages.createdAt": -1 } },
-        //     { $skip: skip },
-        //     { $limit: limit },
-        // ])
-
-        return messages;
+        query.filter = { ...query.filter, _id: chatId };
+        return await this.findMessages(query);
     }
 
-    async createMessage({
-        text,
-        chatId,
-        requestingUserId,
-    }: {
-        text: string;
-        chatId: Types.ObjectId;
-        requestingUserId: Types.ObjectId;
-    }): Promise<IChat> {
-        let chat = await this.Chat.findById(chatId);
-        chat.messages.unshift({
-            text,
-            meta: { from: requestingUserId, readBy: [] },
-            isDeleted: false,
-            isEdited: false,
-        });
-
-        chat.lastMessageSentAt = new Date();
-
-        return await chat.save();
+    async createMessage(
+        messageData: Partial<IMessage>,
+        chatId: Types.ObjectId
+    ): Promise<{ message: IMessage; chat: IChat }> {
+        const [message, chat] = await Promise.all([
+            // @ts-ignore
+            this.Message.create(messageData),
+            this.updateChatById(chatId, { lastMessageSentAt: new Date() }),
+        ]);
+        return { message, chat };
     }
 
-    async updateMessage({
-        text,
-        chatId,
-        messageId,
-    }: {
-        text: string;
-        chatId: Types.ObjectId;
-        messageId: Types.ObjectId;
-    }): Promise<IChat> {
-        const chat = await this.Chat.findOneAndUpdate(
-            { _id: chatId, "messages._id": messageId },
-            { $set: { "messages.$.text": text, "messages.$.isEdited": true } },
-            { new: true }
-        );
-
-        return chat;
+    async updateMessage(
+        messageData: IUpdateQuery<IMessage>,
+        filter: IFilterQuery<IMessage>
+    ): Promise<IMessage> {
+        return await this.Message.findOneAndUpdate(filter, messageData);
     }
 
-    async setMessageDeletion({
-        chatId,
-        messageId,
-        requestingUserId,
-        isDeleted,
-    }: {
-        chatId: Types.ObjectId;
-        messageId: Types.ObjectId;
-        requestingUserId: Types.ObjectId;
-        isDeleted: boolean;
-    }): Promise<IChat> {
-        const chat = await this.findChatById(chatId);
-        const messageIndex = chat.messages.findIndex((message) =>
-            messageId.equals(message._id)
-        );
-        const message = chat.messages[messageIndex];
-        if (!requestingUserId.equals(message.meta.from))
-            errorService.throwError(
-                EErrorTypes.FORBIDDEN,
-                "You cannot delete/restore others' messages"
-            );
-        message.isDeleted = isDeleted;
-        await chat.save();
+    async updateMessageById(
+        messageData: IUpdateQuery<IMessage>,
+        messageId: Types.ObjectId
+    ): Promise<IMessage> {
+        return await this.updateMessage(messageData, { _id: messageId });
+    }
 
-        return chat;
+    async setMessageDeletion(
+        isDeleted: boolean,
+        filter: IFilterQuery<IMessage>
+    ): Promise<IMessage> {
+        return await this.updateMessage({ isDeleted }, filter);
+    }
+
+    async setMessageDeletionById(
+        isDeleted: boolean,
+        messageId: Types.ObjectId
+    ): Promise<IMessage> {
+        return await this.setMessageDeletion(isDeleted, { _id: messageId });
     }
 }

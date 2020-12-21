@@ -29,137 +29,108 @@ const initializeChatSocket: ISocketInitializer = (socket, { io, user }) => {
         }
     });
 
-    socket.on(ESocketEvents.CHAT_MESSAGE_CREATED, async function (data: {
-        chatId: string;
-        text: string;
-    }) {
-        try {
-            if (!user.meta.chats.find((chatId) => chatId.equals(chatId)))
-                throw new Error("chatId not found in user metadata");
-            const chat = await chatService.createMessage({
-                chatId: ObjectId(data.chatId),
-                requestingUserId: user._id,
-                text: data.text,
-            });
+    socket.on(
+        ESocketEvents.CHAT_MESSAGE_CREATED,
+        async function (data: { chatId: string; text: string }) {
+            try {
+                if (!user.meta.chats.find((chatId) => chatId.equals(chatId)))
+                    throw new Error("chatId not found in user metadata");
+                const { chat, message } = await chatService.createMessage(
+                    // @ts-ignore
+                    { text: data.text, meta: { from: user._id, readBy: [] } },
+                    ObjectId(data.chatId)
+                );
 
-            let messageEmitter = io.sockets.to(data.chatId);
+                let messageEmitter = io.sockets.to(data.chatId);
 
-            chat.meta.users.forEach(function (userId: Types.ObjectId) {
-                if (user._id.toString() === userId.toString()) return;
-                messageEmitter = messageEmitter.to(userId.toString());
-            });
+                chat.meta.users.forEach(function (userId: Types.ObjectId) {
+                    if (user._id.toString() === userId.toString()) return;
+                    messageEmitter = messageEmitter.to(userId.toString());
+                });
 
-            messageEmitter.emit(ESocketEvents.CHAT_MESSAGE_CREATED, {
-                chatId: data.chatId,
-                message: chat.messages[0],
-                user,
-            });
-        } catch (e) {
-            logger.error(e);
+                messageEmitter.emit(ESocketEvents.CHAT_MESSAGE_CREATED, {
+                    chatId: data.chatId,
+                    message,
+                    user,
+                });
+            } catch (e) {
+                logger.error(e);
+            }
         }
-    });
+    );
 
-    socket.on(ESocketEvents.CHAT_MESSAGE_UPDATED, async function (data: {
-        chatId: string;
-        messageId: string;
-        text: string;
-    }) {
-        try {
-            if (!user.meta.chats.find((chatId) => chatId.equals(chatId)))
-                throw new Error("chatId not found in user metadata");
-            const chat = await chatService.updateMessage({
-                chatId: ObjectId(data.chatId),
-                messageId: ObjectId(data.messageId),
-                text: data.text,
-            });
+    socket.on(
+        ESocketEvents.CHAT_MESSAGE_UPDATED,
+        async function (data: {
+            chatId: string;
+            messageId: string;
+            text: string;
+        }) {
+            try {
+                if (!user.meta.chats.find((chatId) => chatId.equals(chatId)))
+                    throw new Error("chatId not found in user metadata");
+                const message = await chatService.updateMessageById(
+                    // ts-ignore
+                    { text: data.text },
+                    ObjectId(data.chatId)
+                );
 
-            let messageEmitter = io.sockets.to(data.chatId);
-
-            chat.meta.users.forEach(function (userId: Types.ObjectId) {
-                if (user._id.toString() === userId.toString()) return;
-                messageEmitter = messageEmitter.to(userId.toString());
-            });
-
-            const message = chat.messages.find(
-                (message) => message._id.toString() === data.messageId
-            );
-
-            console.log(message);
-
-            messageEmitter.emit(ESocketEvents.CHAT_MESSAGE_UPDATED, {
-                chatId: data.chatId,
-                message,
-            });
-        } catch (e) {
-            logger.error(e);
+                io.sockets
+                    .to(data.chatId)
+                    .emit(ESocketEvents.CHAT_MESSAGE_UPDATED, {
+                        chatId: data.chatId,
+                        message,
+                    });
+            } catch (e) {
+                logger.error(e);
+            }
         }
-    });
+    );
 
-    socket.on(ESocketEvents.CHAT_MESSAGE_DELETED, async function (data: {
-        chatId: string;
-        messageId: string;
-    }) {
-        try {
-            if (!user.meta.chats.find((chatId) => chatId.equals(chatId)))
-                throw new Error("chatId not found in user metadata");
-            const chat = await chatService.setMessageDeletion({
-                chatId: ObjectId(data.chatId),
-                messageId: ObjectId(data.messageId),
-                isDeleted: true,
-                requestingUserId: user._id,
-            });
-
-            let messageEmitter = io.sockets.to(data.chatId);
-
-            chat.meta.users.forEach(function (userId: Types.ObjectId) {
-                if (user._id.toString() === userId.toString()) return;
-                messageEmitter = messageEmitter.to(userId.toString());
-            });
-
-            const message = chat.messages.find(
-                (message) => message._id.toString() === data.messageId
-            );
-            messageEmitter.emit(ESocketEvents.CHAT_MESSAGE_DELETED, {
-                message,
-                chatId: chat._id,
-            });
-        } catch (e) {
-            logger.error(e);
+    socket.on(
+        ESocketEvents.CHAT_MESSAGE_DELETED,
+        async function (data: { chatId: string; messageId: string }) {
+            try {
+                if (!user.meta.chats.find((chatId) => chatId.equals(chatId)))
+                    throw new Error("chatId not found in user metadata");
+                const message = await chatService.setMessageDeletionById(
+                    true,
+                    ObjectId(data.messageId)
+                );
+                io.sockets
+                    .to(data.chatId)
+                    .emit(ESocketEvents.CHAT_MESSAGE_DELETED, {
+                        message,
+                        chatId: data.chatId,
+                    });
+            } catch (e) {
+                logger.error(e);
+            }
         }
-    });
+    );
 
-    socket.on(ESocketEvents.CHAT_MESSAGE_RESTORED, async function (data: {
-        chatId: string;
-        messageId: string;
-    }) {
-        try {
-            if (!user.meta.chats.find((chatId) => chatId.equals(chatId)))
-                throw new Error("chatId not found in user metadata");
-            const chat = await chatService.setMessageDeletion({
-                chatId: ObjectId(data.chatId),
-                messageId: ObjectId(data.messageId),
-                isDeleted: false,
-                requestingUserId: user._id,
-            });
+    socket.on(
+        ESocketEvents.CHAT_MESSAGE_RESTORED,
+        async function (data: { chatId: string; messageId: string }) {
+            try {
+                if (!user.meta.chats.find((chatId) => chatId.equals(chatId)))
+                    throw new Error("chatId not found in user metadata");
+                const message = await chatService.setMessageDeletionById(
+                    false,
+                    ObjectId(data.messageId)
+                );
 
-            let messageEmitter = io.sockets.to(data.chatId);
-
-            chat.meta.users.forEach(function (userId: Types.ObjectId) {
-                if (user._id.toString() === userId.toString()) return;
-                messageEmitter = messageEmitter.to(userId.toString());
-            });
-
-            const message = chat.messages.find(
-                (message) => message._id.toString() === data.messageId
-            );
-            messageEmitter.emit(ESocketEvents.CHAT_MESSAGE_RESTORED, {
-                message,
-                chatId: chat._id,
-            });
-        } catch (e) {
-            logger.error(e);
+                io.sockets
+                    .to(data.chatId)
+                    .emit(ESocketEvents.CHAT_MESSAGE_RESTORED, {
+                        message,
+                        chatId: data.chatId,
+                    });
+            } catch (e) {
+                logger.error(e);
+            }
         }
-    });
+    );
 };
 
 export default initializeChatSocket;

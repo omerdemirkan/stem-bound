@@ -150,7 +150,6 @@ export async function getUserChats(req: Request, res: Response) {
                     ...req.params.user_ids.split(",").map((id) => ObjectId(id)),
                     userId,
                 ],
-                await userService.findUserById(userId),
                 {
                     exact: !!req.query.exact,
                 }
@@ -175,9 +174,7 @@ export async function getUserChats(req: Request, res: Response) {
 
         const chatIds = user.meta.chats;
         const chats: IChat[] = chatIds.length
-            ? await chatService.findChatsByIds(chatIds, user._id, {
-                  sort: { updatedAt: -1 },
-              })
+            ? await chatService.findChatsByIds(chatIds)
             : [];
 
         res.json({

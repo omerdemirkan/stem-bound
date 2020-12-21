@@ -5,12 +5,12 @@ import { passwordRegex, urlRegex } from "../constants";
 
 export const schemaValidators = {
     uniqueStringArray(values: string[]): boolean {
-        let obj: any = {};
+        const stringSet = new Set();
 
         let i = values.length;
         while (i--) {
-            if (obj[values[i]]) return false;
-            obj[values[i]] = true;
+            if (stringSet.has(values[i])) return false;
+            stringSet.add(values[i]);
         }
         return true;
     },
