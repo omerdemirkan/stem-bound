@@ -2,6 +2,7 @@ import { JwtService } from ".";
 import { Request, Response, NextFunction } from "express";
 import {
     EUserRoles,
+    IModifiedRequest,
     IRequestValidationFunction,
     ITokenPayload,
 } from "../types";
@@ -11,7 +12,7 @@ export default class AuthMiddlewareService {
     constructor(private jwtService: JwtService) {}
 
     extractTokenPayload = async (
-        req: Request,
+        req: IModifiedRequest,
         res: Response,
         next: NextFunction
     ) => {
@@ -38,7 +39,7 @@ export default class AuthMiddlewareService {
 
     allowedRoles(allowedRoles: (EUserRoles | "ADMIN")[]) {
         return async function (
-            req: Request,
+            req: IModifiedRequest,
             res: Response,
             next: NextFunction
         ) {
@@ -53,7 +54,7 @@ export default class AuthMiddlewareService {
 
     // To ensure that any changes to a user is made by the user or by an admin.
     matchParamIdToPayloadUserId(
-        req: Request,
+        req: IModifiedRequest,
         res: Response,
         next: NextFunction
     ) {
@@ -66,7 +67,11 @@ export default class AuthMiddlewareService {
         }
     }
 
-    blockRequestBodyMetadata(req: Request, res: Response, next: NextFunction) {
+    blockRequestBodyMetadata(
+        req: IModifiedRequest,
+        res: Response,
+        next: NextFunction
+    ) {
         if (!req.body.meta) {
             next();
         } else {
@@ -79,7 +84,11 @@ export default class AuthMiddlewareService {
     }
 
     validateRequest(comparisonFunction: IRequestValidationFunction) {
-        return function (req: Request, res: Response, next: NextFunction) {
+        return function (
+            req: IModifiedRequest,
+            res: Response,
+            next: NextFunction
+        ) {
             try {
                 const { body, payload, params } = req as any;
                 if (!comparisonFunction({ body, payload, params }))

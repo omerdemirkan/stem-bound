@@ -1,11 +1,15 @@
 import { Request, Response } from "express";
 import { errorService, courseService } from "../../../../services";
-import { IAnnouncement, EErrorTypes } from "../../../../types";
+import {
+    IAnnouncement,
+    EErrorTypes,
+    IModifiedRequest,
+} from "../../../../types";
 import { Types } from "mongoose";
 
 const { ObjectId } = Types;
 
-export async function createAnnouncement(req: Request, res: Response) {
+export async function createAnnouncement(req: IModifiedRequest, res: Response) {
     try {
         const announcementData: Partial<IAnnouncement> = req.body;
         const courseId = ObjectId(req.params.courseId);
@@ -23,7 +27,7 @@ export async function createAnnouncement(req: Request, res: Response) {
     }
 }
 
-export async function getAnnouncements(req: Request, res: Response) {
+export async function getAnnouncements(req: IModifiedRequest, res: Response) {
     try {
         const { skip, limit } = req.query;
         const courseId = ObjectId(req.params.courseId);
@@ -43,7 +47,7 @@ export async function getAnnouncements(req: Request, res: Response) {
     }
 }
 
-export async function getAnnouncement(req: Request, res: Response) {
+export async function getAnnouncement(req: IModifiedRequest, res: Response) {
     try {
         const announcement = await courseService.findAnnouncementById({
             courseId: ObjectId(req.params.courseId),
@@ -64,7 +68,7 @@ export async function getAnnouncement(req: Request, res: Response) {
     }
 }
 
-export async function updateAnnouncement(req: Request, res: Response) {
+export async function updateAnnouncement(req: IModifiedRequest, res: Response) {
     try {
         const updatedAnnouncement = await courseService.updateAnnouncement({
             announcementId: ObjectId(req.params.announcementId),
@@ -80,7 +84,7 @@ export async function updateAnnouncement(req: Request, res: Response) {
     }
 }
 
-export async function deleteAnnouncement(req: Request, res: Response) {
+export async function deleteAnnouncement(req: IModifiedRequest, res: Response) {
     try {
         const deletedAnnouncement = await courseService.deleteAnnouncementById({
             courseId: ObjectId(req.params.courseId),

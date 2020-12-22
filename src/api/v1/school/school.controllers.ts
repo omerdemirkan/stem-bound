@@ -1,17 +1,12 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { Types } from "mongoose";
 import { configureFindSchoolsQuery } from "../../../helpers/school.helpers";
-import {
-    schoolService,
-    errorService,
-    userService,
-    courseService,
-} from "../../../services";
-import { IStudent, ISchool, ICourse, EErrorTypes } from "../../../types";
+import { schoolService, errorService } from "../../../services";
+import { ISchool, EErrorTypes, IModifiedRequest } from "../../../types";
 
 const { ObjectId } = Types;
 
-export async function getSchools(req: Request, res: Response) {
+export async function getSchools(req: IModifiedRequest, res: Response) {
     try {
         const { query, coordinates } = configureFindSchoolsQuery(
             req.query,
@@ -31,7 +26,7 @@ export async function getSchools(req: Request, res: Response) {
     }
 }
 
-export async function getSchool(req: Request, res: Response) {
+export async function getSchool(req: IModifiedRequest, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const school: ISchool = await schoolService.findSchoolById(id);
@@ -52,7 +47,7 @@ export async function getSchool(req: Request, res: Response) {
     }
 }
 
-export async function refreshDatabase(req: Request, res: Response) {
+export async function refreshDatabase(req: IModifiedRequest, res: Response) {
     try {
         const { url } = req.body;
         const data = await schoolService.refreshDatabase({ url });

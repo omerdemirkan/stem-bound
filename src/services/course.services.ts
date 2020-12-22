@@ -58,6 +58,30 @@ export default class CourseService {
         });
     }
 
+    async findCoursesByInstructorId(
+        instructorId: Types.ObjectId,
+        query: IQuery<ICourse> = { filter: {} }
+    ) {
+        query.filter["meta.instructors"] = instructorId;
+        return await this.findCourses(query);
+    }
+
+    async findCoursesByStudentId(
+        studentId: Types.ObjectId,
+        query: IQuery<ICourse> = { filter: {} }
+    ) {
+        query.filter["meta.students"] = studentId;
+        return await this.findCourses(query);
+    }
+
+    async findCoursesBySchoolId(
+        schoolId: Types.ObjectId,
+        query: IQuery<ICourse> = { filter: {} }
+    ) {
+        query.filter["meta.school"] = schoolId;
+        return await this.findCourses(query);
+    }
+
     async findCourse(filter: IFilterQuery<ICourse>): Promise<ICourse> {
         return await this.Course.findOne(filter);
     }

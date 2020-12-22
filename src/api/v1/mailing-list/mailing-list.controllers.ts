@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 import { mailingListService, errorService } from "../../../services";
+import { IModifiedRequest } from "../../../types";
 
-export async function createMailingListSubscriber(req: Request, res: Response) {
+export async function createMailingListSubscriber(
+    req: IModifiedRequest,
+    res: Response
+) {
     try {
         let { email, a, affiliate, role } = req.body;
         let subscriber: any = { email };
@@ -23,7 +27,10 @@ export async function createMailingListSubscriber(req: Request, res: Response) {
     }
 }
 
-export async function getMailingListSubscribers(req: Request, res: Response) {
+export async function getMailingListSubscribers(
+    req: IModifiedRequest,
+    res: Response
+) {
     try {
         const mailingListSubscribers = await mailingListService.findSubscribers();
 

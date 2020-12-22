@@ -18,6 +18,7 @@ import {
     IUserQueryOptions,
     IChat,
     EErrorTypes,
+    IModifiedRequest,
 } from "../../../types";
 import { configureChatArrayResponseData } from "../../../helpers/chat.helpers";
 import { configureCourseArrayResponseData } from "../../../helpers";
@@ -25,7 +26,7 @@ import { saveFileToBucket } from "../../../jobs";
 
 const { ObjectId } = Types;
 
-export async function getUsers(req: Request, res: Response) {
+export async function getUsers(req: IModifiedRequest, res: Response) {
     try {
         const query: IUserQueryOptions = configureUsersQuery(req.query, req.ip);
         let users: IUser[] = await userService.findUsers(query);
@@ -38,7 +39,7 @@ export async function getUsers(req: Request, res: Response) {
     }
 }
 
-export async function getUser(req: Request, res: Response) {
+export async function getUser(req: IModifiedRequest, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const user: IUser = await userService.findUserById(id);
@@ -58,7 +59,7 @@ export async function getUser(req: Request, res: Response) {
     }
 }
 
-export async function updateUser(req: Request, res: Response) {
+export async function updateUser(req: IModifiedRequest, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const updatedUser: IUser = await userService.updateUserById({
@@ -75,7 +76,7 @@ export async function updateUser(req: Request, res: Response) {
     }
 }
 
-export async function deleteUser(req: Request, res: Response) {
+export async function deleteUser(req: IModifiedRequest, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const deletedUser: IUser = await userService.deleteUserById(id);
@@ -90,7 +91,7 @@ export async function deleteUser(req: Request, res: Response) {
     }
 }
 
-export async function getUserCourses(req: Request, res: Response) {
+export async function getUserCourses(req: IModifiedRequest, res: Response) {
     try {
         const user: IUser = await userService.findUserById(
             ObjectId(req.params.id)
@@ -118,7 +119,7 @@ export async function getUserCourses(req: Request, res: Response) {
     }
 }
 
-export async function getUserSchool(req: Request, res: Response) {
+export async function getUserSchool(req: IModifiedRequest, res: Response) {
     try {
         const user: IUser = await userService.findUserById(
             ObjectId(req.params.id)
@@ -141,7 +142,7 @@ export async function getUserSchool(req: Request, res: Response) {
     }
 }
 
-export async function getUserChats(req: Request, res: Response) {
+export async function getUserChats(req: IModifiedRequest, res: Response) {
     try {
         const userId = ObjectId(req.params.id);
         if (req.query.user_ids) {
@@ -156,10 +157,7 @@ export async function getUserChats(req: Request, res: Response) {
             );
             return res.json({
                 message: "Chat messages successfully fetched",
-                data: configureChatArrayResponseData(chats, {
-                    query: req.query,
-                    payload: (req as any).payload,
-                }),
+                data: configureChatArrayResponseData(chats, req),
             });
         }
 
@@ -179,17 +177,17 @@ export async function getUserChats(req: Request, res: Response) {
 
         res.json({
             message: "User chats successfuly fetched",
-            data: configureChatArrayResponseData(chats, {
-                query: req.query,
-                payload: (req as any).payload,
-            }),
+            data: configureChatArrayResponseData(chats, req),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
-export async function updateUserProfilePicture(req: Request, res: Response) {
+export async function updateUserProfilePicture(
+    req: IModifiedRequest,
+    res: Response
+) {
     try {
         const file: any = req.files.file;
         const profilePictureUrl = await saveFileToBucket(file);
@@ -208,7 +206,7 @@ export async function updateUserProfilePicture(req: Request, res: Response) {
     }
 }
 
-export async function updateUserLocation(req: Request, res: Response) {
+export async function updateUserLocation(req: IModifiedRequest, res: Response) {
     try {
         const userId = ObjectId(req.params.id);
         const updatedUser = await userService.updateUserLocationByZip(

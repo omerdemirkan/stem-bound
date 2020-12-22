@@ -29,11 +29,12 @@ export default class ChatService {
         private errorService: ErrorService
     ) {}
 
-    async createChat(chatData: IChat): Promise<IChat> {
+    async createChat(chatData: Partial<IChat>): Promise<IChat> {
         if (chatData.type === EChatTypes.PRIVATE)
             chatData.privateChatKey = configurePrivateChatKey(
                 chatData.meta.users
             );
+        // @ts-ignore
         return await this.Chat.create(chatData);
     }
 
@@ -104,8 +105,8 @@ export default class ChatService {
         return await this.updateChat({ _id: id }, chatData);
     }
 
-    async deleteChat(where: object): Promise<IChat> {
-        return await this.Chat.findOneAndDelete(where);
+    async deleteChat(filter: IFilterQuery<IChat>): Promise<IChat> {
+        return await this.Chat.findOneAndDelete(filter);
     }
 
     async deleteChatById(id: Types.ObjectId): Promise<IChat> {
@@ -139,6 +140,7 @@ export default class ChatService {
         messageData: Partial<IMessage>,
         chatId: Types.ObjectId
     ): Promise<{ message: IMessage; chat: IChat }> {
+        messageData.meta.chat = chatId;
         const [message, chat] = await Promise.all([
             // @ts-ignore
             this.Message.create(messageData),

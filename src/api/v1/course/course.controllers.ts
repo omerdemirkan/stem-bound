@@ -7,7 +7,13 @@ import {
     userService,
     schoolService,
 } from "../../../services";
-import { ICourse, IUser, EErrorTypes, ISchoolOfficial } from "../../../types";
+import {
+    ICourse,
+    IUser,
+    EErrorTypes,
+    ISchoolOfficial,
+    IModifiedRequest,
+} from "../../../types";
 import {
     configureCourseArrayResponseData,
     configureCourseResponseData,
@@ -15,7 +21,7 @@ import {
 
 const { ObjectId } = Types;
 
-export async function createCourse(req: Request, res: Response) {
+export async function createCourse(req: IModifiedRequest, res: Response) {
     try {
         const courseData = req.body;
         const newCourse: ICourse = await courseService.createCourse(courseData);
@@ -31,7 +37,7 @@ export async function createCourse(req: Request, res: Response) {
     }
 }
 
-export async function enrollInCourse(req: Request, res: Response) {
+export async function enrollInCourse(req: IModifiedRequest, res: Response) {
     try {
         const studentId = ObjectId((req as any).payload.user._id);
         const courseId = ObjectId(req.params.id);
@@ -48,7 +54,7 @@ export async function enrollInCourse(req: Request, res: Response) {
     }
 }
 
-export async function dropCourse(req: Request, res: Response) {
+export async function dropCourse(req: IModifiedRequest, res: Response) {
     try {
         const studentId = ObjectId((req as any).payload.user._id);
         const courseId = ObjectId(req.params.id);
@@ -65,7 +71,7 @@ export async function dropCourse(req: Request, res: Response) {
     }
 }
 
-export async function getCourses(req: Request, res: Response) {
+export async function getCourses(req: IModifiedRequest, res: Response) {
     try {
         const courses: ICourse[] = await courseService.findCourses({
             filter: {},
@@ -89,7 +95,7 @@ export async function getCourses(req: Request, res: Response) {
     }
 }
 
-export async function getCourse(req: Request, res: Response) {
+export async function getCourse(req: IModifiedRequest, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const course: ICourse = await courseService.findCourseById(id);
@@ -109,7 +115,7 @@ export async function getCourse(req: Request, res: Response) {
     }
 }
 
-export async function updateCourse(req: Request, res: Response) {
+export async function updateCourse(req: IModifiedRequest, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const newCourseData = req.body;
@@ -128,7 +134,7 @@ export async function updateCourse(req: Request, res: Response) {
     }
 }
 
-export async function deleteCourse(req: Request, res: Response) {
+export async function deleteCourse(req: IModifiedRequest, res: Response) {
     try {
         const courseId = ObjectId(req.params.id);
 
@@ -149,7 +155,10 @@ export async function deleteCourse(req: Request, res: Response) {
     }
 }
 
-export async function getCourseInstructors(req: Request, res: Response) {
+export async function getCourseInstructors(
+    req: IModifiedRequest,
+    res: Response
+) {
     try {
         const course: ICourse = await courseService.findCourseById(
             ObjectId(req.params.id)
@@ -173,7 +182,7 @@ export async function getCourseInstructors(req: Request, res: Response) {
     }
 }
 
-export async function getCourseStudents(req: Request, res: Response) {
+export async function getCourseStudents(req: IModifiedRequest, res: Response) {
     try {
         const course: ICourse = await courseService.findCourseById(
             ObjectId(req.params.id)
@@ -196,7 +205,7 @@ export async function getCourseStudents(req: Request, res: Response) {
     }
 }
 
-export async function getCourseSchool(req: Request, res: Response) {
+export async function getCourseSchool(req: IModifiedRequest, res: Response) {
     try {
         const course: ICourse = await courseService.findCourseById(
             ObjectId(req.params.id)
@@ -219,7 +228,7 @@ export async function getCourseSchool(req: Request, res: Response) {
     }
 }
 
-export async function verifyCourse(req: Request, res: Response) {
+export async function verifyCourse(req: IModifiedRequest, res: Response) {
     try {
         const courseId = ObjectId(req.params.id);
         const schoolOfficialId = ObjectId((req as any).payload.user._id);

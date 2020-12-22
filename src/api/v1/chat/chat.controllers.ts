@@ -6,7 +6,12 @@ import {
     userService,
 } from "../../../services";
 import { Types } from "mongoose";
-import { IChat, EErrorTypes } from "../../../types";
+import {
+    IChat,
+    EErrorTypes,
+    EChatTypes,
+    IModifiedRequest,
+} from "../../../types";
 import {
     configureChatArrayQuery,
     configureChatResponseData,
@@ -14,47 +19,34 @@ import {
 
 const { ObjectId } = Types;
 
-export async function createChat(req: Request, res: Response) {
+export async function createChat(req: IModifiedRequest, res: Response) {
     try {
-        const chatData: IChat = req.body;
+        let chatData: Partial<IChat> = req.body,
+            duplicateChat: IChat,
+            chat: IChat;
         chatData.meta.users = chatData.meta.users.map((id) =>
             ObjectId(id as any)
         );
-        const [duplicateChat] = await chatService.findChatsByUserIds(
-            chatData.meta.users,
-            { exact: true }
-        );
 
-        if (duplicateChat && req.query.duplicate_fallback) {
-            return res.json({
-                message: "Duplicate chat found",
-                data: configureChatResponseData(duplicateChat, {
-                    query: req.query,
-                    requestingUserId: (req as any).payload.user._id,
-                }),
-            });
-        } else if (duplicateChat && !req.query.duplicate_fallback) {
-            errorService.throwError(
-                EErrorTypes.CONFLICT,
-                "Invalid chat: Duplication"
+        if (chatData.type === EChatTypes.PRIVATE) {
+            duplicateChat = await chatService.findPrivateChatByUserIds(
+                chatData.meta.users
             );
         }
 
-        const newChat: IChat = await chatService.createChat(chatData);
+        const newChat: IChat =
+            duplicateChat || (await chatService.createChat(chatData));
         await metadataService.handleNewChatMetadataUpdate(newChat);
         res.json({
             message: "Chat successfully created",
-            data: configureChatResponseData(newChat, {
-                query: req.query,
-                requestingUserId: (req as any).payload.user._id,
-            }),
+            data: configureChatResponseData(newChat, req),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
-export async function getChat(req: Request, res: Response) {
+export async function getChat(req: IModifiedRequest, res: Response) {
     try {
         const requestingUserId = ObjectId((req as any).payload.user._id);
         const id = ObjectId(req.params.id);
@@ -65,21 +57,21 @@ export async function getChat(req: Request, res: Response) {
                 "Chat not found"
             );
         } else if (!chat.meta.users.some((id) => requestingUserId.equals(id))) {
-            res.status(403);
+            errorService.throwError(
+                EErrorTypes.FORBIDDEN,
+                "You are not a member of this chat"
+            );
         }
         res.json({
             message: "Chat successfully fetched",
-            data: configureChatResponseData(chat, {
-                query: req.query,
-                requestingUserId: (req as any).payload.user._id,
-            }),
+            data: configureChatResponseData(chat, req),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
-export async function getChats(req: Request, res: Response) {
+export async function getChats(req: IModifiedRequest, res: Response) {
     try {
         const userId = ObjectId((req as any).payload.user._id);
         const query = configureChatArrayQuery(req.query);
@@ -94,7 +86,7 @@ export async function getChats(req: Request, res: Response) {
     }
 }
 
-export async function updateChat(req: Request, res: Response) {
+export async function updateChat(req: IModifiedRequest, res: Response) {
     try {
         const id = ObjectId(req.params.id);
         const updatedChat: IChat = await chatService.updateChatById(
@@ -104,29 +96,24 @@ export async function updateChat(req: Request, res: Response) {
 
         res.json({
             message: "Chat successfully updated",
-            data: configureChatResponseData(updatedChat, {
-                query: req.query,
-                requestingUserId: (req as any).payload.user._id,
-            }),
+            data: configureChatResponseData(updatedChat, req),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
-export async function deleteChat(req: Request, res: Response) {
+export async function deleteChat(req: IModifiedRequest, res: Response) {
     try {
-        const deletedChat: IChat = await chatService.deleteChatById(
-            ObjectId(req.params.id)
-        );
+        const deletedChat: IChat = await chatService.deleteChat({
+            _id: ObjectId(req.params.id),
+            "meta.users": ObjectId((req as any).payload.user._id),
+        });
 
         await metadataService.handleDeletedChatMetadataUpdate(deletedChat);
         res.json({
             message: "Chat successfully deleted",
-            data: configureChatResponseData(deletedChat, {
-                query: req.query,
-                requestingUserId: (req as any).payload.user._id,
-            }),
+            data: configureChatResponseData(deletedChat, req),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

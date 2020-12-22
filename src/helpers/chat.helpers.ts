@@ -5,8 +5,10 @@ import {
     IUser,
     EChatTypes,
     IQuery,
+    IRequestMetadata,
 } from "../types";
 import { Types } from "mongoose";
+import { Request } from "express";
 
 const { ObjectId } = Types;
 
@@ -64,64 +66,46 @@ export function configureChatArrayQuery(requestQuery: any): IQuery<IChat> {
     return query;
 }
 
-export function configureChatArrayResponseData(
+export async function configureChatArrayResponseData(
     chats: IChat[],
-    { query, payload }: { query: any; payload: ITokenPayload }
-): Partial<IChat>[] {
-    const configuredChats: Partial<IChat>[] = chats.map((chat) => ({
-        ...chat.toObject(),
-        messages: chat.messages.slice(0, 21),
-    }));
-    return configuredChats;
+    requestMetadata: IRequestMetadata
+): Promise<IChat[]> {
+    await configureChatArrayPictureUrls(
+        chats,
+        ObjectId(requestMetadata.payload.user._id)
+    );
+    return chats;
 }
 
-export function configureChatResponseData(
+export async function configureChatResponseData(
     chat: IChat,
-    {
-        query,
-        requestingUserId,
-    }: { query: any; requestingUserId: Types.ObjectId }
-): Partial<IChat> {
-    const limit = +query.limit ? Math.min(+query.limit, 20) : 20;
-    const skip = +query.skip || 0;
-    const messages = chat.messages
-        .filter(
-            (message) =>
-                !message.isDeleted &&
-                !requestingUserId.equals(message.meta.from)
-        )
-        .slice(skip, limit + 1);
-
-    return {
-        ...chat.toObject(),
-        messages,
-    };
+    requestMetadata: IRequestMetadata
+): Promise<IChat> {
+    await configureChatArrayPictureUrls(
+        [chat],
+        ObjectId(requestMetadata.payload.user._id)
+    );
+    return chat;
 }
 
 export function configureMessageResponseData(
     message: IMessage,
-    { query }: { query: any }
-) {}
+    requestMetadata: IRequestMetadata
+) {
+    return message;
+}
 
 export function configureMessageArrayResponseData(
     messages: IMessage[],
-    {
-        query,
-    }: {
-        query: any;
-    }
+    requestMetadata: IRequestMetadata
 ) {
-    const limit = Math.min(+query.limit || 20, 20);
-    const skip = +query.skip || 0;
-    const configuredMessages = messages.slice(skip, limit + 1);
-
-    return configuredMessages;
+    return messages;
 }
 
-export async function configureChatPictureUrls(
+export async function configureChatArrayPictureUrls(
     chats: IChat[],
     requestingUserId: Types.ObjectId
-) {
+): Promise<IChat[]> {
     let userHashTable: { [key: string]: IUser } = {};
 
     chats.forEach(function (chat) {

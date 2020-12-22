@@ -1,5 +1,4 @@
 import { Router } from "express";
-import * as apiMiddlewares from "./v1.middlewares";
 
 import userRouter from "./user/user.routes";
 import schoolRouter from "./school/school.routes";
@@ -10,9 +9,6 @@ import mailingListRouter from "./mailing-list/mailing-list.routes";
 import locationRouter from "./location/location.routes";
 
 const v1Router: Router = Router();
-
-v1Router.use(apiMiddlewares.apiRateLimiter);
-v1Router.use(apiMiddlewares.requestLogger);
 
 v1Router.use("/users", userRouter);
 v1Router.use("/schools", schoolRouter);

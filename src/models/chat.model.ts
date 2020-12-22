@@ -45,6 +45,7 @@ const chatSchema = new Schema(
         privateChatKey: {
             type: String,
             index: true,
+            unique: true,
         },
     },
     {

@@ -6,12 +6,12 @@ import {
     userService,
 } from "../../../services";
 import { Types } from "mongoose";
-import { EErrorTypes } from "../../../types";
+import { EErrorTypes, IModifiedRequest } from "../../../types";
 import { configureTokenPayload } from "../../../helpers";
 
 const { ObjectId } = Types;
 
-export async function me(req: Request, res: Response) {
+export async function me(req: IModifiedRequest, res: Response) {
     try {
         const userData = await userService.findUserById(
             ObjectId((req as any).payload.user._id)
@@ -36,7 +36,7 @@ export async function me(req: Request, res: Response) {
     }
 }
 
-export async function signUp(req: Request, res: Response) {
+export async function signUp(req: IModifiedRequest, res: Response) {
     try {
         const { user, accessToken } = await authService.userSignUp(
             req.body,
@@ -52,7 +52,7 @@ export async function signUp(req: Request, res: Response) {
     }
 }
 
-export async function logIn(req: Request, res: Response) {
+export async function logIn(req: IModifiedRequest, res: Response) {
     try {
         const { email, password } = req.body;
         const loginResult = await authService.userLogin(email, password);

@@ -1,7 +1,12 @@
 import { Types } from "mongoose";
 import { Request, Response } from "express";
 import { chatService, errorService } from "../../../../services";
-import { IChat, IMessage, EErrorTypes } from "../../../../types";
+import {
+    IChat,
+    IMessage,
+    EErrorTypes,
+    IModifiedRequest,
+} from "../../../../types";
 import {
     configureMessageArrayQuery,
     configureMessageArrayResponseData,
@@ -9,7 +14,7 @@ import {
 
 const { ObjectId } = Types;
 
-export async function getChatMessages(req: Request, res: Response) {
+export async function getChatMessages(req: IModifiedRequest, res: Response) {
     try {
         const chatId = ObjectId(req.params.chatId);
         const query = configureMessageArrayQuery(req.query);
@@ -19,16 +24,14 @@ export async function getChatMessages(req: Request, res: Response) {
         );
         res.json({
             message: "Chat successfully fetched",
-            data: configureMessageArrayResponseData(messages, {
-                query: req.query,
-            }),
+            data: configureMessageArrayResponseData(messages, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
 
-export async function createChatMessage(req: Request, res: Response) {
+export async function createChatMessage(req: IModifiedRequest, res: Response) {
     try {
         const requestingUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
@@ -43,7 +46,7 @@ export async function createChatMessage(req: Request, res: Response) {
     }
 }
 
-export async function getChatMessage(req: Request, res: Response) {
+export async function getChatMessage(req: IModifiedRequest, res: Response) {
     try {
         const requestingUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
@@ -72,7 +75,7 @@ export async function getChatMessage(req: Request, res: Response) {
     }
 }
 
-export async function updateChatMessage(req: Request, res: Response) {
+export async function updateChatMessage(req: IModifiedRequest, res: Response) {
     try {
         const messageData: Partial<IMessage> = req.body;
         const message = await chatService.updateMessageById(
@@ -88,7 +91,7 @@ export async function updateChatMessage(req: Request, res: Response) {
     }
 }
 
-export async function deleteChatMessage(req: Request, res: Response) {
+export async function deleteChatMessage(req: IModifiedRequest, res: Response) {
     try {
         const message = await chatService.setMessageDeletionById(
             true,

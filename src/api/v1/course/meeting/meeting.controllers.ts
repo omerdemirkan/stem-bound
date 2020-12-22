@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
 import { errorService, courseService } from "../../../../services";
 import { Types } from "mongoose";
-import { IMeeting } from "../../../../types";
+import { IMeeting, IModifiedRequest } from "../../../../types";
 import { configureMeetingArrayResponseData } from "../../../../helpers";
 
 const { ObjectId } = Types;
 
-export async function getMeetings(req: Request, res: Response) {
+export async function getMeetings(req: IModifiedRequest, res: Response) {
     try {
         const { limit, skip, before, after } = req.query;
         const courseId = ObjectId(req.params.courseId);
@@ -23,7 +23,7 @@ export async function getMeetings(req: Request, res: Response) {
     }
 }
 
-export async function getMeeting(req: Request, res: Response) {
+export async function getMeeting(req: IModifiedRequest, res: Response) {
     try {
         const courseId = ObjectId(req.params.courseId);
         const meetingId = ObjectId(req.params.meetingId);
@@ -40,7 +40,7 @@ export async function getMeeting(req: Request, res: Response) {
     }
 }
 
-export async function createMeeting(req: Request, res: Response) {
+export async function createMeeting(req: IModifiedRequest, res: Response) {
     try {
         const courseId = ObjectId(req.params.courseId);
         const newMeetings: IMeeting[] = await courseService.createMeetings(
@@ -57,7 +57,7 @@ export async function createMeeting(req: Request, res: Response) {
     }
 }
 
-export async function updateMeeting(req: Request, res: Response) {
+export async function updateMeeting(req: IModifiedRequest, res: Response) {
     try {
         const updatedMeeting: IMeeting = await courseService.updateMeeting({
             courseId: ObjectId(req.params.courseId),
@@ -74,7 +74,7 @@ export async function updateMeeting(req: Request, res: Response) {
     }
 }
 
-export async function deleteMeeting(req: Request, res: Response) {
+export async function deleteMeeting(req: IModifiedRequest, res: Response) {
     try {
         const courseId = ObjectId(req.params.courseId);
         const meetingId = ObjectId(req.params.meetingId);
