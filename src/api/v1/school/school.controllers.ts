@@ -13,29 +13,14 @@ const { ObjectId } = Types;
 
 export async function getSchools(req: Request, res: Response) {
     try {
-        const {
-            coordinates,
-            limit,
-            skip,
-            where,
-            text,
-        } = configureFindSchoolsQuery(req.query, req.ip);
+        const { query, coordinates } = configureFindSchoolsQuery(
+            req.query,
+            req.ip
+        );
         let schools: ISchool[];
-        if (coordinates) {
-            schools = await schoolService.findSchoolsByCoordinates(
-                coordinates,
-                {
-                    limit,
-                    skip,
-                    where,
-                    text,
-                }
-            );
-        } else if (text) {
-            schools = await schoolService.findSchoolsByText(text);
-        } else {
-            schools = await schoolService.findSchools(where);
-        }
+        schools = coordinates
+            ? await schoolService.findSchoolsByCoordinates(coordinates, query)
+            : await schoolService.findSchools(query);
 
         res.json({
             message: "Schools successfully fetched",

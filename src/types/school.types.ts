@@ -72,12 +72,3 @@ export interface ISchool extends Document {
         courses: Types.ObjectId[];
     };
 }
-
-export interface ISchoolQuery {
-    limit?: number;
-    skip?: number;
-    sort?: object;
-    where?: MongooseFilterQuery<ISchool>;
-    coordinates?: number[];
-    text?: string;
-}

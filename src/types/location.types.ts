@@ -26,3 +26,5 @@ export interface ILocationData extends Document {
         coordinates: number[];
     };
 }
+
+export type ICoordinates = number[];

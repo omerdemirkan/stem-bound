@@ -25,12 +25,7 @@ export default class SchoolService {
 
     async findSchoolsByCoordinates(
         coordinates: number[],
-        options?: {
-            limit?: number | null;
-            where?: IQuery<ISchool> | null;
-            skip?: number | null;
-            text?: string;
-        }
+        query: IQuery<ISchool> = {}
     ): Promise<ISchool[]> {
         const geoNearOptions: any = {
             $geoNear: {
@@ -44,24 +39,15 @@ export default class SchoolService {
         };
         const aggregateOptions: any[] = [geoNearOptions];
 
-        if (options?.where && Object.keys(options.where).length) {
-            geoNearOptions.$geoNear.query = options.where;
-        }
+        if (query.filter) geoNearOptions.$geoNear.query = query.filter;
+        if (query.sort) aggregateOptions.push({ $sort: query.sort });
+        if (query.skip) aggregateOptions.push({ $skip: query.skip });
 
-        if (options?.text) {
-            aggregateOptions.push({ $text: { $search: options.text } });
-        }
-
-        aggregateOptions.push({ $skip: options?.skip || 0 });
-
-        aggregateOptions.push(
-            options?.limit
-                ? { $limit: options?.limit > 50 ? 50 : options?.limit }
-                : { $limit: 20 }
-        );
+        aggregateOptions.push({
+            $limit: query.limit ? Math.min(query.limit, 50) : 20,
+        });
 
         const schools = await this.School.aggregate(aggregateOptions);
-
         return schools;
     }
 

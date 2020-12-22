@@ -3,8 +3,6 @@ import {
     IChat,
     IMessage,
     EModels,
-    EErrorTypes,
-    IUser,
     IQuery,
     EChatTypes,
     IFilterQuery,
@@ -12,7 +10,7 @@ import {
 } from "../types";
 import { EventEmitter } from "events";
 import { model, emitter } from "../decorators";
-import { ErrorService, errorService } from ".";
+import { ErrorService } from ".";
 import UserService from "./user.services";
 
 export default class ChatService {
@@ -78,8 +76,8 @@ export default class ChatService {
         return await this.findChats(query);
     }
 
-    async findChat(query: IQuery<IChat>): Promise<IChat> {
-        return await this.Chat.findOne(query.filter).sort(query.sort);
+    async findChat(filter: IFilterQuery<IChat>): Promise<IChat> {
+        return await this.Chat.findOne(filter);
     }
 
     async findChatById(chatId: Types.ObjectId): Promise<IChat> {
