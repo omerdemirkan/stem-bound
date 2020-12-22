@@ -23,12 +23,10 @@ export const locationSchema = new Schema(
             type: String,
             required: [true, "Location zip required"],
             unique: false,
-            index: "text",
         },
         city: {
             type: String,
             required: [true, "Location city required"],
-            index: "text",
         },
         state: {
             type: String,
@@ -42,6 +40,8 @@ export const locationSchema = new Schema(
     },
     { _id: false, timestamps: false, versionKey: false }
 );
+
+locationSchema.index({ zip: "text", city: "text" });
 
 const Locations = mongoose.model<ILocationData>("Location", locationSchema);
 
