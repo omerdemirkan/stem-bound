@@ -7,7 +7,7 @@ export default class MailingListService {
     @model(EModels.MAILING_LIST_SUBSCRIBER)
     private Subscriber: Model<Document>;
 
-    async findSubscribers(where: IQuery<any> = {}) {
+    async findSubscribers(where: IQuery<any> = { filter: {} }) {
         return await this.Subscriber.find(where);
     }
 

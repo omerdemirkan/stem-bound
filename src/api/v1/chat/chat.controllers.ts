@@ -7,7 +7,10 @@ import {
 } from "../../../services";
 import { Types } from "mongoose";
 import { IChat, EErrorTypes } from "../../../types";
-import { configureChatResponseData } from "../../../helpers/chat.helpers";
+import {
+    configureChatArrayQuery,
+    configureChatResponseData,
+} from "../../../helpers/chat.helpers";
 
 const { ObjectId } = Types;
 
@@ -78,18 +81,10 @@ export async function getChat(req: Request, res: Response) {
 
 export async function getChats(req: Request, res: Response) {
     try {
-        const user = await userService.findUserById(
-            ObjectId((req as any).payload.user._id)
-        );
-        const { user_ids } = req.query;
-        let chats = user_ids
-            ? await chatService.findChatsByUserIds(
-                  [
-                      (req as any).payload.user._id,
-                      ...(user_ids as string).split(","),
-                  ].map((s) => ObjectId(s))
-              )
-            : await chatService.findChatsByIds(user.meta.chats, user._id);
+        const userId = ObjectId((req as any).payload.user._id);
+        const query = configureChatArrayQuery(req.query);
+        let chats = await chatService.findChatsByUserId(userId, query);
+
         res.json({
             data: chats,
             message: "User chats successfully found",

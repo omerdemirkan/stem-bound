@@ -11,19 +11,23 @@ const courseMetaSchema = new Schema(
                 validator: schemaValidators.arrayLength({ min: 1, max: 5 }),
                 message: "A course must have 1 to 5 instructors",
             },
+            index: true,
         },
         students: {
             type: [Schema.Types.ObjectId],
             required: [true, "Course students are required."],
             default: [],
+            index: true,
         },
         school: {
             type: Schema.Types.ObjectId,
             required: [true, "Course school is required."],
+            index: true,
         },
     },
     {
         _id: false,
+        timestamps: false,
     }
 );
 

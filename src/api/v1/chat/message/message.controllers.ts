@@ -5,7 +5,6 @@ import { IChat, IMessage, EErrorTypes } from "../../../../types";
 import {
     configureMessageArrayQuery,
     configureMessageArrayResponseData,
-    configureMessageQuery,
 } from "../../../../helpers/chat.helpers";
 
 const { ObjectId } = Types;
@@ -49,25 +48,19 @@ export async function getChatMessage(req: Request, res: Response) {
         const requestingUserId = ObjectId((req as any).payload.user._id);
         const chatId = ObjectId(req.params.chatId);
         const messageId = ObjectId(req.params.messageId);
-        const query = configureMessageQuery(req.query);
-        const messages = await chatService.findMessages(query);
+        const message = await chatService.findMessageById(messageId);
 
-        if (!messages) {
+        if (message.meta.chat !== chatId) {
             errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
                 "Chat not found"
             );
-        }
-
-        const message = messages.find(
-            (message) => message._id.toString() === messageId.toString()
-        );
-
-        if (!message) {
-            errorService.throwError(
-                EErrorTypes.DOCUMENT_NOT_FOUND,
-                "Message not found"
-            );
+        } else if (
+            !(
+                await chatService.findChatById(message.meta.chat)
+            ).meta.users.includes(requestingUserId)
+        ) {
+            errorService.throwError(EErrorTypes.FORBIDDEN, "Not Authorized");
         }
 
         res.json({

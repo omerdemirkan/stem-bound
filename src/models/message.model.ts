@@ -6,10 +6,12 @@ const messageMetaSchema = new Schema(
         chat: {
             type: Schema.Types.ObjectId,
             required: true,
+            index: true,
         },
         from: {
             type: Schema.Types.ObjectId,
             required: true,
+            index: true,
         },
         readBy: {
             type: [Schema.Types.ObjectId],
@@ -19,10 +21,12 @@ const messageMetaSchema = new Schema(
                 validator: schemaValidators.uniqueStringArray,
                 message: (props) => `readBy must include unique object ids.`,
             },
+            index: true,
         },
     },
     {
         _id: false,
+        timestamps: false,
     }
 );
 

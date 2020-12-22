@@ -37,7 +37,9 @@ export default class CourseService {
         return await this.verifyCourse({ _id: courseId });
     }
 
-    async findCourses(query: IQuery<ICourse> = {}): Promise<ICourse[]> {
+    async findCourses(
+        query: IQuery<ICourse> = { filter: {} }
+    ): Promise<ICourse[]> {
         return await this.Course.find({ verified: true, ...query.filter })
             .sort(query.sort)
             .skip(query.skip || 0)

@@ -67,7 +67,9 @@ export async function dropCourse(req: Request, res: Response) {
 
 export async function getCourses(req: Request, res: Response) {
     try {
-        const courses: ICourse[] = await courseService.findCourses({});
+        const courses: ICourse[] = await courseService.findCourses({
+            filter: {},
+        });
 
         if (!courses) {
             errorService.throwError(
@@ -224,9 +226,9 @@ export async function verifyCourse(req: Request, res: Response) {
 
         const [course, schoolOfficial] = await Promise.all([
             courseService.findCourseById(courseId),
-            userService.findUserById(schoolOfficialId) as Promise<
-                ISchoolOfficial
-            >,
+            userService.findUserById(
+                schoolOfficialId
+            ) as Promise<ISchoolOfficial>,
         ]);
 
         if (!schoolOfficial.meta.school.equals(course.meta.school))

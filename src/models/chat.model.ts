@@ -12,6 +12,7 @@ const chatMetaSchema = new Schema(
                 message: (props) =>
                     `2 to 10 users required for a chat, ${props.value} is not a valid amount.`,
             },
+            index: true,
         },
     },
     {

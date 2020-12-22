@@ -8,14 +8,60 @@ import {
 } from "../types";
 import { Types } from "mongoose";
 
+const { ObjectId } = Types;
+
 export function configureMessageArrayQuery(
     requestQuery: any
 ): IQuery<IMessage> {
-    return {};
+    let { skip, limit, before, after } = requestQuery;
+    skip = +skip;
+    limit = +limit;
+    before = before ? new Date(before) : null;
+    after = after ? new Date(after) : null;
+
+    let query: IQuery<IMessage> = { filter: {} };
+
+    if (skip) query.skip = skip;
+    if (limit) query.limit = limit;
+    if (before || after) query.filter.createdAt = {};
+    // @ts-ignore
+    if (before) query.filter.createdAt.$lt = before;
+    // @ts-ignore
+    if (after) query.filter.createdAt.$gt = after;
+    return query;
 }
 
-export function configureMessageQuery(requestQuery: any): IQuery<IMessage> {
-    return {};
+export function configureChatArrayQuery(requestQuery: any): IQuery<IChat> {
+    let {
+        user_ids,
+        exact_match,
+        private_chat,
+        skip,
+        limit,
+        before,
+        after,
+    } = requestQuery;
+    user_ids = user_ids?.join(",").map((id) => ObjectId(id)) as
+        | Types.ObjectId[]
+        | null;
+    skip = +skip;
+    limit = +limit;
+    before = before ? new Date(before) : null;
+    after = after ? new Date(before) : null;
+    let query: IQuery<IChat> = { filter: {} };
+    if (user_ids && !private_chat)
+        query.filter["meta.users"] = {
+            $all: user_ids,
+        };
+    if (user_ids && !private_chat && exact_match)
+        query.filter["meta.users"].$size = user_ids.length;
+
+    if (user_ids && private_chat)
+        query.filter.privateChatKey = configurePrivateChatKey(user_ids);
+
+    if (skip) query.skip = skip;
+    if (limit) query.limit = limit;
+    return query;
 }
 
 export function configureChatArrayResponseData(
@@ -112,4 +158,10 @@ export async function configureChatPictureUrls(
     }
 
     return chats;
+}
+
+export function configurePrivateChatKey(userIds: Types.ObjectId[]): string {
+    const stringUserIds = userIds.map((u) => u.toString());
+    stringUserIds.sort();
+    return stringUserIds.join("-");
 }

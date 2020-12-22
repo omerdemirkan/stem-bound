@@ -7,4 +7,5 @@ export * from "./user.helpers";
 export * from "./location.helpers";
 export * from "./socket.helpers";
 export * from "./auth.helpers";
+export * from "./chat.helpers";
 // export * from "./file.helpers";

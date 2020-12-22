@@ -8,6 +8,7 @@ const schoolOfficialMetaSchema = new Schema(
         school: {
             type: Schema.Types.ObjectId,
             required: true,
+            index: true,
         },
         chats: {
             type: [Schema.Types.ObjectId],
@@ -17,10 +18,12 @@ const schoolOfficialMetaSchema = new Schema(
                 validator: schemaValidators.uniqueStringArray,
                 message: "all course ids added must be unique.",
             },
+            index: true,
         },
     },
     {
         _id: false,
+        timestamps: false,
     }
 );
 

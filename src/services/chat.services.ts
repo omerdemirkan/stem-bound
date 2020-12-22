@@ -7,11 +7,13 @@ import {
     EChatTypes,
     IFilterQuery,
     IUpdateQuery,
+    IUser,
 } from "../types";
 import { EventEmitter } from "events";
 import { model, emitter } from "../decorators";
 import { ErrorService } from ".";
 import UserService from "./user.services";
+import { configurePrivateChatKey } from "../helpers";
 
 export default class ChatService {
     @model(EModels.CHAT)
@@ -27,23 +29,17 @@ export default class ChatService {
         private errorService: ErrorService
     ) {}
 
-    private configurePrivateChatKey(userIds: Types.ObjectId[]): string {
-        const stringUserIds = userIds.map((u) => u.toString());
-        stringUserIds.sort();
-        return stringUserIds.join("-");
-    }
-
     async createChat(chatData: IChat): Promise<IChat> {
         if (chatData.type === EChatTypes.PRIVATE)
-            chatData.privateChatKey = this.configurePrivateChatKey(
+            chatData.privateChatKey = configurePrivateChatKey(
                 chatData.meta.users
             );
         return await this.Chat.create(chatData);
     }
 
     async findPrivateChatByUserIds(userIds: Types.ObjectId[]) {
-        return await this.Chat.findOne({
-            privateChatKey: this.configurePrivateChatKey(userIds),
+        return await this.findChat({
+            privateChatKey: configurePrivateChatKey(userIds),
         });
     }
 
@@ -58,6 +54,14 @@ export default class ChatService {
         if (options?.exact) query = query.size("meta.users", userIds.length);
 
         return await query;
+    }
+
+    async findChatsByUserId(
+        userId: Types.ObjectId,
+        query: IQuery<IChat> = { filter: {} }
+    ) {
+        query.filter["meta.users"] = userId;
+        return await this.findChats(query);
     }
 
     async findChats(query: IQuery<IChat>): Promise<IChat[]> {
@@ -113,6 +117,14 @@ export default class ChatService {
             .sort(query.sort || { lastMessageSentAt: -1 })
             .skip(query.skip || 0)
             .limit(Math.min(query.limit, 20));
+    }
+
+    async findMessage(filter: IFilterQuery<IMessage>) {
+        return await this.Message.findOne(filter);
+    }
+
+    async findMessageById(messageId: Types.ObjectId) {
+        return await this.findMessage({ _id: messageId });
     }
 
     async findMessagesByChatId(

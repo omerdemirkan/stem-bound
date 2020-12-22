@@ -8,7 +8,7 @@ export default class SchoolService {
     private School: Model<ISchool>;
 
     async findSchools(
-        where: IQuery<ISchool> = {},
+        where: IQuery<ISchool> = { filter: {} },
         options?: {
             sort?: object;
             skip?: number;
@@ -25,7 +25,7 @@ export default class SchoolService {
 
     async findSchoolsByCoordinates(
         coordinates: number[],
-        query: IQuery<ISchool> = {}
+        query: IQuery<ISchool> = { filter: {} }
     ): Promise<ISchool[]> {
         const geoNearOptions: any = {
             $geoNear: {
