@@ -27,9 +27,10 @@ export default class AuthMiddlewareService {
             });
 
         try {
-            (req as any).payload = (await this.jwtService.verify(
+            req.payload = (await this.jwtService.verify(
                 token
             )) as ITokenPayload;
+            req.meta.payload = req.payload;
             next();
         } catch (e) {
             logger.info(e);
@@ -43,7 +44,7 @@ export default class AuthMiddlewareService {
             res: Response,
             next: NextFunction
         ) {
-            if (allowedRoles.includes((req as any).payload.user.role)) {
+            if (allowedRoles.includes(req.payload.user.role)) {
                 next();
             } else {
                 logger.error("Invalid user role");
@@ -59,8 +60,8 @@ export default class AuthMiddlewareService {
         next: NextFunction
     ) {
         const id = req.params.id;
-        const payloadId = (req as any).payload.user._id || null;
-        if (id === payloadId || (req as any).payload.role === "ADMIN") {
+        const payloadId = req.payload.user._id || null;
+        if (id === payloadId || req.payload.user.role === "ADMIN") {
             next();
         } else {
             res.sendStatus(403);

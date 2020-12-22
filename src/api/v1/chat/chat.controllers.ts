@@ -22,8 +22,7 @@ const { ObjectId } = Types;
 export async function createChat(req: IModifiedRequest, res: Response) {
     try {
         let chatData: Partial<IChat> = req.body,
-            duplicateChat: IChat,
-            chat: IChat;
+            duplicateChat: IChat;
         chatData.meta.users = chatData.meta.users.map((id) =>
             ObjectId(id as any)
         );
@@ -36,7 +35,10 @@ export async function createChat(req: IModifiedRequest, res: Response) {
 
         const newChat: IChat =
             duplicateChat || (await chatService.createChat(chatData));
-        await metadataService.handleNewChatMetadataUpdate(newChat);
+
+        if (!duplicateChat)
+            await metadataService.handleNewChatMetadataUpdate(newChat);
+
         res.json({
             message: "Chat successfully created",
             data: configureChatResponseData(newChat, req),
@@ -48,18 +50,14 @@ export async function createChat(req: IModifiedRequest, res: Response) {
 
 export async function getChat(req: IModifiedRequest, res: Response) {
     try {
-        const requestingUserId = ObjectId((req as any).payload.user._id);
-        const id = ObjectId(req.params.id);
-        const chat: IChat = await chatService.findChatById(id);
+        const chat: IChat = await chatService.findChat({
+            _id: ObjectId(req.params.id),
+            "meta.users": ObjectId(req.payload.user._id),
+        });
         if (!chat) {
             errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
                 "Chat not found"
-            );
-        } else if (!chat.meta.users.some((id) => requestingUserId.equals(id))) {
-            errorService.throwError(
-                EErrorTypes.FORBIDDEN,
-                "You are not a member of this chat"
             );
         }
         res.json({
@@ -73,7 +71,7 @@ export async function getChat(req: IModifiedRequest, res: Response) {
 
 export async function getChats(req: IModifiedRequest, res: Response) {
     try {
-        const userId = ObjectId((req as any).payload.user._id);
+        const userId = ObjectId(req.payload.user._id);
         const query = configureChatArrayQuery(req.query);
         let chats = await chatService.findChatsByUserId(userId, query);
 
@@ -89,8 +87,9 @@ export async function getChats(req: IModifiedRequest, res: Response) {
 export async function updateChat(req: IModifiedRequest, res: Response) {
     try {
         const id = ObjectId(req.params.id);
-        const updatedChat: IChat = await chatService.updateChatById(
-            id,
+        const userId = ObjectId(req.payload.user._id);
+        const updatedChat: IChat = await chatService.updateChat(
+            { _id: id, "meta.users": userId },
             req.body
         );
 
@@ -107,7 +106,7 @@ export async function deleteChat(req: IModifiedRequest, res: Response) {
     try {
         const deletedChat: IChat = await chatService.deleteChat({
             _id: ObjectId(req.params.id),
-            "meta.users": ObjectId((req as any).payload.user._id),
+            "meta.users": ObjectId(req.payload.user._id),
         });
 
         await metadataService.handleDeletedChatMetadataUpdate(deletedChat);

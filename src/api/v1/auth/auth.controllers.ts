@@ -14,7 +14,7 @@ const { ObjectId } = Types;
 export async function me(req: IModifiedRequest, res: Response) {
     try {
         const userData = await userService.findUserById(
-            ObjectId((req as any).payload.user._id)
+            ObjectId(req.payload.user._id)
         );
 
         if (!userData) {

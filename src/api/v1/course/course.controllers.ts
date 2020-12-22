@@ -39,7 +39,7 @@ export async function createCourse(req: IModifiedRequest, res: Response) {
 
 export async function enrollInCourse(req: IModifiedRequest, res: Response) {
     try {
-        const studentId = ObjectId((req as any).payload.user._id);
+        const studentId = ObjectId(req.payload.user._id);
         const courseId = ObjectId(req.params.id);
 
         await metadataService.handleCourseEnrollmentMetadataUpdate({
@@ -56,7 +56,7 @@ export async function enrollInCourse(req: IModifiedRequest, res: Response) {
 
 export async function dropCourse(req: IModifiedRequest, res: Response) {
     try {
-        const studentId = ObjectId((req as any).payload.user._id);
+        const studentId = ObjectId(req.payload.user._id);
         const courseId = ObjectId(req.params.id);
 
         await metadataService.handleCourseDropMetadataUpdate({
@@ -87,7 +87,7 @@ export async function getCourses(req: IModifiedRequest, res: Response) {
             message: "Courses successfully fetched",
             data: configureCourseArrayResponseData(courses, {
                 query: req.query,
-                payload: (req as any).payload,
+                payload: req.payload,
             }),
         });
     } catch (e) {
@@ -231,7 +231,7 @@ export async function getCourseSchool(req: IModifiedRequest, res: Response) {
 export async function verifyCourse(req: IModifiedRequest, res: Response) {
     try {
         const courseId = ObjectId(req.params.id);
-        const schoolOfficialId = ObjectId((req as any).payload.user._id);
+        const schoolOfficialId = ObjectId(req.payload.user._id);
 
         const [course, schoolOfficial] = await Promise.all([
             courseService.findCourseById(courseId),
@@ -253,7 +253,7 @@ export async function verifyCourse(req: IModifiedRequest, res: Response) {
         res.json({
             message: "Course verification successfully updated",
             data: configureCourseResponseData(course, {
-                payload: (req as any).payload,
+                payload: req.payload,
                 query: req.query,
             }),
         });

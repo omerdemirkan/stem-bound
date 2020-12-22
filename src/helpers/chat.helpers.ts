@@ -88,18 +88,18 @@ export async function configureChatResponseData(
     return chat;
 }
 
-export function configureMessageResponseData(
-    message: IMessage,
-    requestMetadata: IRequestMetadata
-) {
-    return message;
-}
-
 export function configureMessageArrayResponseData(
     messages: IMessage[],
     requestMetadata: IRequestMetadata
 ) {
     return messages;
+}
+
+export function configureMessageResponseData(
+    message: IMessage,
+    requestMetadata: IRequestMetadata
+) {
+    return message;
 }
 
 export async function configureChatArrayPictureUrls(

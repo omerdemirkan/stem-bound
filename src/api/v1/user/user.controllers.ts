@@ -111,7 +111,7 @@ export async function getUserCourses(req: IModifiedRequest, res: Response) {
             message: "User courses successfully fetched",
             data: configureCourseArrayResponseData(courses, {
                 query: req.query,
-                payload: (req as any).payload,
+                payload: req.payload,
             }),
         });
     } catch (e) {

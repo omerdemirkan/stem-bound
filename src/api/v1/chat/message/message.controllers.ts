@@ -33,9 +33,10 @@ export async function getChatMessages(req: IModifiedRequest, res: Response) {
 
 export async function createChatMessage(req: IModifiedRequest, res: Response) {
     try {
-        const requestingUserId = ObjectId((req as any).payload.user._id);
+        const requestingUserId = ObjectId(req.payload.user._id);
         const chatId = ObjectId(req.params.chatId);
         let messageData: Partial<IMessage> = req.body;
+        messageData.meta.from = requestingUserId;
         const message = await chatService.createMessage(messageData, chatId);
         res.json({
             message: "Chat message successfully created",
@@ -48,7 +49,7 @@ export async function createChatMessage(req: IModifiedRequest, res: Response) {
 
 export async function getChatMessage(req: IModifiedRequest, res: Response) {
     try {
-        const requestingUserId = ObjectId((req as any).payload.user._id);
+        const requestingUserId = ObjectId(req.payload.user._id);
         const chatId = ObjectId(req.params.chatId);
         const messageId = ObjectId(req.params.messageId);
         const message = await chatService.findMessageById(messageId);
@@ -77,11 +78,12 @@ export async function getChatMessage(req: IModifiedRequest, res: Response) {
 
 export async function updateChatMessage(req: IModifiedRequest, res: Response) {
     try {
+        const requestingUserId = ObjectId(req.payload.user._id);
         const messageData: Partial<IMessage> = req.body;
-        const message = await chatService.updateMessageById(
-            messageData,
-            ObjectId(req.params.messageId)
-        );
+        const message = await chatService.updateMessage(messageData, {
+            _id: ObjectId(req.params.messageId),
+            "meta.from": requestingUserId,
+        });
         res.json({
             message: "Message successfully updated",
             data: message,

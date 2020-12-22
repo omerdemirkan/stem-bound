@@ -13,7 +13,7 @@ export async function createAnnouncement(req: IModifiedRequest, res: Response) {
     try {
         const announcementData: Partial<IAnnouncement> = req.body;
         const courseId = ObjectId(req.params.courseId);
-        announcementData.meta.from = (req as any).payload.user._id;
+        announcementData.meta.from = ObjectId(req.payload.user._id);
         const newAnouncement = await courseService.createAnnouncement(
             announcementData,
             courseId
