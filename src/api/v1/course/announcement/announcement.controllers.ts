@@ -70,11 +70,13 @@ export async function getAnnouncement(req: IModifiedRequest, res: Response) {
 
 export async function updateAnnouncement(req: IModifiedRequest, res: Response) {
     try {
-        const updatedAnnouncement = await courseService.updateAnnouncement({
-            announcementId: ObjectId(req.params.announcementId),
-            courseId: ObjectId(req.params.courseId),
-            announcementData: req.body,
-        });
+        const updatedAnnouncement = await courseService.updateAnnouncementByCourseId(
+            {
+                announcementId: ObjectId(req.params.announcementId),
+                courseId: ObjectId(req.params.courseId),
+            },
+            req.body
+        );
         res.json({
             data: updatedAnnouncement,
             message: "Announcement successfully fetched",
