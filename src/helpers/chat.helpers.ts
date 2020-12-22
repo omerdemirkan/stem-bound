@@ -13,9 +13,9 @@ import { Request } from "express";
 const { ObjectId } = Types;
 
 export function configureMessageArrayQuery(
-    requestQuery: any
+    requestMetadata: IRequestMetadata
 ): IQuery<IMessage> {
-    let { skip, limit, before, after } = requestQuery;
+    let { skip, limit, before, after } = requestMetadata.query;
     skip = +skip;
     limit = +limit;
     before = before ? new Date(before) : null;
@@ -33,7 +33,9 @@ export function configureMessageArrayQuery(
     return query;
 }
 
-export function configureChatArrayQuery(requestQuery: any): IQuery<IChat> {
+export function configureChatArrayQuery(
+    requestMetadata: IRequestMetadata
+): IQuery<IChat> {
     let {
         user_ids,
         exact_match,
@@ -42,7 +44,7 @@ export function configureChatArrayQuery(requestQuery: any): IQuery<IChat> {
         limit,
         before,
         after,
-    } = requestQuery;
+    } = requestMetadata.query;
     user_ids = user_ids?.join(",").map((id) => ObjectId(id)) as
         | Types.ObjectId[]
         | null;
@@ -91,14 +93,14 @@ export async function configureChatResponseData(
 export function configureMessageArrayResponseData(
     messages: IMessage[],
     requestMetadata: IRequestMetadata
-) {
+): IMessage[] {
     return messages;
 }
 
 export function configureMessageResponseData(
     message: IMessage,
     requestMetadata: IRequestMetadata
-) {
+): IMessage {
     return message;
 }
 

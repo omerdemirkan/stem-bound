@@ -70,9 +70,8 @@ const initializeChatSocket: ISocketInitializer = (socket, { io, user }) => {
                 if (!user.meta.chats.find((chatId) => chatId.equals(chatId)))
                     throw new Error("chatId not found in user metadata");
                 const message = await chatService.updateMessageById(
-                    // ts-ignore
-                    { text: data.text },
-                    ObjectId(data.chatId)
+                    ObjectId(data.chatId),
+                    { text: data.text }
                 );
 
                 io.sockets
@@ -94,8 +93,8 @@ const initializeChatSocket: ISocketInitializer = (socket, { io, user }) => {
                 if (!user.meta.chats.find((chatId) => chatId.equals(chatId)))
                     throw new Error("chatId not found in user metadata");
                 const message = await chatService.setMessageDeletionById(
-                    true,
-                    ObjectId(data.messageId)
+                    ObjectId(data.messageId),
+                    true
                 );
                 io.sockets
                     .to(data.chatId)
@@ -116,8 +115,8 @@ const initializeChatSocket: ISocketInitializer = (socket, { io, user }) => {
                 if (!user.meta.chats.find((chatId) => chatId.equals(chatId)))
                     throw new Error("chatId not found in user metadata");
                 const message = await chatService.setMessageDeletionById(
-                    false,
-                    ObjectId(data.messageId)
+                    ObjectId(data.messageId),
+                    false
                 );
 
                 io.sockets

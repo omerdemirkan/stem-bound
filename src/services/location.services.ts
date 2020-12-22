@@ -1,4 +1,4 @@
-import { ILocationData, EModels } from "../types";
+import { ILocationData, EModels, IQuery } from "../types";
 import { Model } from "mongoose";
 import { model } from "../decorators";
 
@@ -6,18 +6,19 @@ export default class LocationService {
     @model(EModels.LOCATION)
     private Location: Model<ILocationData>;
 
+    async findLocation(query: IQuery<ILocationData>): Promise<ILocationData[]> {
+        return await this.Location.find(query.filter)
+            .sort(query.sort)
+            .skip(query.skip || 0)
+            .limit(query.limit ? Math.min(query.limit, 20) : 20);
+    }
+
     async findLocationsByText(
         text: string,
-        options?: {
-            sort?: object;
-            skip?: number;
-            limit?: number;
-        }
+        query: IQuery<ILocationData> = { filter: {} }
     ): Promise<ILocationData[]> {
-        return await this.Location.find({ $text: { $search: text } })
-            .sort(options?.sort)
-            .skip(options?.skip || 0)
-            .limit(options?.limit ? Math.min(options?.limit, 20) : 20);
+        query.filter.$text = { $search: text };
+        return await this.findLocation(query);
     }
 
     async findLocationByZip(zip: string) {

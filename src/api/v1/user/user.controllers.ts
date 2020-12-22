@@ -109,10 +109,7 @@ export async function getUserCourses(req: IModifiedRequest, res: Response) {
 
         res.json({
             message: "User courses successfully fetched",
-            data: configureCourseArrayResponseData(courses, {
-                query: req.query,
-                payload: req.payload,
-            }),
+            data: configureCourseArrayResponseData(courses, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

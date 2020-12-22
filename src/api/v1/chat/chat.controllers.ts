@@ -14,6 +14,7 @@ import {
 } from "../../../types";
 import {
     configureChatArrayQuery,
+    configureChatArrayResponseData,
     configureChatResponseData,
 } from "../../../helpers/chat.helpers";
 
@@ -72,11 +73,11 @@ export async function getChat(req: IModifiedRequest, res: Response) {
 export async function getChats(req: IModifiedRequest, res: Response) {
     try {
         const userId = ObjectId(req.payload.user._id);
-        const query = configureChatArrayQuery(req.query);
+        const query = configureChatArrayQuery(req.meta);
         let chats = await chatService.findChatsByUserId(userId, query);
 
         res.json({
-            data: chats,
+            data: configureChatArrayResponseData(chats, req.meta),
             message: "User chats successfully found",
         });
     } catch (e) {
@@ -86,10 +87,10 @@ export async function getChats(req: IModifiedRequest, res: Response) {
 
 export async function updateChat(req: IModifiedRequest, res: Response) {
     try {
-        const id = ObjectId(req.params.id);
+        const chatId = ObjectId(req.params.id);
         const userId = ObjectId(req.payload.user._id);
         const updatedChat: IChat = await chatService.updateChat(
-            { _id: id, "meta.users": userId },
+            { _id: chatId, "meta.users": userId },
             req.body
         );
 

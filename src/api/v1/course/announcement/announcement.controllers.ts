@@ -6,6 +6,11 @@ import {
     IModifiedRequest,
 } from "../../../../types";
 import { Types } from "mongoose";
+import {
+    configureAnnouncementArrayQuery,
+    configureAnnouncementArrayResponseData,
+    configureAnnouncementResponseData,
+} from "../../../../helpers";
 
 const { ObjectId } = Types;
 
@@ -19,7 +24,7 @@ export async function createAnnouncement(req: IModifiedRequest, res: Response) {
             courseId
         );
         res.json({
-            data: newAnouncement,
+            data: configureAnnouncementResponseData(newAnouncement, req.meta),
             message: "Announcement successfully created",
         });
     } catch (e) {
@@ -29,17 +34,17 @@ export async function createAnnouncement(req: IModifiedRequest, res: Response) {
 
 export async function getAnnouncements(req: IModifiedRequest, res: Response) {
     try {
-        const { skip, limit } = req.query;
         const courseId = ObjectId(req.params.courseId);
+        const query = configureAnnouncementArrayQuery(req.meta);
         const announcements = await courseService.findAnnouncementsByCourseId(
             courseId,
-            {
-                skip,
-                limit,
-            } as any
+            query
         );
         res.json({
-            data: announcements,
+            data: configureAnnouncementArrayResponseData(
+                announcements,
+                req.meta
+            ),
             message: "Course announcement successfully fetched",
         });
     } catch (e) {
@@ -60,7 +65,7 @@ export async function getAnnouncement(req: IModifiedRequest, res: Response) {
             );
         }
         res.json({
-            data: announcement,
+            data: configureAnnouncementResponseData(announcement, req.meta),
             message: "Announcement successfully fetched",
         });
     } catch (e) {
@@ -78,7 +83,10 @@ export async function updateAnnouncement(req: IModifiedRequest, res: Response) {
             req.body
         );
         res.json({
-            data: updatedAnnouncement,
+            data: configureAnnouncementResponseData(
+                updatedAnnouncement,
+                req.meta
+            ),
             message: "Announcement successfully fetched",
         });
     } catch (e) {
@@ -94,7 +102,10 @@ export async function deleteAnnouncement(req: IModifiedRequest, res: Response) {
         });
 
         res.json({
-            data: deletedAnnouncement,
+            data: configureAnnouncementResponseData(
+                deletedAnnouncement,
+                req.meta
+            ),
             message: "Announcement successfully deleted",
         });
     } catch (e) {

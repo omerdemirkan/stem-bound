@@ -15,6 +15,7 @@ import {
     IModifiedRequest,
 } from "../../../types";
 import {
+    configureCourseArrayQuery,
     configureCourseArrayResponseData,
     configureCourseResponseData,
 } from "../../../helpers";
@@ -23,9 +24,7 @@ const { ObjectId } = Types;
 
 export async function createCourse(req: IModifiedRequest, res: Response) {
     try {
-        const courseData = req.body;
-        const newCourse: ICourse = await courseService.createCourse(courseData);
-
+        const newCourse: ICourse = await courseService.createCourse(req.body);
         await metadataService.handleNewCourseMetadataUpdate(newCourse);
 
         res.status(201).json({
@@ -39,12 +38,9 @@ export async function createCourse(req: IModifiedRequest, res: Response) {
 
 export async function enrollInCourse(req: IModifiedRequest, res: Response) {
     try {
-        const studentId = ObjectId(req.payload.user._id);
-        const courseId = ObjectId(req.params.id);
-
         await metadataService.handleCourseEnrollmentMetadataUpdate({
-            courseId,
-            studentId,
+            courseId: ObjectId(req.params.id),
+            studentId: ObjectId(req.payload.user._id),
         });
         res.json({
             message: "Successfully enrolled in course.",
@@ -56,12 +52,9 @@ export async function enrollInCourse(req: IModifiedRequest, res: Response) {
 
 export async function dropCourse(req: IModifiedRequest, res: Response) {
     try {
-        const studentId = ObjectId(req.payload.user._id);
-        const courseId = ObjectId(req.params.id);
-
         await metadataService.handleCourseDropMetadataUpdate({
-            courseId,
-            studentId,
+            courseId: ObjectId(req.params.id),
+            studentId: ObjectId(req.payload.user._id),
         });
         res.json({
             message: "Successfully dropped course",
@@ -73,22 +66,11 @@ export async function dropCourse(req: IModifiedRequest, res: Response) {
 
 export async function getCourses(req: IModifiedRequest, res: Response) {
     try {
-        const courses: ICourse[] = await courseService.findCourses({
-            filter: {},
-        });
-
-        if (!courses) {
-            errorService.throwError(
-                EErrorTypes.DOCUMENT_NOT_FOUND,
-                "Courses not found"
-            );
-        }
+        const query = configureCourseArrayQuery(req.query);
+        const courses: ICourse[] = await courseService.findCourses(query);
         res.json({
             message: "Courses successfully fetched",
-            data: configureCourseArrayResponseData(courses, {
-                query: req.query,
-                payload: req.payload,
-            }),
+            data: configureCourseArrayResponseData(courses, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -118,7 +100,7 @@ export async function getCourse(req: IModifiedRequest, res: Response) {
 export async function updateCourse(req: IModifiedRequest, res: Response) {
     try {
         const id = ObjectId(req.params.id);
-        const newCourseData = req.body;
+        const newCourseData: Partial<ICourse> = req.body;
 
         const updatedCourse: ICourse = await courseService.updateCourseById(
             id,
@@ -137,7 +119,6 @@ export async function updateCourse(req: IModifiedRequest, res: Response) {
 export async function deleteCourse(req: IModifiedRequest, res: Response) {
     try {
         const courseId = ObjectId(req.params.id);
-
         const deletedCourse: ICourse = await courseService.deleteCourseById(
             courseId
         );
@@ -252,10 +233,7 @@ export async function verifyCourse(req: IModifiedRequest, res: Response) {
 
         res.json({
             message: "Course verification successfully updated",
-            data: configureCourseResponseData(course, {
-                payload: req.payload,
-                query: req.query,
-            }),
+            data: configureCourseResponseData(course, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

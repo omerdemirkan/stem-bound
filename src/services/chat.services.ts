@@ -138,8 +138,8 @@ export default class ChatService {
     }
 
     async createMessage(
-        messageData: Partial<IMessage>,
-        chatId: Types.ObjectId
+        chatId: Types.ObjectId,
+        messageData: Partial<IMessage>
     ): Promise<{ message: IMessage; chat: IChat }> {
         messageData.meta.chat = chatId;
         const [message, chat] = await Promise.all([
@@ -151,8 +151,8 @@ export default class ChatService {
     }
 
     async updateMessage(
-        messageData: IUpdateQuery<IMessage>,
-        filter: IFilterQuery<IMessage>
+        filter: IFilterQuery<IMessage>,
+        messageData: IUpdateQuery<IMessage>
     ): Promise<IMessage> {
         return await this.Message.findOneAndUpdate(filter, messageData, {
             new: true,
@@ -161,23 +161,53 @@ export default class ChatService {
     }
 
     async updateMessageById(
-        messageData: IUpdateQuery<IMessage>,
-        messageId: Types.ObjectId
+        messageId: Types.ObjectId,
+        messageData: IUpdateQuery<IMessage>
     ): Promise<IMessage> {
         return await this.updateMessage(messageData, { _id: messageId });
     }
 
     async setMessageDeletion(
-        isDeleted: boolean,
-        filter: IFilterQuery<IMessage>
+        filter: IFilterQuery<IMessage>,
+        isDeleted: boolean
     ): Promise<IMessage> {
-        return await this.updateMessage({ isDeleted }, filter);
+        return await this.updateMessage(filter, { isDeleted });
     }
 
     async setMessageDeletionById(
-        isDeleted: boolean,
-        messageId: Types.ObjectId
+        messageId: Types.ObjectId,
+        isDeleted: boolean
     ): Promise<IMessage> {
-        return await this.setMessageDeletion(isDeleted, { _id: messageId });
+        return await this.setMessageDeletion({ _id: messageId }, isDeleted);
+    }
+
+    async removeUserMetadata({
+        userIds,
+        chatIds,
+    }: {
+        userIds: Types.ObjectId[];
+        chatIds: Types.ObjectId[];
+    }) {
+        await this.Chat.updateMany(
+            { _id: { $in: chatIds } },
+            {
+                $pullAll: { "meta.users": userIds },
+            }
+        );
+    }
+
+    async addUserMetadata({
+        userIds,
+        chatIds,
+    }: {
+        userIds: Types.ObjectId[];
+        chatIds: Types.ObjectId[];
+    }) {
+        await this.Chat.updateMany(
+            { _id: { $in: chatIds } },
+            {
+                $addToSet: { "meta.users": { $each: userIds } },
+            }
+        );
     }
 }

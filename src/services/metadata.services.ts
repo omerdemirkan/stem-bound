@@ -1,32 +1,43 @@
-import { SchoolService, CourseService, UserService, ChatService } from ".";
+import { CourseService, UserService, ChatService } from ".";
 import { Types } from "mongoose";
 import { EUserRoles, ICourse, IStudent, IUser, IInstructor } from "../types";
 
 export default class MetadataService {
     constructor(
-        private schoolService: SchoolService,
         private courseService: CourseService,
         private userService: UserService,
         private chatService: ChatService
     ) {}
 
     async handleDeletedUserMetadataUpdate(deletedUser: IUser) {
+        let promises: Promise<any>[] = [];
+        promises.push(
+            this.chatService.removeUserMetadata({
+                userIds: [deletedUser._id],
+                chatIds: deletedUser.meta.chats,
+            })
+        );
         if (
             deletedUser.role === EUserRoles.STUDENT &&
             (deletedUser as IStudent).meta.courses.length
         )
-            await this.courseService.removeStudentMetadata({
-                studentIds: [deletedUser._id],
-                courseIds: (deletedUser as IStudent).meta.courses,
-            });
+            promises.push(
+                this.courseService.removeStudentMetadata({
+                    studentIds: [deletedUser._id],
+                    courseIds: (deletedUser as IStudent).meta.courses,
+                })
+            );
         else if (
             deletedUser.role === EUserRoles.INSTRUCTOR &&
             (deletedUser as IInstructor).meta.courses.length
         )
-            await this.courseService.removeInstructorMetadata({
-                instructorIds: [deletedUser._id],
-                courseIds: (deletedUser as IInstructor).meta.courses,
-            });
+            promises.push(
+                this.courseService.removeInstructorMetadata({
+                    instructorIds: [deletedUser._id],
+                    courseIds: (deletedUser as IInstructor).meta.courses,
+                })
+            );
+        await Promise.all(promises);
     }
 
     async handleNewCourseMetadataUpdate(newCourse: ICourse) {

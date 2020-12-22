@@ -17,7 +17,7 @@ const { ObjectId } = Types;
 export async function getChatMessages(req: IModifiedRequest, res: Response) {
     try {
         const chatId = ObjectId(req.params.chatId);
-        const query = configureMessageArrayQuery(req.query);
+        const query = configureMessageArrayQuery(req.meta);
         const messages: IMessage[] = await chatService.findMessagesByChatId(
             chatId,
             query
@@ -37,7 +37,7 @@ export async function createChatMessage(req: IModifiedRequest, res: Response) {
         const chatId = ObjectId(req.params.chatId);
         let messageData: Partial<IMessage> = req.body;
         messageData.meta.from = requestingUserId;
-        const message = await chatService.createMessage(messageData, chatId);
+        const message = await chatService.createMessage(chatId, messageData);
         res.json({
             message: "Chat message successfully created",
             data: message,
@@ -96,8 +96,8 @@ export async function updateChatMessage(req: IModifiedRequest, res: Response) {
 export async function deleteChatMessage(req: IModifiedRequest, res: Response) {
     try {
         const message = await chatService.setMessageDeletionById(
-            true,
-            ObjectId(req.params.messageId)
+            ObjectId(req.params.messageId),
+            true
         );
 
         res.json({

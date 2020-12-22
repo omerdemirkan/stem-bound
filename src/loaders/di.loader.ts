@@ -26,7 +26,6 @@ export const chatService = new services.ChatService(userService, errorService);
 export const courseService = new services.CourseService(errorService);
 
 export const metadataService = new services.MetadataService(
-    schoolService,
     courseService,
     userService,
     chatService

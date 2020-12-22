@@ -1,21 +1,51 @@
+import { Types } from "mongoose";
 import {
     ICourse,
     ITokenPayload,
-    IMessage,
     IMeeting,
-    IMeetingsQuery,
+    IQuery,
+    ISubDocumentQuery,
+    IRequestMetadata,
+    IAnnouncement,
 } from "../types";
+
+export function configureCourseArrayQuery(requestQuery: any): IQuery<ICourse> {
+    let { skip, limit, school_id, unverified } = requestQuery;
+    skip = +skip;
+    limit = +limit;
+    unverified = !!unverified;
+    school_id = school_id ? Types.ObjectId(school_id) : null;
+    let query: IQuery<ICourse> = { filter: {} };
+
+    if (skip) query.skip = skip;
+    if (limit) query.limit = limit;
+    if (unverified) query.filter.verified = false;
+    // @ts-ignore
+    if (school_id) query.filter.meta = { school: school_id };
+    return query;
+}
+
+export function configureMeetingArrayQuery(
+    requestMetadata: IRequestMetadata
+): ISubDocumentQuery<IMeeting> {
+    let {} = requestMetadata.query;
+    let query = {};
+    return query;
+}
+
+export function configureAnnouncementArrayQuery(
+    requestMetadata: IRequestMetadata
+): ISubDocumentQuery<IAnnouncement> {
+    let {} = requestMetadata.query;
+    let query = {};
+    return query;
+}
 
 export function configureCourseArrayResponseData(
     courses: ICourse[],
-    {
-        query,
-        payload,
-    }: {
-        query: any;
-        payload: ITokenPayload;
-    }
+    requestMetadata: IRequestMetadata
 ): Partial<ICourse>[] {
+    const { payload } = requestMetadata;
     const now = new Date();
     const configuredCourses = courses.map((course) => ({
         ...course.toObject(),
@@ -35,16 +65,11 @@ export function configureCourseArrayResponseData(
     }));
     return configuredCourses;
 }
+
 export function configureCourseResponseData(
     course: ICourse,
-    {
-        query,
-        payload,
-    }: {
-        query: any;
-        payload: ITokenPayload;
-    }
-): Partial<ICourse> {
+    requestMetadata: IRequestMetadata
+): ICourse {
     const now = new Date();
     return {
         ...course.toObject(),
@@ -55,7 +80,10 @@ export function configureCourseResponseData(
     };
 }
 
-export function configureMeetingArrayResponseData(meetings: IMeeting[]) {
+export function configureMeetingArrayResponseData(
+    meetings: IMeeting[],
+    requestMetadata: IRequestMetadata
+): IMeeting[] {
     let configuredMeetings = [...meetings];
     configuredMeetings.sort(
         (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime()
@@ -63,12 +91,28 @@ export function configureMeetingArrayResponseData(meetings: IMeeting[]) {
     return configuredMeetings;
 }
 
-export function configureMeetingArrayQuery(
-    requestQuery: any
-): Partial<IMeetingsQuery> {
-    let { after, before } = requestQuery,
-        query: IMeetingsQuery = {};
-    if (after && (after = new Date(after))) query.after = after;
-    if (before && (before = new Date(before))) query.before = before;
-    return query;
+export function configureMeetingResponseData(
+    meeting: IMeeting,
+    requestMetadata: IRequestMetadata
+): IMeeting {
+    return meeting;
+}
+
+export function configureAnnouncementArrayResponseData(
+    announcements: IAnnouncement[],
+    requestMetadata: IRequestMetadata
+): IAnnouncement[] {
+    let configuredAnnouncements = [...announcements];
+    configuredAnnouncements.sort(
+        (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+    return configuredAnnouncements;
+}
+
+export function configureAnnouncementResponseData(
+    announcement: IAnnouncement,
+    requestMetadata: IRequestMetadata
+): IAnnouncement {
+    return announcement;
 }

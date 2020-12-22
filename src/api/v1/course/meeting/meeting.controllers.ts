@@ -2,21 +2,25 @@ import { Request, Response } from "express";
 import { errorService, courseService } from "../../../../services";
 import { Types } from "mongoose";
 import { EUserRoles, IMeeting, IModifiedRequest } from "../../../../types";
-import { configureMeetingArrayResponseData } from "../../../../helpers";
+import {
+    configureMeetingArrayQuery,
+    configureMeetingArrayResponseData,
+    configureMeetingResponseData,
+} from "../../../../helpers";
 
 const { ObjectId } = Types;
 
 export async function getMeetings(req: IModifiedRequest, res: Response) {
     try {
-        const { limit, skip, before, after } = req.query;
         const courseId = ObjectId(req.params.courseId);
+        const query = configureMeetingArrayQuery(req.meta);
         const meetings: IMeeting[] = await courseService.findMeetings(
             { _id: courseId },
-            { limit, skip, before, after } as any
+            query
         );
         res.json({
             message: "Meetings successfully fetched",
-            data: configureMeetingArrayResponseData(meetings),
+            data: configureMeetingArrayResponseData(meetings, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -33,7 +37,7 @@ export async function getMeeting(req: IModifiedRequest, res: Response) {
         });
         res.json({
             message: "Meeting successfully found",
-            data: meeting,
+            data: configureMeetingResponseData(meeting, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -50,7 +54,7 @@ export async function createMeeting(req: IModifiedRequest, res: Response) {
 
         res.json({
             message: "Meetings successfully added",
-            data: newMeetings,
+            data: configureMeetingArrayResponseData(newMeetings, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -69,7 +73,7 @@ export async function updateMeeting(req: IModifiedRequest, res: Response) {
         );
         res.json({
             message: "Meeting successfully updated",
-            data: updatedMeeting,
+            data: configureMeetingResponseData(updatedMeeting, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -87,7 +91,7 @@ export async function deleteMeeting(req: IModifiedRequest, res: Response) {
 
         res.json({
             message: "Meeting successfully deleted",
-            data: deletedMeeting,
+            data: configureMeetingResponseData(deletedMeeting, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
