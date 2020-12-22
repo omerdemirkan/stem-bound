@@ -66,9 +66,4 @@ export interface ISchool extends Document {
         telephone: string;
         website: string;
     };
-    meta: {
-        schoolOfficials: Types.ObjectId[];
-        students: Types.ObjectId[];
-        courses: Types.ObjectId[];
-    };
 }

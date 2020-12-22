@@ -1,6 +1,6 @@
 import { SchoolService, CourseService, UserService, ChatService } from ".";
 import { Types } from "mongoose";
-import { EUserRoles, IUser } from "../types";
+import { EUserRoles, ICourse, IStudent, IUser, IInstructor } from "../types";
 
 export default class MetadataService {
     constructor(
@@ -10,110 +10,42 @@ export default class MetadataService {
         private chatService: ChatService
     ) {}
 
-    async handleNewUserMetadataUpdate(newUser: any) {
-        switch (newUser.role) {
-            case EUserRoles.SCHOOL_OFFICIAL:
-                await this.schoolService.addSchoolOfficialMetadata({
-                    schoolOfficialIds: [newUser._id],
-                    schoolIds: [newUser.meta.school],
-                });
-                break;
-            case EUserRoles.STUDENT:
-                await this.schoolService.addStudentMetadata({
-                    studentIds: [newUser._id],
-                    schoolIds: [newUser.meta.school],
-                });
-                break;
-        }
-    }
-
     async handleDeletedUserMetadataUpdate(deletedUser: IUser) {
-        const {
-            courses: courseIds,
-            school: schoolId,
-        } = deletedUser.meta as any;
-
-        switch (deletedUser.role) {
-            case EUserRoles.SCHOOL_OFFICIAL:
-                await this.schoolService.removeSchoolOfficialMetadata({
-                    schoolOfficialIds: [deletedUser._id],
-                    schoolIds: [schoolId],
-                });
-                break;
-            case EUserRoles.STUDENT:
-                await this.schoolService.removeStudentMetadata({
-                    studentIds: [deletedUser._id],
-                    schoolIds: [schoolId],
-                });
-                if (courseIds.length) {
-                    await this.courseService.removeStudentMetadata({
-                        studentIds: [deletedUser._id],
-                        courseIds,
-                    });
-                }
-                break;
-            case EUserRoles.INSTRUCTOR:
-                await this.schoolService.removeStudentMetadata({
-                    studentIds: [deletedUser._id],
-                    schoolIds: [schoolId],
-                });
-                if (courseIds.length) {
-                    await this.courseService.removeInstructorMetadata({
-                        instructorIds: [deletedUser._id],
-                        courseIds,
-                    });
-                }
-                break;
-        }
+        if (
+            deletedUser.role === EUserRoles.STUDENT &&
+            (deletedUser as IStudent).meta.courses.length
+        )
+            await this.courseService.removeStudentMetadata({
+                studentIds: [deletedUser._id],
+                courseIds: (deletedUser as IStudent).meta.courses,
+            });
+        else if (
+            deletedUser.role === EUserRoles.INSTRUCTOR &&
+            (deletedUser as IInstructor).meta.courses.length
+        )
+            await this.courseService.removeInstructorMetadata({
+                instructorIds: [deletedUser._id],
+                courseIds: (deletedUser as IInstructor).meta.courses,
+            });
     }
 
-    async handleNewCourseMetadataUpdate(newCourse: any) {
-        const courseId = newCourse._id;
-        const {
-            instructors: instructorIds,
-            school: schoolId,
-            students: studentIds,
-        } = newCourse.meta as {
-            instructors: Types.ObjectId[];
-            school: Types.ObjectId;
-            students: Types.ObjectId[];
-        };
-        await Promise.all([
-            this.userService.addCourseMetadata({
-                userIds: [...instructorIds, ...studentIds],
-                courseIds: [courseId],
-                roles: [EUserRoles.INSTRUCTOR, EUserRoles.STUDENT],
-            }),
-            this.schoolService.addCourseMetadata({
-                courseIds: [courseId],
-                schoolIds: [schoolId],
-            }),
-        ]);
+    async handleNewCourseMetadataUpdate(newCourse: ICourse) {
+        await this.userService.addCourseMetadata({
+            userIds: newCourse.meta.instructors,
+            courseIds: [newCourse._id],
+            roles: [EUserRoles.INSTRUCTOR],
+        });
     }
 
-    async handleDeletedCourseMetadataUpdate(deletedCourse: any) {
-        const courseId = deletedCourse._id;
-        const {
-            instructors: instructorIds,
-            school: schoolId,
-            students: studentIds,
-        } = deletedCourse.meta as {
-            instructors: Types.ObjectId[];
-            school: Types.ObjectId;
-            students: Types.ObjectId[];
-        };
-
-        await Promise.all([
-            this.userService.removeCourseMetadata({
-                userIds: [...instructorIds, ...studentIds],
-                courseIds: [courseId],
-                roles: [EUserRoles.INSTRUCTOR, EUserRoles.STUDENT],
-            }),
-            this.schoolService.removeCourseMetadata({
-                courseIds: [courseId],
-                schoolIds: [schoolId],
-            }),
-        ]);
+    async handleDeletedCourseMetadataUpdate(deletedCourse: ICourse) {
+        await this.userService.removeCourseMetadata({
+            userIds: [
+                ...deletedCourse.meta.instructors,
+                ...deletedCourse.meta.students,
+            ],
+            courseIds: [deletedCourse._id],
+            roles: [EUserRoles.INSTRUCTOR, EUserRoles.STUDENT],
+        });
     }
 
     async handleCourseEnrollmentMetadataUpdate({

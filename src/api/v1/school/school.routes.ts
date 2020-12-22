@@ -8,12 +8,6 @@ schoolRouter.get("/", schoolController.getSchools);
 
 schoolRouter.get("/:id", schoolController.getSchool);
 
-schoolRouter.get("/:id/students", schoolController.getSchoolStudents);
-
-schoolRouter.get("/:id/school-officials", schoolController.getSchoolOfficials);
-
-schoolRouter.get("/:id/courses", schoolController.getSchoolCourses);
-
 schoolRouter.post(
     "/refresh-database",
     authMiddlewareService.extractTokenPayload,

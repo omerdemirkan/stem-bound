@@ -74,41 +74,6 @@ const contactSchema = new Schema(
     }
 );
 
-const metaSchema = new Schema(
-    {
-        schoolOfficials: {
-            type: [Schema.Types.ObjectId],
-            required: true,
-            default: [],
-            validate: {
-                validator: schemaValidators.uniqueStringArray,
-                message: "all schoolOfficial ids added must be unique.",
-            },
-        },
-        students: {
-            type: [Schema.Types.ObjectId],
-            required: true,
-            default: [],
-            validate: {
-                validator: schemaValidators.uniqueStringArray,
-                message: "all student ids added must be unique.",
-            },
-        },
-        courses: {
-            type: [Schema.Types.ObjectId],
-            required: true,
-            default: [],
-            validate: {
-                validator: schemaValidators.uniqueStringArray,
-                message: "all courses ids added must be unique.",
-            },
-        },
-    },
-    {
-        _id: false,
-    }
-);
-
 const schoolSchema = new Schema(
     {
         name: {
@@ -154,11 +119,6 @@ const schoolSchema = new Schema(
         contact: {
             type: contactSchema,
             require: true,
-        },
-        meta: {
-            type: metaSchema,
-            required: true,
-            default: {},
         },
     },
     {

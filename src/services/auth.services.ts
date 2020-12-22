@@ -28,8 +28,6 @@ export default class AuthService {
 
         const newUser: any = await this.userService.createUser(userData, role);
 
-        await this.metadataService.handleNewUserMetadataUpdate(newUser);
-
         const payload: ITokenPayload = configureTokenPayload(newUser);
 
         const accessToken = await this.jwtService.sign(payload);
