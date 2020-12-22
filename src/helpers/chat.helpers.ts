@@ -9,6 +9,7 @@ import {
 } from "../types";
 import { Types } from "mongoose";
 import { Request } from "express";
+import { userService } from "../services";
 
 const { ObjectId } = Types;
 
@@ -120,7 +121,7 @@ export async function configureChatArrayPictureUrls(
 
     delete userHashTable[requestingUserId.toHexString()];
 
-    const users = await this.userService.findUsersByIds(
+    const users = await userService.findUsersByIds(
         Object.values(userHashTable) as any
     );
 
