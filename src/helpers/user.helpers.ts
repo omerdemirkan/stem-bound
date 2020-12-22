@@ -1,54 +1,73 @@
 import {
     EUserRoles,
-    IUserQueryOptions,
     EErrorTypes,
-    ITokenPayload,
+    IUser,
+    IQuery,
+    IRequestMetadata,
+    ICoordinates,
 } from "../types";
 import { errorService } from "../services";
 import { getCoordinatesByIp } from "./location.helpers";
+import { Types } from "mongoose";
 
-export function configureUsersQuery(
-    requestQueries: any,
-    ip: string
-): Partial<IUserQueryOptions> {
-    const {
+const { ObjectId } = Types;
+
+export function configureUserArrayQuery(
+    requestMetadata: IRequestMetadata
+): { query: IQuery<IUser>; coordinates } {
+    let {
         role,
         limit,
         skip,
-        sort_field,
-        sort_direction,
         geo_ip,
         lat,
         long,
         exclude,
-        userIds,
+        user_ids,
         text,
-    } = requestQueries;
-    let query: Partial<IUserQueryOptions> = {};
+    } = requestMetadata.query;
 
-    if (isValidUserRole(role)) query.role = role.toUpperCase();
+    role = isValidUserRole(role) ? role.toUpperCase() : null;
+    limit = +limit;
+    skip = +skip;
+    lat = +lat;
+    long = +long;
+    exclude = exclude ? exclude.split(",").map((id) => ObjectId(id)) : null;
+    user_ids = user_ids ? user_ids.split(",").map((id) => ObjectId(id)) : null;
 
-    if (userIds) query.userIds = userIds.split(",");
+    let query: IQuery<IUser> = { filter: {} };
+    let coordinates: ICoordinates;
 
-    if (sort_field && sort_direction && typeof +sort_direction === "number")
-        query.sort = { [sort_field]: +sort_direction };
-
-    if (+limit) query.limit = +limit;
-
-    if (+skip) query.skip = +skip;
+    if (role) query.filter.role = role;
+    if (user_ids || exclude) query.filter._id = {};
+    if (user_ids) query.filter._id.$in = user_ids;
+    if (exclude) query.filter._id.$nin = exclude;
+    if (text) query.filter.$text = { $search: text };
+    if (limit) query.limit = limit;
+    if (skip) query.skip = skip;
 
     if (geo_ip) {
-        const { latitude, longitude } = getCoordinatesByIp(ip);
-        query.coordinates = [longitude, latitude];
+        const { latitude, longitude } = getCoordinatesByIp(requestMetadata.ip);
+        coordinates = [longitude, latitude];
     } else if (+lat & +long) {
-        query.coordinates = [+long, +lat];
+        coordinates = [+long, +lat];
     }
 
-    if (exclude) query.excludedUserIds = exclude.split(",");
+    return { query, coordinates };
+}
 
-    if (text) query.text = text;
+export function configureUserArrayResponseData(
+    users: IUser[],
+    requestMetadata: IRequestMetadata
+): IUser[] {
+    return users;
+}
 
-    return query;
+export function configureUserResponseData(
+    user: IUser,
+    requestMetadata: IRequestMetadata
+): IUser {
+    return user;
 }
 
 export function isValidUserRole(s: any) {

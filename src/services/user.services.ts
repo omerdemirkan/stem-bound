@@ -46,7 +46,9 @@ export default class UserService {
 
     async createUser(userData, role: EUserRoles): Promise<IUser> {
         if ((userData as any).password)
-            throw new Error("We don't store passwords around here kiddo");
+            throw new Error(
+                "We don't store plaintext passwords around here kiddo"
+            );
 
         userData.location = (userData as any).zip
             ? (
@@ -62,15 +64,14 @@ export default class UserService {
 
     async findUsersByCoordinates(
         coordinates: number[],
-        options: IUserQueryOptions
+        query: IQuery<IUser> = { filter: {} }
     ) {
         let aggregateOptions: any[] = [];
 
-        if (options.excludedUserIds) {
+        if (Object.keys(query.filter).length)
             aggregateOptions.push({
-                $match: { _id: { $nin: options.excludedUserIds } },
+                $match: query.filter,
             });
-        }
 
         aggregateOptions.push({
             $geoNear: {
@@ -83,71 +84,114 @@ export default class UserService {
             },
         });
 
-        if (options?.where && Object.keys(options.where).length) {
-            (aggregateOptions[0].$geoNear as any).query = options.where;
-        }
+        aggregateOptions.push({ $skip: query.skip || 0 });
 
-        if (options?.text) {
-            aggregateOptions.push({ $text: { $search: options.text } });
-        }
+        aggregateOptions.push({
+            $limit: query.limit ? (query.limit > 50 ? 50 : query.limit) : 20,
+        });
 
-        aggregateOptions.push({ $skip: options.skip || 0 });
-
-        aggregateOptions.push(
-            options?.limit
-                ? { $limit: options.limit > 50 ? 50 : options.limit }
-                : { $limit: 20 }
-        );
-
-        let model = options?.role
-            ? this.getUserModelByRole(options.role)
-            : this.User;
-
-        return await model.aggregate(aggregateOptions);
+        return await this.User.aggregate(aggregateOptions);
     }
 
-    async findUsers(options: IUserQueryOptions): Promise<IUser[]> {
-        if (options?.coordinates) {
-            return await this.findUsersByCoordinates(
-                options.coordinates,
-                options
-            );
-        }
+    // async findUsersByCoordinates(
+    //     coordinates: number[],
+    //     options: IUserQueryOptions
+    // ) {
+    //     let aggregateOptions: any[] = [];
 
-        if (options.userIds) {
-            return this.findUsersByIds(
-                options.userIds.map((id) => ObjectId(id))
-            );
-        }
+    //     if (options.excludedUserIds) {
+    //         aggregateOptions.push({
+    //             $match: { _id: { $nin: options.excludedUserIds } },
+    //         });
+    //     }
 
-        const model = options.role
-            ? this.getUserModelByRole(options.role)
-            : this.User;
-        let where: IFilterQuery<IUser> = {};
+    //     aggregateOptions.push({
+    //         $geoNear: {
+    //             near: {
+    //                 type: "Point",
+    //                 coordinates,
+    //             },
+    //             distanceField: "distance.calculated",
+    //             key: "location.geoJSON",
+    //         },
+    //     });
 
-        if (options.text) {
-            where.$text = { $search: options.text };
-        }
+    //     if (options?.where && Object.keys(options.where).length) {
+    //         (aggregateOptions[0].$geoNear as any).query = options.where;
+    //     }
 
-        if (options.excludedUserIds) {
-            where._id = {
-                $nin: options.excludedUserIds,
-            };
-        }
+    //     if (options?.text) {
+    //         aggregateOptions.push({ $text: { $search: options.text } });
+    //     }
 
-        return await model
-            .find(where)
-            .sort(options.sort)
-            .skip(options.skip || 0)
-            .limit(Math.min(options.limit, 20));
+    //     aggregateOptions.push({ $skip: options.skip || 0 });
+
+    //     aggregateOptions.push(
+    //         options?.limit
+    //             ? { $limit: options.limit > 50 ? 50 : options.limit }
+    //             : { $limit: 20 }
+    //     );
+
+    //     let model = options?.role
+    //         ? this.getUserModelByRole(options.role)
+    //         : this.User;
+
+    //     return await model.aggregate(aggregateOptions);
+    // }
+
+    async findUsers(query: IQuery<IUser>): Promise<IUser[]> {
+        return await this.User.find(query.filter)
+            .sort(query.sort)
+            .skip(query.skip || 0)
+            .limit(Math.min(query.limit, 20));
     }
 
-    async findUsersByIds(ids: Types.ObjectId[]): Promise<IUser[]> {
-        return await this.User.find({ _id: { $in: ids } });
+    // async findUsers(options: IUserQueryOptions): Promise<IUser[]> {
+    //     if (options?.coordinates) {
+    //         return await this.findUsersByCoordinates(
+    //             options.coordinates,
+    //             options
+    //         );
+    //     }
+
+    //     if (options.userIds) {
+    //         return this.findUsersByIds(
+    //             options.userIds.map((id) => ObjectId(id))
+    //         );
+    //     }
+
+    //     const model = options.role
+    //         ? this.getUserModelByRole(options.role)
+    //         : this.User;
+    //     let where: IFilterQuery<IUser> = {};
+
+    //     if (options.text) {
+    //         where.$text = { $search: options.text };
+    //     }
+
+    //     if (options.excludedUserIds) {
+    //         where._id = {
+    //             $nin: options.excludedUserIds,
+    //         };
+    //     }
+
+    //     return await model
+    //         .find(where)
+    //         .sort(options.sort)
+    //         .skip(options.skip || 0)
+    //         .limit(Math.min(options.limit, 20));
+    // }
+
+    async findUsersByIds(
+        ids: Types.ObjectId[],
+        query: IQuery<IUser> = { filter: {} }
+    ): Promise<IUser[]> {
+        query.filter._id = { $in: ids };
+        return await this.findUsers(query);
     }
 
-    async findUser(where: IFilterQuery<IUser>): Promise<IUser> {
-        return await this.User.findOne(where);
+    async findUser(filter: IFilterQuery<IUser>): Promise<IUser> {
+        return await this.User.findOne(filter);
     }
 
     async findUserById(id: Types.ObjectId): Promise<IUser> {

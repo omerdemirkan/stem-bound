@@ -7,7 +7,11 @@ import {
     schoolService,
     chatService,
 } from "../../../services";
-import { configureUsersQuery } from "../../../helpers/user.helpers";
+import {
+    configureUserArrayQuery,
+    configureUserArrayResponseData,
+    configureUserResponseData,
+} from "../../../helpers/user.helpers";
 import { Types } from "mongoose";
 import {
     IUser,
@@ -28,11 +32,17 @@ const { ObjectId } = Types;
 
 export async function getUsers(req: IModifiedRequest, res: Response) {
     try {
-        const query: IUserQueryOptions = configureUsersQuery(req.query, req.ip);
-        let users: IUser[] = await userService.findUsers(query);
+        const { query, coordinates } = configureUserArrayQuery(req.meta);
+        let users: IUser[];
+        if (coordinates)
+            users = await userService.findUsersByCoordinates(
+                coordinates,
+                query
+            );
+        else users = await userService.findUsers(query);
         res.json({
             message: "Users successfully found",
-            data: users,
+            data: configureUserArrayResponseData(users, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -52,7 +62,7 @@ export async function getUser(req: IModifiedRequest, res: Response) {
 
         res.json({
             message: "User successfully fetched",
-            data: user,
+            data: configureUserResponseData(user, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -68,7 +78,7 @@ export async function updateUser(req: IModifiedRequest, res: Response) {
 
         res.json({
             message: "User successfully updated",
-            data: updatedUser,
+            data: configureUserResponseData(updatedUser, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -84,7 +94,7 @@ export async function deleteUser(req: IModifiedRequest, res: Response) {
         await metadataService.handleDeletedUserMetadataUpdate(deletedUser);
         res.json({
             message: "User successfully deleted",
-            data: deletedUser,
+            data: configureUserResponseData(deletedUser, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -195,7 +205,7 @@ export async function updateUserProfilePicture(
         );
 
         res.json({
-            data: user,
+            data: configureUserResponseData(user, req.meta),
             message: "User profile picture successfully updated",
         });
     } catch (e) {
@@ -213,7 +223,7 @@ export async function updateUserLocation(req: IModifiedRequest, res: Response) {
 
         res.json({
             message: "User location successfully updated",
-            data: updatedUser,
+            data: configureUserResponseData(updatedUser, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
