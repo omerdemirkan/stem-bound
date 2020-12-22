@@ -1,10 +1,5 @@
-import { Request, Response } from "express";
-import {
-    errorService,
-    chatService,
-    metadataService,
-    userService,
-} from "../../../services";
+import { Response } from "express";
+import { errorService, chatService, metadataService } from "../../../services";
 import { Types } from "mongoose";
 import {
     IChat,
@@ -34,15 +29,16 @@ export async function createChat(req: IModifiedRequest, res: Response) {
             );
         }
 
-        const newChat: IChat =
+        let newChat: IChat =
             duplicateChat || (await chatService.createChat(chatData));
 
         if (!duplicateChat)
             await metadataService.handleNewChatMetadataUpdate(newChat);
 
+        newChat = await configureChatResponseData(newChat, req);
         res.json({
             message: "Chat successfully created",
-            data: configureChatResponseData(newChat, req),
+            data: newChat,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -51,7 +47,7 @@ export async function createChat(req: IModifiedRequest, res: Response) {
 
 export async function getChat(req: IModifiedRequest, res: Response) {
     try {
-        const chat: IChat = await chatService.findChat({
+        let chat: IChat = await chatService.findChat({
             _id: ObjectId(req.params.id),
             "meta.users": ObjectId(req.payload.user._id),
         });
@@ -61,9 +57,10 @@ export async function getChat(req: IModifiedRequest, res: Response) {
                 "Chat not found"
             );
         }
+        chat = await configureChatResponseData(chat, req);
         res.json({
             message: "Chat successfully fetched",
-            data: configureChatResponseData(chat, req),
+            data: chat,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -75,9 +72,9 @@ export async function getChats(req: IModifiedRequest, res: Response) {
         const userId = ObjectId(req.payload.user._id);
         const query = configureChatArrayQuery(req.meta);
         let chats = await chatService.findChatsByUserId(userId, query);
-
+        chats = await configureChatArrayResponseData(chats, req.meta);
         res.json({
-            data: configureChatArrayResponseData(chats, req.meta),
+            data: chats,
             message: "User chats successfully found",
         });
     } catch (e) {
@@ -87,16 +84,16 @@ export async function getChats(req: IModifiedRequest, res: Response) {
 
 export async function updateChat(req: IModifiedRequest, res: Response) {
     try {
-        const chatId = ObjectId(req.params.id);
-        const userId = ObjectId(req.payload.user._id);
-        const updatedChat: IChat = await chatService.updateChat(
+        const chatId = ObjectId(req.params.id),
+            userId = ObjectId(req.payload.user._id);
+        let updatedChat: IChat = await chatService.updateChat(
             { _id: chatId, "meta.users": userId },
             req.body
         );
-
+        updatedChat = await configureChatResponseData(updatedChat, req.meta);
         res.json({
             message: "Chat successfully updated",
-            data: configureChatResponseData(updatedChat, req),
+            data: updatedChat,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -113,7 +110,7 @@ export async function deleteChat(req: IModifiedRequest, res: Response) {
         await metadataService.handleDeletedChatMetadataUpdate(deletedChat);
         res.json({
             message: "Chat successfully deleted",
-            data: configureChatResponseData(deletedChat, req),
+            data: await configureChatResponseData(deletedChat, req),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

@@ -7,6 +7,7 @@ import Schools from "../models/school.model";
 import { fetch } from "../config/dependency.config";
 import { ISchoolDataOriginal } from "../types";
 import { schoolCsvColumns } from "../constants";
+import { logger } from "../config";
 
 const defaultUrl =
     "https://opendata.arcgis.com/datasets/87376bdb0cb3490cbda39935626f6604_0.csv?outSR=%7B%22latestWkid%22%3A3857%2C%22wkid%22%3A102100%7D";
@@ -19,6 +20,7 @@ export async function refreshSchoolDatabase({
     | { results: { deletionData: any; insertionData: any } }
     | { error: { message: string } }
 > {
+    logger.info("Beginning school database population");
     const { data: csvData } = await fetch.get(url || defaultUrl);
 
     const fetchedSchoolsData: ISchoolDataOriginal[] = await parseCsvAsync(

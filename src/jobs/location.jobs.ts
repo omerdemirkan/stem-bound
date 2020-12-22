@@ -1,5 +1,4 @@
 import { fetch, logger } from "../config";
-import { ILocationDataOriginal } from "../types";
 import { mapAndFilterLocationData } from "../helpers";
 import { Location } from "../models";
 
@@ -7,7 +6,7 @@ const defaultUrl =
     "https://public.opendatasoft.com/explore/dataset/us-zip-code-latitude-and-longitude/download/?format=json&timezone=America/Los_Angeles&lang=en";
 
 export async function refreshLocationDatabase(options?: { url?: string }) {
-    logger.info("fetch locations starting");
+    logger.info("Beginning location database population");
     const fetchedLocationData = (await fetch.get(options?.url || defaultUrl))
         .data;
 

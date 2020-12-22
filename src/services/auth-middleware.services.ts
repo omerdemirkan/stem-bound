@@ -20,7 +20,6 @@ export default class AuthMiddlewareService {
         const token: string | null = authHeader
             ? authHeader.split(" ")[1]
             : null;
-        console.log(token);
 
         if (!token)
             return res.status(401).json({

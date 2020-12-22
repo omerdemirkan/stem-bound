@@ -57,7 +57,6 @@ export async function mapSchoolData(schoolsData: ISchoolDataOriginal[]) {
             telephone: schoolData.TELEPHONE,
             website: schoolData.WEBSITE,
         },
-        meta: {},
     }));
 }
 
