@@ -1,9 +1,8 @@
-import { ICoordinates, IQuery, ISchool } from "../types";
+import { ICoordinates, IQuery, IRequestMetadata, ISchool } from "../types";
 import { getCoordinatesByIp } from "./location.helpers";
 
-export function configureFindSchoolsQuery(
-    requestQueries: any,
-    ip: string
+export function configureSchoolArrayQuery(
+    requestMetadata: IRequestMetadata
 ): { query: IQuery<ISchool>; coordinates: ICoordinates } {
     let {
         lat,
@@ -13,7 +12,7 @@ export function configureFindSchoolsQuery(
         with_school_officials,
         text,
         geo_ip,
-    } = requestQueries;
+    } = requestMetadata.query;
     lat = +lat;
     long = +long;
     limit = +limit;
@@ -33,7 +32,7 @@ export function configureFindSchoolsQuery(
     if (long && lat) {
         coordinates = [+long, +lat];
     } else if (geo_ip) {
-        const { latitude, longitude } = getCoordinatesByIp(ip);
+        const { latitude, longitude } = getCoordinatesByIp(requestMetadata.ip);
         coordinates = [longitude, latitude];
     }
 

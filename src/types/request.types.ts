@@ -6,6 +6,7 @@ export interface IRequestMetadata {
     params: any;
     query: any;
     body: any;
+    ip: string;
 }
 
 export interface IModifiedRequest extends Request {

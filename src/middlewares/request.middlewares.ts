@@ -7,6 +7,7 @@ export function modifyRequestMiddleware(req: Request, res: Response, next) {
         params: req.params,
         query: req.query,
         payload: null,
+        ip: req.ip,
     };
     next();
 }

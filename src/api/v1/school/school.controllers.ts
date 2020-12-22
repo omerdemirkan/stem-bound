@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { Types } from "mongoose";
-import { configureFindSchoolsQuery } from "../../../helpers/school.helpers";
+import { configureSchoolArrayQuery } from "../../../helpers/school.helpers";
 import { schoolService, errorService } from "../../../services";
 import { ISchool, EErrorTypes, IModifiedRequest } from "../../../types";
 
@@ -8,10 +8,7 @@ const { ObjectId } = Types;
 
 export async function getSchools(req: IModifiedRequest, res: Response) {
     try {
-        const { query, coordinates } = configureFindSchoolsQuery(
-            req.query,
-            req.ip
-        );
+        const { query, coordinates } = configureSchoolArrayQuery(req.meta);
         let schools: ISchool[];
         schools = coordinates
             ? await schoolService.findSchoolsByCoordinates(coordinates, query)

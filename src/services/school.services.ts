@@ -1,6 +1,6 @@
 import { Model, Types } from "mongoose";
 import { refreshSchoolDatabase } from "../jobs";
-import { ISchool, EModels, IQuery } from "../types";
+import { ISchool, EModels, IQuery, IFilterQuery } from "../types";
 import { model } from "../decorators";
 
 export default class SchoolService {
@@ -8,17 +8,12 @@ export default class SchoolService {
     private School: Model<ISchool>;
 
     async findSchools(
-        where: IQuery<ISchool> = { filter: {} },
-        options?: {
-            sort?: object;
-            skip?: number;
-            limit?: number;
-        }
+        query: IQuery<ISchool> = { filter: {} }
     ): Promise<ISchool[]> {
-        const schools = await this.School.find(where)
-            .sort(options?.sort)
-            .skip(options?.skip || 0)
-            .limit(options?.limit ? Math.min(options?.limit, 20) : 20);
+        const schools = await this.School.find(query.filter)
+            .sort(query.sort)
+            .skip(query.skip || 0)
+            .limit(query.limit ? Math.min(query.limit, 20) : 20);
 
         return schools;
     }
@@ -51,12 +46,16 @@ export default class SchoolService {
         return schools;
     }
 
-    async findSchoolsByText(text: string): Promise<ISchool[]> {
-        return await this.School.find({ $text: { $search: text } });
+    async findSchoolsByText(
+        text: string,
+        query: IQuery<ISchool> = { filter: {} }
+    ): Promise<ISchool[]> {
+        query.filter.$text = { $search: text };
+        return await this.findSchools(query);
     }
 
-    async findSchool(where: IQuery<ISchool>): Promise<ISchool> {
-        return await this.School.findOne(where);
+    async findSchool(filter: IFilterQuery<ISchool>): Promise<ISchool> {
+        return await this.School.findOne(filter);
     }
 
     async findSchoolById(id: Types.ObjectId): Promise<ISchool> {
