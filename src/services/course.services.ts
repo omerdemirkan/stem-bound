@@ -9,6 +9,8 @@ import {
     EErrorTypes,
     IQuery,
     IFilterQuery,
+    IUpdateQuery,
+    ISubDocumentQuery,
 } from "../types";
 import { model, emitter } from "../decorators";
 import { ErrorService } from ".";
@@ -92,17 +94,17 @@ export default class CourseService {
 
     async updateCourse(
         filter: IFilterQuery<ICourse>,
-        newCourse: Partial<ICourse>
+        udpateQuery: IUpdateQuery<ICourse>
     ): Promise<ICourse> {
-        const course = await this.findCourse(filter);
-        Object.assign(course, newCourse);
-        await course.save();
-        return course;
+        return this.Course.findOneAndUpdate(filter, udpateQuery, {
+            new: true,
+            runValidators: true,
+        });
     }
 
     async updateCourseById(
         id: Types.ObjectId,
-        newCourse: Partial<ICourse>
+        newCourse: IUpdateQuery<ICourse>
     ): Promise<ICourse> {
         return await this.updateCourse({ _id: id }, newCourse);
     }
@@ -117,12 +119,7 @@ export default class CourseService {
 
     async findMeetingsByCourseId(
         courseId: Types.ObjectId,
-        options?: {
-            skip?: number;
-            limit?: number;
-            before?: Date;
-            after?: Date;
-        }
+        query: ISubDocumentQuery<IMeeting> = {}
     ) {
         const course = await this.findCourseById(courseId);
         if (!course) {
@@ -131,25 +128,27 @@ export default class CourseService {
                 "Course not found"
             );
         }
-        const limit = +options?.limit ? Math.min(+options.limit, 20) : 20;
-        const skip = +options?.skip || 0;
+        const limit = +query.limit ? Math.min(+query.limit, 20) : 20,
+            skip = +query.skip || 0,
+            before = query.before ? new Date(query.before) : null,
+            after = query.after ? new Date(query.after) : null;
+        let filter = query.filter || ((meeting) => true),
+            sort =
+                query.sort ||
+                ((a, b) =>
+                    new Date(b.start).getTime() - new Date(a.start).getTime());
 
-        if (options?.before) {
-            const before = new Date(options.before);
-            course.meetings = course.meetings.filter(
-                (meeting) => new Date(meeting.start) < before
-            );
-        }
-        if (options?.after) {
-            const after = new Date(options.after);
-            course.meetings = course.meetings.filter(
-                (meeting) => new Date(meeting.start) > after
-            );
-        }
+        if (before)
+            filter = (meeting: IMeeting) =>
+                filter(meeting) && new Date(meeting.start) < before;
+        if (after)
+            filter = (meeting: IMeeting) =>
+                filter(meeting) && new Date(meeting.start) > before;
 
-        const meetings = course.meetings.slice(skip, limit + 1);
-
-        return meetings;
+        return course.meetings
+            .sort(sort)
+            .filter(filter)
+            .slice(skip, limit + 1);
     }
 
     async findMeetingById({
@@ -185,34 +184,40 @@ export default class CourseService {
             );
         }
         course.meetings = meetings.concat(course.meetings);
-        // @ts-ignore
-        course.meetings.sort((a, b) => new Date(b.start) - new Date(a.start));
+        course.meetings.sort(
+            (a, b) => new Date(b.start).getTime() - new Date(a.start).getTime()
+        );
         await course.save();
 
-        const meetingDatesObj = {};
+        const meetingDatesSet = new Set<string>();
         meetings.forEach(function (meeting) {
-            meetingDatesObj[new Date(meeting.start).toString()] = true;
+            meetingDatesSet.add(new Date(meeting.start).toString());
         });
-        return course.meetings.filter(
-            (meeting: IMeeting) => meetingDatesObj[meeting.start.toString()]
+        return course.meetings.filter((meeting: IMeeting) =>
+            meetingDatesSet.has(meeting.start.toString())
         );
     }
 
-    async updateMeeting({
-        courseId,
-        meetingId,
-        requestingUserId,
-        meetingData,
-    }: {
-        courseId: Types.ObjectId;
-        meetingId: Types.ObjectId;
-        requestingUserId: Types.ObjectId;
-        meetingData: Partial<IMeeting>;
-    }): Promise<IMeeting> {
-        const course = await this.Course.findOne({
-            _id: courseId,
-            "meta.instructors": requestingUserId.toString(),
-        });
+    async updateMeetingByCourseId(
+        {
+            courseId,
+            meetingId,
+        }: { courseId: Types.ObjectId; meetingId: Types.ObjectId },
+        meetingData: Partial<IMeeting>
+    ) {
+        return await this.updateMeeting(
+            { _id: courseId },
+            meetingId,
+            meetingData
+        );
+    }
+
+    async updateMeeting(
+        filter: IFilterQuery<ICourse>,
+        meetingId: Types.ObjectId,
+        meetingData: Partial<IMeeting>
+    ): Promise<IMeeting> {
+        const course = await this.findCourse(filter);
         if (!course) {
             this.errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,

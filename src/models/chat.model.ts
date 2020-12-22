@@ -6,7 +6,7 @@ const chatMetaSchema = new Schema(
     {
         users: {
             type: [Schema.Types.ObjectId],
-            required: true,
+            required: [true, "User metadata required"],
             validate: {
                 validator: schemaValidators.arrayLength({ min: 2, max: 10 }),
                 message: (props) =>
@@ -26,21 +26,22 @@ const chatSchema = new Schema(
         type: {
             type: String,
             enum: Object.keys(EChatTypes),
-            required: true,
+            required: [true, "Chat type required"],
         },
         meta: {
             type: chatMetaSchema,
-            required: true,
+            required: [true, "Chat metadata required"],
         },
         name: {
             type: String,
+            trim: true,
         },
         pictureUrl: {
             type: String,
+            trim: true,
         },
         lastMessageSentAt: {
             type: Date,
-            required: false,
         },
         privateChatKey: {
             type: String,

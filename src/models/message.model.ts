@@ -5,17 +5,17 @@ const messageMetaSchema = new Schema(
     {
         chat: {
             type: Schema.Types.ObjectId,
-            required: true,
+            required: [true, "Message chat metadata required"],
             index: true,
         },
         from: {
             type: Schema.Types.ObjectId,
-            required: true,
+            required: [true, "Message from metadata required"],
             index: true,
         },
         readBy: {
             type: [Schema.Types.ObjectId],
-            required: true,
+            required: [true, "Message readBy metadata required"],
             default: [],
             validate: {
                 validator: schemaValidators.uniqueStringArray,

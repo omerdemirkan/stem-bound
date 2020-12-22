@@ -7,12 +7,12 @@ const schoolOfficialMetaSchema = new Schema(
     {
         school: {
             type: Schema.Types.ObjectId,
-            required: true,
+            required: [true, "School metadata required"],
             index: true,
         },
         chats: {
             type: [Schema.Types.ObjectId],
-            required: true,
+            required: [true, "Chat metadata required"],
             default: [],
             validate: {
                 validator: schemaValidators.uniqueStringArray,
@@ -34,12 +34,13 @@ const SchoolOfficials = Users.discriminator(
             type: String,
             maxlength: 200,
             minlength: 2,
-            required: true,
+            required: [true, "Position Required"],
             trim: true,
         },
         meta: {
             type: schoolOfficialMetaSchema,
             required: true,
+            default: {},
         },
     })
 );

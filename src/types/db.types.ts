@@ -19,3 +19,12 @@ export interface IQuery<T extends Document> {
     limit?: number;
     skip?: number;
 }
+
+export interface ISubDocumentQuery<T> {
+    filter?(element: T): boolean;
+    sort?(a: T, b: T): number;
+    limit?: number;
+    skip?: number;
+    before?: Date | string;
+    after?: Date | string;
+}

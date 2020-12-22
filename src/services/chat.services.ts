@@ -95,6 +95,7 @@ export default class ChatService {
     ): Promise<IChat> {
         return await this.Chat.findOneAndUpdate(filter, chatData, {
             new: true,
+            runValidators: true,
         });
     }
 
@@ -153,7 +154,10 @@ export default class ChatService {
         messageData: IUpdateQuery<IMessage>,
         filter: IFilterQuery<IMessage>
     ): Promise<IMessage> {
-        return await this.Message.findOneAndUpdate(filter, messageData);
+        return await this.Message.findOneAndUpdate(filter, messageData, {
+            new: true,
+            runValidators: true,
+        });
     }
 
     async updateMessageById(

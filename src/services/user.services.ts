@@ -162,21 +162,17 @@ export default class UserService {
         filter: IFilterQuery<IUser>,
         userData: Partial<IUser>
     ): Promise<IUser> {
-        const user = await this.findUser(filter);
-        Object.assign(user, userData);
-
-        // @ts-ignore
-        return await user.save();
+        return await this.User.findOneAndUpdate(filter, userData, {
+            new: true,
+            runValidators: true,
+        });
     }
 
-    async updateUserById({
-        id,
-        userData,
-    }: {
-        id: Types.ObjectId;
-        userData: object;
-    }): Promise<IUser> {
-        return await this.updateUser({ _id: id }, userData);
+    async updateUserById(
+        userId: Types.ObjectId,
+        userData: Partial<IUser>
+    ): Promise<IUser> {
+        return await this.updateUser({ _id: userId }, userData);
     }
 
     async deleteUser(where: IQuery<IUser>): Promise<IUser> {
@@ -191,11 +187,7 @@ export default class UserService {
         userId: Types.ObjectId,
         profilePictureUrl: string
     ): Promise<IUser> {
-        const user = await this.findUserById(userId);
-
-        user.profilePictureUrl = profilePictureUrl;
-        // @ts-ignore
-        return await user.save();
+        return await this.updateUserById(userId, { profilePictureUrl });
     }
 
     async updateUserLocationByZip(

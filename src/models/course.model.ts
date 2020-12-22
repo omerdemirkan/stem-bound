@@ -8,15 +8,27 @@ const courseMetaSchema = new Schema(
             type: [Schema.Types.ObjectId],
             required: [true, "Course instructor is required."],
             validate: {
-                validator: schemaValidators.arrayLength({ min: 1, max: 5 }),
-                message: "A course must have 1 to 5 instructors",
+                validator: schemaValidators.combineValidators([
+                    schemaValidators.uniqueStringArray,
+                ]),
+                message: "A course must have 1 to 5 unique instructors",
             },
+            minlength: 0,
+            maxlength: 5,
             index: true,
         },
         students: {
             type: [Schema.Types.ObjectId],
             required: [true, "Course students are required."],
             default: [],
+            validate: {
+                validator: schemaValidators.combineValidators([
+                    schemaValidators.uniqueStringArray,
+                ]),
+                message: "A course must have 1 to 5 unique students",
+            },
+            minlength: 0,
+            maxlength: 100,
             index: true,
         },
         school: {
@@ -92,7 +104,9 @@ const meetingSchema = new Schema(
         url: {
             type: String,
             validate: {
-                validator: schemaValidators.url,
+                validator: schemaValidators.combineValidators([
+                    schemaValidators.url,
+                ]),
                 message: "Invalid url for meeting type",
             },
             required: [

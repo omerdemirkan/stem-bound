@@ -7,7 +7,7 @@ const locationSchema = new Schema(
     {
         country: {
             type: String,
-            default: "USA",
+            required: [true, "School country required"],
         },
         state: {
             type: String,
@@ -34,7 +34,7 @@ const locationSchema = new Schema(
         },
         geoJSON: {
             type: geoJsonSchema,
-            required: true,
+            required: [true, "School geoJSON required"],
             index: "2dsphere",
         },
     },

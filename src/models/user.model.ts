@@ -23,7 +23,7 @@ const userSchema = new Schema(
         },
         email: {
             type: String,
-            required: [true, "Email name required"],
+            required: [true, "Email required"],
             unique: [true, "Email already in use"],
             trim: true,
             index: true,
@@ -36,7 +36,7 @@ const userSchema = new Schema(
             type: String,
             maxlength: 200,
             minlength: 8,
-            required: true,
+            required: [true, "Hash required"],
         },
         shortDescription: {
             type: String,

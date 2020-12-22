@@ -7,11 +7,11 @@ const studentMetaSchema = new Schema(
     {
         school: {
             type: Schema.Types.ObjectId,
-            required: true,
+            required: [true, "School Metadata Required"],
         },
         courses: {
             type: [Schema.Types.ObjectId],
-            required: true,
+            required: [true, "Course Metadata Required"],
             default: [],
             validate: {
                 validator: schemaValidators.uniqueStringArray,
@@ -20,7 +20,7 @@ const studentMetaSchema = new Schema(
         },
         chats: {
             type: [Schema.Types.ObjectId],
-            required: true,
+            required: [true, "Chat Metadata Required"],
             default: [],
             validate: {
                 validator: schemaValidators.uniqueStringArray,

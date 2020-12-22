@@ -7,18 +7,21 @@ const instructorMetaSchema = new Schema(
     {
         courses: {
             type: [Schema.Types.ObjectId],
-            required: true,
+            required: [true, "Course metadata required"],
             default: [],
+            maxlength: 100,
             validate: {
                 validator: schemaValidators.uniqueStringArray,
-                message: "all course ids added must be unique.",
+                message: "Instructors must have 0 to 10 unique courses.",
             },
+
             index: true,
         },
         chats: {
             type: [Schema.Types.ObjectId],
-            required: true,
+            required: [false, "Chat metadata required"],
             default: [],
+            maxlength: 100,
             validate: {
                 validator: schemaValidators.uniqueStringArray,
                 message: "all course ids added must be unique.",
@@ -36,19 +39,7 @@ const Instructors = Users.discriminator(
     EUserRoles.INSTRUCTOR,
     new Schema({
         specialties: {
-            type: [
-                {
-                    type: String,
-                    minlength: [
-                        2,
-                        "At least 2 characters required for specialties",
-                    ],
-                    maxlength: [
-                        40,
-                        "Maximum of 40 characters allowed for specialties",
-                    ],
-                },
-            ],
+            type: [String],
             validate: {
                 validator: schemaValidators.arrayLength({ min: 1, max: 10 }),
                 message: (props) => `1 to 10 specialties required.`,

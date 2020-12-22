@@ -37,4 +37,12 @@ export const schemaValidators = {
             return array.length === Object.keys(valuesHashTable).length;
         };
     },
+
+    combineValidators(validators: ((el) => boolean)[]) {
+        return function (data) {
+            for (let i = 0; i < validators.length; i++)
+                if (validators[i](data)) return false;
+            return true;
+        };
+    },
 };

@@ -61,11 +61,10 @@ export async function getUser(req: IModifiedRequest, res: Response) {
 
 export async function updateUser(req: IModifiedRequest, res: Response) {
     try {
-        const id = ObjectId(req.params.id);
-        const updatedUser: IUser = await userService.updateUserById({
-            id,
-            userData: req.body,
-        });
+        const updatedUser: IUser = await userService.updateUserById(
+            ObjectId(req.payload.user._id),
+            req.body
+        );
 
         res.json({
             message: "User successfully updated",
@@ -78,8 +77,9 @@ export async function updateUser(req: IModifiedRequest, res: Response) {
 
 export async function deleteUser(req: IModifiedRequest, res: Response) {
     try {
-        const id = ObjectId(req.params.id);
-        const deletedUser: IUser = await userService.deleteUserById(id);
+        const deletedUser: IUser = await userService.deleteUserById(
+            ObjectId(req.payload.user._id)
+        );
 
         await metadataService.handleDeletedUserMetadataUpdate(deletedUser);
         res.json({
@@ -193,7 +193,7 @@ export async function updateUserProfilePicture(
         const profilePictureUrl = await saveFileToBucket(file);
 
         const user = await userService.updateUserProfilePictureUrl(
-            ObjectId(req.params.id),
+            ObjectId(req.payload.user._id),
             profilePictureUrl
         );
 
@@ -208,7 +208,7 @@ export async function updateUserProfilePicture(
 
 export async function updateUserLocation(req: IModifiedRequest, res: Response) {
     try {
-        const userId = ObjectId(req.params.id);
+        const userId = ObjectId(req.payload.user._id);
         const updatedUser = await userService.updateUserLocationByZip(
             userId,
             req.body.zip as string
