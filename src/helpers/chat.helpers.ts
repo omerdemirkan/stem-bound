@@ -73,7 +73,7 @@ export async function configureChatArrayResponseData(
     chats: IChat[],
     requestMetadata: IRequestMetadata
 ): Promise<IChat[]> {
-    chats = await configureChatArrayPictureUrls(
+    await configureChatArrayPictureUrls(
         chats,
         ObjectId(requestMetadata.payload.user._id)
     );
@@ -84,10 +84,10 @@ export async function configureChatResponseData(
     chat: IChat,
     requestMetadata: IRequestMetadata
 ): Promise<IChat> {
-    chat = await configureChatArrayPictureUrls(
+    await configureChatArrayPictureUrls(
         [chat],
         ObjectId(requestMetadata.payload.user._id)
-    )[0];
+    );
     return chat;
 }
 

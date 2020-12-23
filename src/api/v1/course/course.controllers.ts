@@ -66,7 +66,7 @@ export async function dropCourse(req: IModifiedRequest, res: Response) {
 
 export async function getCourses(req: IModifiedRequest, res: Response) {
     try {
-        const query = configureCourseArrayQuery(req.query);
+        const query = configureCourseArrayQuery(req.meta);
         const courses: ICourse[] = await courseService.findCourses(query);
         res.json({
             message: "Courses successfully fetched",

@@ -14,19 +14,20 @@ export interface IMessage extends Document {
 }
 
 export interface IChat extends Document {
-    messages?: IMessage[];
+    type: EChatTypes;
     meta: {
         users: Types.ObjectId[];
     };
-    type: EChatTypes;
     name?: string;
     pictureUrl?: string;
-    createdAt?: Date;
     lastMessageSentAt?: Date;
     privateChatKey?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    messages?: IMessage[];
 }
 
 export enum EChatTypes {
-    "PRIVATE",
-    "GROUP",
+    PRIVATE = "PRIVATE",
+    GROUP = "GROUP",
 }

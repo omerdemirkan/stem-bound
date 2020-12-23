@@ -9,8 +9,10 @@ import {
     IAnnouncement,
 } from "../types";
 
-export function configureCourseArrayQuery(requestQuery: any): IQuery<ICourse> {
-    let { skip, limit, school_id, unverified } = requestQuery;
+export function configureCourseArrayQuery(
+    requestMetadata: IRequestMetadata
+): IQuery<ICourse> {
+    let { skip, limit, school_id, unverified } = requestMetadata.query;
     skip = +skip;
     limit = +limit;
     unverified = !!unverified;

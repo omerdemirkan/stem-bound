@@ -32,14 +32,24 @@ const initializeChatSocket: ISocketInitializer = (socket, { io, user }) => {
     socket.on(
         ESocketEvents.CHAT_MESSAGE_CREATED,
         async function (data: { chatId: string; text: string }) {
+            console.log(JSON.stringify(data));
             try {
+                let { text, chatId } = data;
                 if (!user.meta.chats.find((chatId) => chatId.equals(chatId)))
                     throw new Error("chatId not found in user metadata");
                 const { chat, message } = await chatService.createMessage(
-                    // @ts-ignore
-                    { text: data.text, meta: { from: user._id, readBy: [] } },
-                    ObjectId(data.chatId)
+                    ObjectId(data.chatId),
+                    {
+                        text,
+                        meta: {
+                            from: user._id,
+                            chat: ObjectId(chatId),
+                            readBy: [],
+                        },
+                    }
                 );
+
+                console.log({ message: JSON.stringify(message) });
 
                 let messageEmitter = io.sockets.to(data.chatId);
 

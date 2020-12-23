@@ -133,7 +133,7 @@ export default class ChatService {
         chatId: Types.ObjectId,
         query: IQuery<IMessage> = { filter: {} }
     ): Promise<IMessage[]> {
-        query.filter = { ...query.filter, _id: chatId };
+        query.filter = { ...query.filter, "meta.chat": chatId };
         return await this.findMessages(query);
     }
 
