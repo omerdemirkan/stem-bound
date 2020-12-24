@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { schemaValidators } from "../helpers";
+import { IMessage } from "../types";
 
 const messageMetaSchema = new Schema(
     {
@@ -51,6 +52,9 @@ const messageSchema = new Schema(
             type: Boolean,
             default: false,
         },
+        pictureUrl: {
+            type: String,
+        },
     },
     {
         // I want users to be able to alter messages by id.
@@ -62,6 +66,6 @@ const messageSchema = new Schema(
     }
 );
 
-const Message = mongoose.model("Message", messageSchema);
+const Message = mongoose.model<IMessage>("Message", messageSchema);
 
 export default Message;

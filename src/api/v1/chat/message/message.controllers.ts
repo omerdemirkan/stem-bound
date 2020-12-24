@@ -1,12 +1,7 @@
 import { Types } from "mongoose";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { chatService, errorService } from "../../../../services";
-import {
-    IChat,
-    IMessage,
-    EErrorTypes,
-    IModifiedRequest,
-} from "../../../../types";
+import { IMessage, EErrorTypes, IModifiedRequest } from "../../../../types";
 import {
     configureMessageArrayQuery,
     configureMessageArrayResponseData,

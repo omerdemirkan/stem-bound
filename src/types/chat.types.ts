@@ -11,6 +11,7 @@ export interface IMessage extends Document {
     isEdited: boolean;
     createdAt?: Date;
     updatedAt?: Date;
+    pictureUrl?: string;
 }
 
 export interface IChat extends Document {

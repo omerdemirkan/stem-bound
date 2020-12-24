@@ -25,6 +25,4 @@ export interface ISubDocumentQuery<T> {
     sort?(a: T, b: T): number;
     limit?: number;
     skip?: number;
-    before?: Date | string;
-    after?: Date | string;
 }

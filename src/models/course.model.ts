@@ -43,7 +43,7 @@ const announcementMetaSchema = new Schema(
     {
         from: {
             type: Schema.Types.ObjectId,
-            required: true,
+            required: [true, "Announcement from field required"],
         },
         readBy: {
             type: [Schema.Types.ObjectId],
@@ -60,13 +60,14 @@ const announcementSchema = new Schema(
     {
         text: {
             type: String,
-            required: true,
+            required: [true, "Announcement text field required"],
             minlength: 4,
             maxlength: 2000,
         },
         meta: {
             type: announcementMetaSchema,
             required: true,
+            default: {},
         },
     },
     {
@@ -83,7 +84,7 @@ const meetingSchema = new Schema(
         type: {
             type: String,
             enum: Object.values(EMeetingTypes),
-            required: true,
+            required: [true, "Meeting type field required"],
         },
         roomNum: {
             type: String,
@@ -114,11 +115,11 @@ const meetingSchema = new Schema(
         },
         start: {
             type: Date,
-            required: true,
+            required: [true, "Meeting start field required"],
         },
         end: {
             type: Date,
-            required: true,
+            required: [true, "Meeting end field required"],
         },
         message: {
             type: String,
@@ -141,12 +142,12 @@ const courseSchema = new Schema({
     },
     verified: {
         type: Boolean,
-        required: true,
+        required: [true, "Course verification field is required."],
         default: false,
     },
     shortDescription: {
         type: String,
-        required: true,
+        required: [true, "Course short description is required."],
         minlength: 4,
         maxlength: 80,
         trim: true,
@@ -187,6 +188,11 @@ const courseSchema = new Schema({
         type: courseMetaSchema,
         required: [true, "Course meta details are required."],
     },
+});
+
+courseSchema.index({
+    title: "text",
+    shortDescription: "text",
 });
 
 const Courses = mongoose.model<ICourse>("Course", courseSchema);

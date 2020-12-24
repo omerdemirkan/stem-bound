@@ -59,6 +59,10 @@ const chatSchema = new Schema(
     }
 );
 
+chatSchema.index({
+    name: "text",
+});
+
 const Chats = mongoose.model<IChat>("chat", chatSchema);
 
 export default Chats;

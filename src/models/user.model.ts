@@ -95,6 +95,9 @@ userSchema.index({
     lastName: "text",
     shortDescription: "text",
     email: "text",
+    specialties: "text",
+    interests: "text",
+    role: "text",
 });
 
 const Users = mongoose.model<IUser>("user", userSchema);

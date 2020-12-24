@@ -29,21 +29,12 @@ export default class CourseService {
         query: ISubDocumentQuery<IMeeting>
     ) {
         const limit = +query.limit ? Math.min(+query.limit, 20) : 20,
-            skip = +query.skip || 0,
-            before = query.before ? new Date(query.before) : null,
-            after = query.after ? new Date(query.after) : null;
+            skip = +query.skip || 0;
         let filter = query.filter || (() => true),
             sort =
                 query.sort ||
                 ((a, b) =>
                     new Date(b.start).getTime() - new Date(a.start).getTime());
-
-        if (before)
-            filter = (meeting) =>
-                filter(meeting) && new Date(meeting.start) < before;
-        if (after)
-            filter = (meeting) =>
-                filter(meeting) && new Date(meeting.start) > before;
 
         return course.meetings
             .sort(sort)
@@ -56,24 +47,13 @@ export default class CourseService {
         query: ISubDocumentQuery<IAnnouncement>
     ) {
         const limit = +query.limit ? Math.min(+query.limit, 20) : 20,
-            skip = +query.skip || 0,
-            before = query.before ? new Date(query.before) : null,
-            after = query.after ? new Date(query.after) : null;
+            skip = +query.skip || 0;
         let filter = query.filter || (() => true),
             sort =
                 query.sort ||
                 ((a, b) =>
                     new Date(b.createdAt).getTime() -
                     new Date(a.createdAt).getTime());
-
-        if (before)
-            filter = (announcement) =>
-                filter(announcement) &&
-                new Date(announcement.createdAt) < before;
-        if (after)
-            filter = (announcement) =>
-                filter(announcement) &&
-                new Date(announcement.createdAt) > before;
 
         return course.announcements
             .sort(sort)

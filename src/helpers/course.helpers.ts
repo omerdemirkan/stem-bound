@@ -1,3 +1,4 @@
+import { request } from "express";
 import { Types } from "mongoose";
 import {
     ICourse,
@@ -6,7 +7,11 @@ import {
     ISubDocumentQuery,
     IRequestMetadata,
     IAnnouncement,
+    ECourseTypes,
+    EMeetingTypes,
 } from "../types";
+import { configureSubdocumentQuery } from "./query.helpers";
+
 const { ObjectId } = Types;
 
 export function configureCourseArrayQuery(
@@ -16,9 +21,11 @@ export function configureCourseArrayQuery(
         skip,
         limit,
         unverified,
+        type,
         school_id,
         instructor_id,
         student_id,
+        text,
     } = requestMetadata.query;
 
     skip = +skip;
@@ -29,12 +36,15 @@ export function configureCourseArrayQuery(
         ? ObjectId(instructor_id)
         : null;
     student_id = ObjectId.isValid(student_id) ? ObjectId(student_id) : null;
+    type = isValidCourseType(type) ? type : null;
 
     let query: IQuery<ICourse> = { filter: {} };
 
     if (skip) query.skip = skip;
     if (limit) query.limit = limit;
     if (unverified) query.filter.verified = false;
+    if (type) query.filter.type = type;
+    if (text) query.filter.$text = { $search: text };
 
     // @ts-ignore
     if (school_id) query.filter["meta.school"] = school_id;
@@ -42,34 +52,24 @@ export function configureCourseArrayQuery(
     if (instructor_id) query.filter["meta.instructors"] = instructor_id;
     // @ts-ignore
     if (student_id) query.filter["meta.students"] = student_id;
-    console.log(query);
     return query;
 }
 
 export function configureMeetingArrayQuery(
     requestMetadata: IRequestMetadata
 ): ISubDocumentQuery<IMeeting> {
-    let { before, after, limit, skip } = requestMetadata.query;
-
-    before = before ? new Date(before) : null;
-    after = after ? new Date(after) : null;
-    limit = +limit;
-    skip = +skip;
-
-    let query: ISubDocumentQuery<IMeeting> = {};
-
-    if (before) query.before = before;
-    if (after) query.after = after;
-    if (limit) query.limit = limit;
-    if (skip) query.skip = skip;
-    return query;
+    let query = configureSubdocumentQuery<IMeeting>(requestMetadata, {
+        timeKey: "start",
+    });
+    let { type, room_num } = requestMetadata.query;
+    type = isValidMeetingType(type) ? type : null;
+    if (query.filter) return query;
 }
 
 export function configureAnnouncementArrayQuery(
     requestMetadata: IRequestMetadata
 ): ISubDocumentQuery<IAnnouncement> {
-    let {} = requestMetadata.query;
-    let query = {};
+    let query = configureSubdocumentQuery<IAnnouncement>(requestMetadata);
     return query;
 }
 
@@ -149,4 +149,12 @@ export function configureAnnouncementResponseData(
     requestMetadata: IRequestMetadata
 ): IAnnouncement {
     return announcement;
+}
+
+export function isValidCourseType(courseType: ECourseTypes): boolean {
+    return Object.keys(ECourseTypes).includes(courseType);
+}
+
+export function isValidMeetingType(meetingType: EMeetingTypes): boolean {
+    return Object.keys(EMeetingTypes).includes(meetingType);
 }
