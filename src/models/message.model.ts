@@ -37,6 +37,7 @@ const messageSchema = new Schema(
             required: true,
             minlength: 1,
             maxlength: 2000,
+            index: "text",
         },
         meta: {
             type: messageMetaSchema,

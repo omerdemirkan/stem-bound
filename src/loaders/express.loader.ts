@@ -10,6 +10,7 @@ const corsMiddleware = cors({
 
 export default function expressLoader(app: Application) {
     app.use(fileUpload());
+    app.disable("x-powered-by");
     app.set("trust proxy", 1);
     app.set("trust proxy", "loopback, 0.0.0.0");
     app.use(express.json());

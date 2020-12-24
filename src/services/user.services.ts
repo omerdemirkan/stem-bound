@@ -93,94 +93,12 @@ export default class UserService {
         return await this.User.aggregate(aggregateOptions);
     }
 
-    // async findUsersByCoordinates(
-    //     coordinates: number[],
-    //     options: IUserQueryOptions
-    // ) {
-    //     let aggregateOptions: any[] = [];
-
-    //     if (options.excludedUserIds) {
-    //         aggregateOptions.push({
-    //             $match: { _id: { $nin: options.excludedUserIds } },
-    //         });
-    //     }
-
-    //     aggregateOptions.push({
-    //         $geoNear: {
-    //             near: {
-    //                 type: "Point",
-    //                 coordinates,
-    //             },
-    //             distanceField: "distance.calculated",
-    //             key: "location.geoJSON",
-    //         },
-    //     });
-
-    //     if (options?.where && Object.keys(options.where).length) {
-    //         (aggregateOptions[0].$geoNear as any).query = options.where;
-    //     }
-
-    //     if (options?.text) {
-    //         aggregateOptions.push({ $text: { $search: options.text } });
-    //     }
-
-    //     aggregateOptions.push({ $skip: options.skip || 0 });
-
-    //     aggregateOptions.push(
-    //         options?.limit
-    //             ? { $limit: options.limit > 50 ? 50 : options.limit }
-    //             : { $limit: 20 }
-    //     );
-
-    //     let model = options?.role
-    //         ? this.getUserModelByRole(options.role)
-    //         : this.User;
-
-    //     return await model.aggregate(aggregateOptions);
-    // }
-
     async findUsers(query: IQuery<IUser>): Promise<IUser[]> {
         return await this.User.find(query.filter)
             .sort(query.sort)
             .skip(query.skip || 0)
             .limit(Math.min(query.limit, 20));
     }
-
-    // async findUsers(options: IUserQueryOptions): Promise<IUser[]> {
-    //     if (options?.coordinates) {
-    //         return await this.findUsersByCoordinates(
-    //             options.coordinates,
-    //             options
-    //         );
-    //     }
-
-    //     if (options.userIds) {
-    //         return this.findUsersByIds(
-    //             options.userIds.map((id) => ObjectId(id))
-    //         );
-    //     }
-
-    //     const model = options.role
-    //         ? this.getUserModelByRole(options.role)
-    //         : this.User;
-    //     let where: IFilterQuery<IUser> = {};
-
-    //     if (options.text) {
-    //         where.$text = { $search: options.text };
-    //     }
-
-    //     if (options.excludedUserIds) {
-    //         where._id = {
-    //             $nin: options.excludedUserIds,
-    //         };
-    //     }
-
-    //     return await model
-    //         .find(where)
-    //         .sort(options.sort)
-    //         .skip(options.skip || 0)
-    //         .limit(Math.min(options.limit, 20));
-    // }
 
     async findUsersByIds(
         ids: Types.ObjectId[],

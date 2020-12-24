@@ -24,7 +24,9 @@ const { ObjectId } = Types;
 
 export async function createCourse(req: IModifiedRequest, res: Response) {
     try {
-        const newCourse: ICourse = await courseService.createCourse(req.body);
+        let courseData: ICourse = req.body;
+        courseData.meta.instructors = [ObjectId(req.payload.user._id)];
+        const newCourse: ICourse = await courseService.createCourse(courseData);
         await metadataService.handleNewCourseMetadataUpdate(newCourse);
 
         res.status(201).json({

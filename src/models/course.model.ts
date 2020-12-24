@@ -8,12 +8,10 @@ const courseMetaSchema = new Schema(
             type: [Schema.Types.ObjectId],
             required: [true, "Course instructor is required."],
             validate: {
-                validator: schemaValidators.combineValidators([
-                    schemaValidators.uniqueStringArray,
-                ]),
-                message: "A course must have 1 to 5 unique instructors",
+                validator: schemaValidators.uniqueIdArray,
+                message: "Course instructors must be unique",
             },
-            minlength: 0,
+            minlength: 1,
             maxlength: 5,
             index: true,
         },
@@ -22,10 +20,8 @@ const courseMetaSchema = new Schema(
             required: [true, "Course students are required."],
             default: [],
             validate: {
-                validator: schemaValidators.combineValidators([
-                    schemaValidators.uniqueStringArray,
-                ]),
-                message: "A course must have 1 to 5 unique students",
+                validator: schemaValidators.uniqueIdArray,
+                message: "Course students must be unique",
             },
             minlength: 0,
             maxlength: 100,
@@ -139,7 +135,7 @@ const courseSchema = new Schema({
     title: {
         type: String,
         minlength: 4,
-        maxlength: 30,
+        maxlength: 40,
         required: [true, "Course title is required."],
         trim: true,
     },
@@ -152,7 +148,7 @@ const courseSchema = new Schema({
         type: String,
         required: true,
         minlength: 4,
-        maxlength: 60,
+        maxlength: 80,
         trim: true,
     },
     longDescription: {

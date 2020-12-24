@@ -23,9 +23,13 @@ import {
     IChat,
     EErrorTypes,
     IModifiedRequest,
+    EUserRoles,
 } from "../../../types";
 import { configureChatArrayResponseData } from "../../../helpers/chat.helpers";
-import { configureCourseArrayResponseData } from "../../../helpers";
+import {
+    configureCourseArrayQuery,
+    configureCourseArrayResponseData,
+} from "../../../helpers";
 import { saveFileToBucket } from "../../../jobs";
 
 const { ObjectId } = Types;
@@ -71,8 +75,9 @@ export async function getUser(req: IModifiedRequest, res: Response) {
 
 export async function updateUser(req: IModifiedRequest, res: Response) {
     try {
+        const userId = ObjectId(req.params.id);
         const updatedUser: IUser = await userService.updateUserById(
-            ObjectId(req.payload.user._id),
+            userId,
             req.body
         );
 
@@ -88,7 +93,7 @@ export async function updateUser(req: IModifiedRequest, res: Response) {
 export async function deleteUser(req: IModifiedRequest, res: Response) {
     try {
         const deletedUser: IUser = await userService.deleteUserById(
-            ObjectId(req.payload.user._id)
+            ObjectId(req.params.id)
         );
 
         await metadataService.handleDeletedUserMetadataUpdate(deletedUser);
@@ -103,19 +108,23 @@ export async function deleteUser(req: IModifiedRequest, res: Response) {
 
 export async function getUserCourses(req: IModifiedRequest, res: Response) {
     try {
-        const user: IUser = await userService.findUserById(
-            ObjectId(req.params.id)
-        );
-        if (!user) {
-            errorService.throwError(
-                EErrorTypes.DOCUMENT_NOT_FOUND,
-                "User not found"
-            );
+        const userId = ObjectId(req.params.id);
+        const query = configureCourseArrayQuery(req.meta);
+        let courses: ICourse[];
+        switch (req.payload.user.role) {
+            case EUserRoles.INSTRUCTOR:
+                courses = await courseService.findCoursesByInstructorId(
+                    userId,
+                    query
+                );
+                break;
+            case EUserRoles.STUDENT:
+                courses = await courseService.findCoursesByStudentId(
+                    userId,
+                    query
+                );
+                break;
         }
-        const courseIds = (user as IStudent | IInstructor).meta.courses;
-        const courses: ICourse[] = courseIds.length
-            ? await courseService.findCoursesByIds(courseIds)
-            : [];
 
         res.json({
             message: "User courses successfully fetched",
@@ -152,35 +161,7 @@ export async function getUserSchool(req: IModifiedRequest, res: Response) {
 export async function getUserChats(req: IModifiedRequest, res: Response) {
     try {
         const userId = ObjectId(req.params.id);
-        if (req.query.user_ids) {
-            const chats = await chatService.findChatsByUserIds(
-                [
-                    ...req.params.user_ids.split(",").map((id) => ObjectId(id)),
-                    userId,
-                ],
-                {
-                    exact: !!req.query.exact,
-                }
-            );
-            return res.json({
-                message: "Chat messages successfully fetched",
-                data: configureChatArrayResponseData(chats, req),
-            });
-        }
-
-        const user: IUser = await userService.findUserById(userId);
-
-        if (!user) {
-            errorService.throwError(
-                EErrorTypes.DOCUMENT_NOT_FOUND,
-                "User not found"
-            );
-        }
-
-        const chatIds = user.meta.chats;
-        const chats: IChat[] = chatIds.length
-            ? await chatService.findChatsByIds(chatIds)
-            : [];
+        const chats = await chatService.findChatsByUserId(userId);
 
         res.json({
             message: "User chats successfuly fetched",
@@ -200,7 +181,7 @@ export async function updateUserProfilePicture(
         const profilePictureUrl = await saveFileToBucket(file);
 
         const user = await userService.updateUserProfilePictureUrl(
-            ObjectId(req.payload.user._id),
+            ObjectId(req.params.id),
             profilePictureUrl
         );
 
@@ -215,7 +196,7 @@ export async function updateUserProfilePicture(
 
 export async function updateUserLocation(req: IModifiedRequest, res: Response) {
     try {
-        const userId = ObjectId(req.payload.user._id);
+        const userId = ObjectId(req.params.id);
         const updatedUser = await userService.updateUserLocationByZip(
             userId,
             req.body.zip as string

@@ -116,7 +116,7 @@ export default class ChatService {
 
     async findMessages(query: IQuery<IMessage>) {
         return await this.Message.find(query.filter)
-            .sort(query.sort || { lastMessageSentAt: -1 })
+            .sort(query.sort || { createdAt: -1 })
             .skip(query.skip || 0)
             .limit(Math.min(query.limit, 20));
     }
@@ -154,17 +154,21 @@ export default class ChatService {
         filter: IFilterQuery<IMessage>,
         messageData: IUpdateQuery<IMessage>
     ): Promise<IMessage> {
-        return await this.Message.findOneAndUpdate(filter, messageData, {
-            new: true,
-            runValidators: true,
-        });
+        return await this.Message.findOneAndUpdate(
+            filter,
+            { ...messageData, isEdited: true },
+            {
+                new: true,
+                runValidators: true,
+            }
+        );
     }
 
     async updateMessageById(
         messageId: Types.ObjectId,
         messageData: IUpdateQuery<IMessage>
     ): Promise<IMessage> {
-        return await this.updateMessage(messageData, { _id: messageId });
+        return await this.updateMessage({ _id: messageId }, messageData);
     }
 
     async setMessageDeletion(
