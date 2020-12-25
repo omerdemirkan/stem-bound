@@ -63,6 +63,14 @@ export function configureMeetingArrayQuery(
     });
     let { type, room_num } = requestMetadata.query;
     type = isValidMeetingType(type) ? type : null;
+
+    if (type)
+        query.filter = (meeting) =>
+            query.filter(meeting) && meeting.type === type;
+    if (room_num)
+        query.filter = (meeting) =>
+            query.filter(meeting) && meeting.roomNum === room_num;
+
     if (query.filter) return query;
 }
 

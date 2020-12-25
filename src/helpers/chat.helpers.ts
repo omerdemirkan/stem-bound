@@ -15,22 +15,23 @@ export function configureChatArrayQuery(
     requestMetadata: IRequestMetadata
 ): IQuery<IChat> {
     let {
-        user_ids,
         exact_match,
         type,
         skip,
         limit,
         before,
         after,
+        user_ids,
     } = requestMetadata.query;
-    user_ids = user_ids?.join(",").map((id) => ObjectId(id)) as
-        | Types.ObjectId[]
-        | null;
     skip = +skip;
     limit = +limit;
     before = before ? new Date(before) : null;
     after = after ? new Date(before) : null;
     type = isValidChatType(type) ? type : null;
+    user_ids = user_ids?.join(",").map((id) => ObjectId(id)) as
+        | Types.ObjectId[]
+        | null;
+
     let query: IQuery<IChat> = { filter: {} };
     if (user_ids && type !== EChatTypes.PRIVATE)
         query.filter["meta.users"] = {
@@ -78,22 +79,24 @@ export async function configureChatArrayResponseData(
     chats: IChat[],
     requestMetadata: IRequestMetadata
 ): Promise<IChat[]> {
+    let newChats = chats.map((chat) => chat.toObject());
     await configureChatArrayPictureUrls(
-        chats,
+        newChats,
         ObjectId(requestMetadata.payload.user._id)
     );
-    return chats;
+    return newChats;
 }
 
 export async function configureChatResponseData(
     chat: IChat,
     requestMetadata: IRequestMetadata
 ): Promise<IChat> {
+    let newChat = chat.toObject();
     await configureChatArrayPictureUrls(
-        [chat],
+        [newChat],
         ObjectId(requestMetadata.payload.user._id)
     );
-    return chat;
+    return newChat;
 }
 
 export function configureMessageArrayResponseData(

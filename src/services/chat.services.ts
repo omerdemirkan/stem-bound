@@ -154,14 +154,12 @@ export default class ChatService {
         filter: IFilterQuery<IMessage>,
         messageData: IUpdateQuery<IMessage>
     ): Promise<IMessage> {
-        return await this.Message.findOneAndUpdate(
-            filter,
-            { ...messageData, isEdited: true },
-            {
-                new: true,
-                runValidators: true,
-            }
-        );
+        // @ts-ignore
+        if (messageData.text) messageData.isEdited = true;
+        return await this.Message.findOneAndUpdate(filter, messageData, {
+            new: true,
+            runValidators: true,
+        });
     }
 
     async updateMessageById(

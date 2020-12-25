@@ -25,6 +25,9 @@ export function configureUserArrayQuery(
         exclude,
         user_ids,
         text,
+        chat_id,
+        course_id,
+        school_id,
     } = requestMetadata.query;
 
     role = isValidUserRole(role) ? role.toUpperCase() : null;
@@ -34,6 +37,9 @@ export function configureUserArrayQuery(
     long = +long;
     exclude = exclude ? exclude.split(",").map((id) => ObjectId(id)) : null;
     user_ids = user_ids ? user_ids.split(",").map((id) => ObjectId(id)) : null;
+    chat_id = ObjectId.isValid(chat_id) ? ObjectId(chat_id) : null;
+    course_id = ObjectId.isValid(course_id) ? ObjectId(course_id) : null;
+    school_id = ObjectId.isValid(school_id) ? ObjectId(school_id) : null;
 
     let query: IQuery<IUser> = { filter: {} };
     let coordinates: ICoordinates;
@@ -45,14 +51,17 @@ export function configureUserArrayQuery(
     if (text) query.filter.$text = { $search: text };
     if (limit) query.limit = limit;
     if (skip) query.skip = skip;
+    if (chat_id) query.filter["meta.chats"] = chat_id;
+    if (course_id) query.filter["meta.courses"] = course_id;
+    if (school_id) query.filter["meta.school"] = school_id;
 
-    if (geo_ip) {
+    if (+lat & +long) {
+        coordinates = [+long, +lat];
+    } else if (geo_ip) {
         const { latitude, longitude } = getCoordinatesByIp(requestMetadata.ip);
         coordinates = [longitude, latitude];
-    } else if (+lat & +long) {
-        coordinates = [+long, +lat];
     }
-
+    console.log(query);
     return { query, coordinates };
 }
 

@@ -9,25 +9,21 @@ export function configureSchoolArrayQuery(
         long,
         limit,
         skip,
-        with_school_officials,
         text,
         geo_ip,
+        filter,
     } = requestMetadata.query;
     lat = +lat;
     long = +long;
     limit = +limit;
     skip = +skip;
-    with_school_officials = !!with_school_officials;
 
     let query: IQuery<ISchool> = { filter: {} },
         coordinates: ICoordinates;
 
-    if (with_school_officials) {
-        query.filter.meta = {
-            // @ts-ignore
-            schoolOfficials: { $not: { $size: 0 } },
-        };
-    }
+    try {
+        query.filter = JSON.parse(filter);
+    } catch (e) {}
 
     if (long && lat) {
         coordinates = [+long, +lat];
@@ -40,7 +36,7 @@ export function configureSchoolArrayQuery(
 
     if (skip) query.skip = skip;
 
-    if (typeof text === "string") query.filter.$text = { $search: text };
+    if (text) query.filter.$text = { $search: text };
 
     return { query, coordinates };
 }

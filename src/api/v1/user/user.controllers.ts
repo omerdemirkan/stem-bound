@@ -1,4 +1,4 @@
-import { Request, Response, json } from "express";
+import { Response } from "express";
 import {
     errorService,
     userService,
@@ -16,11 +16,8 @@ import { Types } from "mongoose";
 import {
     IUser,
     IStudent,
-    IInstructor,
     ISchoolOfficial,
     ICourse,
-    IUserQueryOptions,
-    IChat,
     EErrorTypes,
     IModifiedRequest,
     EUserRoles,

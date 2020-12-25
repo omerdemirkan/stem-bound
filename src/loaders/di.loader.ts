@@ -39,3 +39,5 @@ export const authService = new services.AuthService(
 );
 
 export const mailingListService = new services.MailingListService();
+
+// userService.find

@@ -1,6 +1,13 @@
 import { CourseService, UserService, ChatService } from ".";
 import { Types } from "mongoose";
-import { EUserRoles, ICourse, IStudent, IUser, IInstructor } from "../types";
+import {
+    EUserRoles,
+    ICourse,
+    IStudent,
+    IUser,
+    IInstructor,
+    IChat,
+} from "../types";
 
 export default class MetadataService {
     constructor(
@@ -99,7 +106,7 @@ export default class MetadataService {
         ]);
     }
 
-    async handleNewChatMetadataUpdate(newChat: any) {
+    async handleNewChatMetadataUpdate(newChat: IChat) {
         const userIds = newChat.meta.users;
         await this.userService.addChatMetadata({
             chatIds: [newChat._id],
@@ -107,7 +114,7 @@ export default class MetadataService {
         });
     }
 
-    async handleDeletedChatMetadataUpdate(deletedChat: any) {
+    async handleDeletedChatMetadataUpdate(deletedChat: IChat) {
         const userIds = deletedChat.meta.users;
         await this.userService.removeChatMetadata({
             chatIds: [deletedChat._id],
