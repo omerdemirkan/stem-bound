@@ -9,8 +9,6 @@ import {
 } from "../types";
 import { model } from "../decorators";
 import { injectable } from "inversify";
-import { container } from "../config";
-import { School } from "../models";
 
 @injectable()
 class SchoolService implements ISchoolService {
@@ -76,7 +74,5 @@ class SchoolService implements ISchoolService {
         return await refreshSchoolDatabase(options);
     }
 }
-
-container.bind<SchoolService>(SchoolService).toSelf();
 
 export default SchoolService;

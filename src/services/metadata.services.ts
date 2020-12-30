@@ -1,4 +1,3 @@
-import { CourseService, UserService, ChatService } from ".";
 import { Types } from "mongoose";
 import {
     EUserRoles,
@@ -8,16 +7,19 @@ import {
     IInstructor,
     IChat,
     IMetadataService,
+    ICourseService,
+    IUserService,
+    IChatService,
 } from "../types";
-import { injectable } from "inversify";
-import { container } from "../config";
+import { inject, injectable } from "inversify";
+import { SERVICE } from "../constants/service.constants";
 
 @injectable()
 class MetadataService implements IMetadataService {
     constructor(
-        private courseService: CourseService,
-        private userService: UserService,
-        private chatService: ChatService
+        @inject(SERVICE.COURSE_SERVICE) protected courseService: ICourseService,
+        @inject(SERVICE.USER_SERVICE) protected userService: IUserService,
+        @inject(SERVICE.CHAT_SERVICE) protected chatService: IChatService
     ) {}
 
     async handleDeletedUserMetadataUpdate(deletedUser: IUser) {
@@ -126,7 +128,5 @@ class MetadataService implements IMetadataService {
         });
     }
 }
-
-container.bind<MetadataService>(MetadataService).toSelf();
 
 export default MetadataService;

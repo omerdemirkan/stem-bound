@@ -1,4 +1,4 @@
-import { container, logger } from "../config";
+import { logger } from "../config";
 import { EErrorTypes, IErrorService } from "../types";
 import { errors } from "../constants";
 import { injectable } from "inversify";
@@ -23,7 +23,5 @@ class ErrorService implements IErrorService {
         throw error;
     }
 }
-
-container.bind<ErrorService>(ErrorService).toSelf();
 
 export default ErrorService;

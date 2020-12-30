@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import { Model, Document, Types } from "mongoose";
-import { container, mailClient } from "../config";
+import { mailClient } from "../config";
 import { model } from "../decorators";
 import { EModels, IMailingListService, IQuery } from "../types";
 
@@ -40,7 +40,5 @@ class MailingListService implements IMailingListService {
         return await mailClient.messages().send(emailData);
     }
 }
-
-container.bind<MailingListService>(MailingListService).toSelf();
 
 export default MailingListService;

@@ -1,6 +1,5 @@
 import * as models from "../models";
 import { EModels } from "../types";
-import { Model, Document } from "mongoose";
 
 const modelsByKey = {
     [EModels.CHAT]: models.Chat,

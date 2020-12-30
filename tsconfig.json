@@ -4,6 +4,7 @@
     "target": "ES6",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
+    "types": ["reflect-metadata"],
     "module": "commonjs",
     "listEmittedFiles": true,
     "alwaysStrict": true,

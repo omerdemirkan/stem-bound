@@ -4,8 +4,7 @@ import { model, emitter } from "../decorators";
 import { ErrorService } from ".";
 import UserService from "./user.services";
 import { configurePrivateChatKey } from "../helpers";
-import { injectable } from "inversify";
-import { container } from "../config";
+import { inject, injectable } from "inversify";
 import {
     IChat,
     IMessage,
@@ -15,7 +14,10 @@ import {
     IFilterQuery,
     IUpdateQuery,
     IChatService,
+    IUserService,
+    IErrorService,
 } from "../types";
+import { SERVICE } from "../constants/service.constants";
 
 @injectable()
 class ChatService implements IChatService {
@@ -28,8 +30,8 @@ class ChatService implements IChatService {
     private eventEmitter: EventEmitter;
 
     constructor(
-        private userService: UserService,
-        private errorService: ErrorService
+        @inject(SERVICE.USER_SERVICE) protected userService: IUserService,
+        @inject(SERVICE.ERROR_SERVICE) protected errorService: IErrorService
     ) {}
 
     async createChat(chatData: Partial<IChat>): Promise<IChat> {
@@ -216,7 +218,5 @@ class ChatService implements IChatService {
         );
     }
 }
-
-container.bind<ChatService>(ChatService).toSelf();
 
 export default ChatService;

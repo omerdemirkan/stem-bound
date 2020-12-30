@@ -2,7 +2,6 @@ import { ILocationData, EModels, IQuery, ILocationService } from "../types";
 import { Model } from "mongoose";
 import { model } from "../decorators";
 import { injectable } from "inversify";
-import { container } from "../config";
 
 @injectable()
 class LocationService implements ILocationService {
@@ -30,7 +29,5 @@ class LocationService implements ILocationService {
         return await this.Location.findOne({ zip });
     }
 }
-
-container.bind<LocationService>(LocationService).toSelf();
 
 export default LocationService;

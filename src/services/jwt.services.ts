@@ -1,5 +1,5 @@
 import { SignOptions, VerifyOptions } from "jsonwebtoken";
-import config, { container } from "../config";
+import config from "../config";
 import { ITokenPayload, IJwt, EDependencies, IJwtService } from "../types";
 import { dependency } from "../decorators";
 import { injectable } from "inversify";
@@ -31,7 +31,5 @@ class JwtService implements IJwtService {
         );
     }
 }
-
-container.bind<JwtService>(JwtService).toSelf();
 
 export default JwtService;

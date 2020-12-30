@@ -1,16 +1,18 @@
-import { JwtService, BcryptService, UserService } from ".";
 import { EventEmitter } from "events";
 import { emitter } from "../decorators";
 import { configureTokenPayload } from "../helpers";
-import { injectable } from "inversify";
-import { container } from "../config";
+import { inject, injectable } from "inversify";
 import {
     EUserRoles,
     ITokenPayload,
     EUserEvents,
     IUser,
     IAuthService,
+    IJwtService,
+    IBcryptService,
+    IUserService,
 } from "../types";
+import { SERVICE } from "../constants/service.constants";
 
 @injectable()
 class AuthService implements IAuthService {
@@ -18,9 +20,9 @@ class AuthService implements IAuthService {
     private eventEmitter: EventEmitter;
 
     constructor(
-        private jwtService: JwtService,
-        private bcryptService: BcryptService,
-        private userService: UserService
+        @inject(SERVICE.JWT_SERVICE) protected jwtService: IJwtService,
+        @inject(SERVICE.BCRYPT_SERVICE) protected bcryptService: IBcryptService,
+        @inject(SERVICE.USER_SERVICE) protected userService: IUserService
     ) {}
 
     async userSignUp(
@@ -61,7 +63,5 @@ class AuthService implements IAuthService {
         return null;
     }
 }
-
-container.bind<AuthService>(AuthService).toSelf();
 
 export default AuthService;

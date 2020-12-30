@@ -1,42 +1,88 @@
-import * as services from "../services";
+var inversify = require("inversify");
+require("reflect-metadata");
 
-// Dependency Injection Loader
+import { container } from "../config";
+import { SERVICE } from "../constants/service.constants";
+import {
+    IAuthMiddlewareService,
+    IAuthService,
+    IBcryptService,
+    IChatService,
+    ICourseService,
+    IErrorService,
+    IJwtService,
+    ILocationService,
+    IMailingListService,
+    IMetadataService,
+    ISchoolService,
+    IUserService,
+} from "../types";
+import {
+    AuthMiddlewareService,
+    AuthService,
+    BcryptService,
+    ChatService,
+    CourseService,
+    ErrorService,
+    JwtService,
+    LocationService,
+    MailingListService,
+    MetadataService,
+    SchoolService,
+    UserService,
+} from "../services";
 
-export const errorService = new services.ErrorService();
+container
+    .bind<IAuthMiddlewareService>(SERVICE.AUTH_MIDDLEWARE_SERVICE)
+    .to(AuthMiddlewareService);
 
-export const jwtService = new services.JwtService();
+container.bind<IAuthService>(SERVICE.AUTH_SERVICE).to(AuthService);
 
-export const bcryptService = new services.BcryptService();
+container.bind<IBcryptService>(SERVICE.BCRYPT_SERVICE).to(BcryptService);
 
-export const authMiddlewareService = new services.AuthMiddlewareService(
-    jwtService
+container.bind<IChatService>(SERVICE.CHAT_SERVICE).to(ChatService);
+
+container.bind<ICourseService>(SERVICE.COURSE_SERVICE).to(CourseService);
+
+container.bind<IErrorService>(SERVICE.ERROR_SERVICE).to(ErrorService);
+
+container.bind<IJwtService>(SERVICE.JWT_SERVICE).to(JwtService);
+
+container.bind<ILocationService>(SERVICE.LOCATION_SERVICE).to(LocationService);
+
+container
+    .bind<IMailingListService>(SERVICE.MAILING_LIST_SERVICE)
+    .to(MailingListService);
+
+container.bind<IMetadataService>(SERVICE.METADATA_SERVICE).to(MetadataService);
+
+container.bind<ISchoolService>(SERVICE.SCHOOL_SERVICE).to(SchoolService);
+
+container.bind<IUserService>(SERVICE.USER_SERVICE).to(UserService);
+
+export const authMiddlewareService = container.get<IAuthMiddlewareService>(
+    SERVICE.AUTH_MIDDLEWARE_SERVICE
 );
-
-export const locationService = new services.LocationService();
-
-export const schoolService = new services.SchoolService();
-
-export const userService = new services.UserService(
-    locationService,
-    schoolService
+export const authService = container.get<IAuthService>(SERVICE.AUTH_SERVICE);
+export const bcryptService = container.get<IBcryptService>(
+    SERVICE.BCRYPT_SERVICE
 );
-
-export const chatService = new services.ChatService(userService, errorService);
-
-export const courseService = new services.CourseService(errorService);
-
-export const metadataService = new services.MetadataService(
-    courseService,
-    userService,
-    chatService
+export const chatService = container.get<IChatService>(SERVICE.CHAT_SERVICE);
+export const courseService = container.get<ICourseService>(
+    SERVICE.COURSE_SERVICE
 );
-
-export const authService = new services.AuthService(
-    jwtService,
-    bcryptService,
-    userService
+export const errorService = container.get<IErrorService>(SERVICE.ERROR_SERVICE);
+export const jwtService = container.get<IJwtService>(SERVICE.JWT_SERVICE);
+export const locationService = container.get<ILocationService>(
+    SERVICE.LOCATION_SERVICE
 );
-
-export const mailingListService = new services.MailingListService();
-
-// userService.find
+export const mailingListService = container.get<IMailingListService>(
+    SERVICE.MAILING_LIST_SERVICE
+);
+export const metadataService = container.get<IMetadataService>(
+    SERVICE.METADATA_SERVICE
+);
+export const schoolService = container.get<ISchoolService>(
+    SERVICE.SCHOOL_SERVICE
+);
+export const userService = container.get<IUserService>(SERVICE.USER_SERVICE);

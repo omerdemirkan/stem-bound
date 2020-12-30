@@ -2,8 +2,7 @@ import { Model, Types } from "mongoose";
 import { EventEmitter } from "events";
 import { model, emitter } from "../decorators";
 import { ErrorService } from ".";
-import { injectable } from "inversify";
-import { container } from "../config";
+import { inject, injectable } from "inversify";
 import {
     ECourseEvents,
     ICourse,
@@ -16,7 +15,9 @@ import {
     IUpdateQuery,
     ISubDocumentQuery,
     ICourseService,
+    IErrorService,
 } from "../types";
+import { SERVICE } from "../constants/service.constants";
 
 @injectable()
 class CourseService implements ICourseService {
@@ -26,7 +27,9 @@ class CourseService implements ICourseService {
     @emitter()
     private eventEmitter: EventEmitter;
 
-    constructor(private errorService: ErrorService) {}
+    constructor(
+        @inject(SERVICE.ERROR_SERVICE) protected errorService: IErrorService
+    ) {}
 
     private configureMeetingsQuery(
         course: ICourse,
@@ -448,7 +451,5 @@ class CourseService implements ICourseService {
         );
     }
 }
-
-container.bind<CourseService>(CourseService).toSelf();
 
 export default CourseService;

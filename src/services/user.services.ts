@@ -1,8 +1,7 @@
 import { Model, Types } from "mongoose";
 import { LocationService, SchoolService } from ".";
 import { model } from "../decorators";
-import { injectable } from "inversify";
-import { container } from "../config";
+import { inject, injectable } from "inversify";
 import {
     EUserRoles,
     IUser,
@@ -13,7 +12,10 @@ import {
     IQuery,
     IFilterQuery,
     IUserService,
+    ILocationService,
+    ISchoolService,
 } from "../types";
+import { SERVICE } from "../constants/service.constants";
 
 @injectable()
 class UserService implements IUserService {
@@ -39,8 +41,9 @@ class UserService implements IUserService {
     }
 
     constructor(
-        private locationService: LocationService,
-        private schoolService: SchoolService
+        @inject(SERVICE.LOCATION_SERVICE)
+        protected locationService: ILocationService,
+        @inject(SERVICE.SCHOOL_SERVICE) protected schoolService: ISchoolService
     ) {}
 
     async createUser(userData, role: EUserRoles): Promise<IUser> {
@@ -258,7 +261,5 @@ class UserService implements IUserService {
         );
     }
 }
-
-container.bind<UserService>(UserService).toSelf();
 
 export default UserService;
