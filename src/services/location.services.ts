@@ -1,15 +1,17 @@
-import { ILocationData, EModels, IQuery } from "../types";
+import { ILocationData, EModels, IQuery, ILocationService } from "../types";
 import { Model } from "mongoose";
 import { model } from "../decorators";
 import { injectable } from "inversify";
 import { container } from "../config";
 
 @injectable()
-class LocationService {
+class LocationService implements ILocationService {
     @model(EModels.LOCATION)
     private Location: Model<ILocationData>;
 
-    async findLocation(query: IQuery<ILocationData>): Promise<ILocationData[]> {
+    async findLocations(
+        query: IQuery<ILocationData>
+    ): Promise<ILocationData[]> {
         return await this.Location.find(query.filter)
             .sort(query.sort)
             .skip(query.skip || 0)
@@ -21,7 +23,7 @@ class LocationService {
         query: IQuery<ILocationData> = { filter: {} }
     ): Promise<ILocationData[]> {
         query.filter.$text = { $search: text };
-        return await this.findLocation(query);
+        return await this.findLocations(query);
     }
 
     async findLocationByZip(zip: string) {

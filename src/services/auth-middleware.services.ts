@@ -1,16 +1,17 @@
 import { JwtService } from ".";
 import { Response, NextFunction } from "express";
+import { container, logger } from "../config";
+import { injectable } from "inversify";
 import {
     EUserRoles,
     IModifiedRequest,
     IRequestValidationFunction,
     ITokenPayload,
+    IAuthMiddlewareService,
 } from "../types";
-import { container, logger } from "../config";
-import { injectable } from "inversify";
 
 @injectable()
-class AuthMiddlewareService {
+class AuthMiddlewareService implements IAuthMiddlewareService {
     constructor(private jwtService: JwtService) {}
 
     extractTokenPayload = async (

@@ -1,4 +1,11 @@
 import { Model, Types } from "mongoose";
+import { EventEmitter } from "events";
+import { model, emitter } from "../decorators";
+import { ErrorService } from ".";
+import UserService from "./user.services";
+import { configurePrivateChatKey } from "../helpers";
+import { injectable } from "inversify";
+import { container } from "../config";
 import {
     IChat,
     IMessage,
@@ -7,17 +14,11 @@ import {
     EChatTypes,
     IFilterQuery,
     IUpdateQuery,
+    IChatService,
 } from "../types";
-import { EventEmitter } from "events";
-import { model, emitter } from "../decorators";
-import { ErrorService } from ".";
-import UserService from "./user.services";
-import { configurePrivateChatKey } from "../helpers";
-import { injectable } from "inversify";
-import { container } from "../config";
 
 @injectable()
-class ChatService {
+class ChatService implements IChatService {
     @model(EModels.CHAT)
     private Chat: Model<IChat>;
     @model(EModels.MESSAGE)

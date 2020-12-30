@@ -7,12 +7,13 @@ import {
     IUser,
     IInstructor,
     IChat,
+    IMetadataService,
 } from "../types";
 import { injectable } from "inversify";
 import { container } from "../config";
 
 @injectable()
-class MetadataService {
+class MetadataService implements IMetadataService {
     constructor(
         private courseService: CourseService,
         private userService: UserService,

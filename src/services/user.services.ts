@@ -1,3 +1,8 @@
+import { Model, Types } from "mongoose";
+import { LocationService, SchoolService } from ".";
+import { model } from "../decorators";
+import { injectable } from "inversify";
+import { container } from "../config";
 import {
     EUserRoles,
     IUser,
@@ -7,15 +12,11 @@ import {
     ISchoolOfficial,
     IQuery,
     IFilterQuery,
+    IUserService,
 } from "../types";
-import { Model, Types } from "mongoose";
-import { LocationService, SchoolService } from ".";
-import { model } from "../decorators";
-import { injectable } from "inversify";
-import { container } from "../config";
 
 @injectable()
-class UserService {
+class UserService implements IUserService {
     @model(EModels.USER)
     private User: Model<IUser>;
 
@@ -26,17 +27,15 @@ class UserService {
     @model(EModels.STUDENT)
     private Student: Model<IStudent>;
 
-    private userModelsByRole = {
-        // @ts-ignore
-        [EUserRoles.STUDENT]: this.Student,
-        // @ts-ignore
-        [EUserRoles.INSTRUCTOR]: this.Instructor,
-        // @ts-ignore
-        [EUserRoles.SCHOOL_OFFICIAL]: this.SchoolOfficial,
-    };
-
     private getUserModelByRole(role: EUserRoles): Model<IUser> {
-        return this.userModelsByRole[role];
+        switch (role) {
+            case EUserRoles.STUDENT:
+                return this.Student;
+            case EUserRoles.SCHOOL_OFFICIAL:
+                return this.SchoolOfficial;
+            case EUserRoles.INSTRUCTOR:
+                return this.Instructor;
+        }
     }
 
     constructor(

@@ -2,15 +2,18 @@ import { injectable } from "inversify";
 import { Model, Document, Types } from "mongoose";
 import { container, mailClient } from "../config";
 import { model } from "../decorators";
-import { EModels, IQuery } from "../types";
+import { EModels, IMailingListService, IQuery } from "../types";
 
 @injectable()
-class MailingListService {
+class MailingListService implements IMailingListService {
     @model(EModels.MAILING_LIST_SUBSCRIBER)
     private Subscriber: Model<Document>;
 
-    async findSubscribers(where: IQuery<any> = { filter: {} }) {
-        return await this.Subscriber.find(where);
+    async findSubscribers(query: IQuery<any> = { filter: {} }): Promise<any[]> {
+        return await this.Subscriber.find(query.filter)
+            .sort(query.sort)
+            .skip(query.skip || 0)
+            .limit(query.limit ? Math.min(query.limit, 20) : 20);
     }
 
     async findSubscriberByEmail(email: string) {

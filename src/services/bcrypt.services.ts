@@ -1,10 +1,10 @@
 import { injectable } from "inversify";
 import config, { container } from "../config";
 import { dependency } from "../decorators";
-import { IBcrypt, EDependencies } from "../types";
+import { IBcrypt, EDependencies, IBcryptService } from "../types";
 
 @injectable()
-class BcryptService {
+class BcryptService implements IBcryptService {
     @dependency(EDependencies.BCRYPT)
     private bcrypt: IBcrypt;
 

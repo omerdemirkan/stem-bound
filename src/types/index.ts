@@ -11,3 +11,5 @@ export * from "./socket.types";
 export * from "./model.types";
 export * from "./db.types";
 export * from "./request.types";
+export * from "./middleware.types";
+export * from "./service.types";

@@ -1,13 +1,19 @@
 import { Model, Types } from "mongoose";
 import { refreshSchoolDatabase } from "../jobs";
-import { ISchool, EModels, IQuery, IFilterQuery } from "../types";
+import {
+    ISchool,
+    EModels,
+    IQuery,
+    IFilterQuery,
+    ISchoolService,
+} from "../types";
 import { model } from "../decorators";
 import { injectable } from "inversify";
 import { container } from "../config";
 import { School } from "../models";
 
 @injectable()
-class SchoolService {
+class SchoolService implements ISchoolService {
     @model(EModels.SCHOOL)
     private School: Model<ISchool>;
 

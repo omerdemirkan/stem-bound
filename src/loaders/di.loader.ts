@@ -34,8 +34,7 @@ export const metadataService = new services.MetadataService(
 export const authService = new services.AuthService(
     jwtService,
     bcryptService,
-    userService,
-    metadataService
+    userService
 );
 
 export const mailingListService = new services.MailingListService();

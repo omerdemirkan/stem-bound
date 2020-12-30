@@ -1,21 +1,26 @@
-import { EUserRoles, ITokenPayload, EUserEvents, IUser } from "../types";
-import { JwtService, BcryptService, UserService, MetadataService } from ".";
+import { JwtService, BcryptService, UserService } from ".";
 import { EventEmitter } from "events";
 import { emitter } from "../decorators";
 import { configureTokenPayload } from "../helpers";
 import { injectable } from "inversify";
 import { container } from "../config";
+import {
+    EUserRoles,
+    ITokenPayload,
+    EUserEvents,
+    IUser,
+    IAuthService,
+} from "../types";
 
 @injectable()
-class AuthService {
+class AuthService implements IAuthService {
     @emitter()
     private eventEmitter: EventEmitter;
 
     constructor(
         private jwtService: JwtService,
         private bcryptService: BcryptService,
-        private userService: UserService,
-        private metadataService: MetadataService
+        private userService: UserService
     ) {}
 
     async userSignUp(

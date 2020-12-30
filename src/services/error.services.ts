@@ -1,13 +1,12 @@
 import { container, logger } from "../config";
-import { EErrorTypes } from "../types";
+import { EErrorTypes, IErrorService } from "../types";
 import { errors } from "../constants";
 import { injectable } from "inversify";
 
 @injectable()
-class ErrorService {
+class ErrorService implements IErrorService {
     status(error: Error) {
         logger.error("%j" + error, error.stack);
-
         return (error as any).status || 400;
     }
 

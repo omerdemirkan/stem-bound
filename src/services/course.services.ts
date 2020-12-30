@@ -1,5 +1,9 @@
 import { Model, Types } from "mongoose";
 import { EventEmitter } from "events";
+import { model, emitter } from "../decorators";
+import { ErrorService } from ".";
+import { injectable } from "inversify";
+import { container } from "../config";
 import {
     ECourseEvents,
     ICourse,
@@ -11,14 +15,11 @@ import {
     IFilterQuery,
     IUpdateQuery,
     ISubDocumentQuery,
+    ICourseService,
 } from "../types";
-import { model, emitter } from "../decorators";
-import { ErrorService } from ".";
-import { injectable } from "inversify";
-import { container } from "../config";
 
 @injectable()
-class CourseService {
+class CourseService implements ICourseService {
     @model(EModels.COURSE)
     private Course: Model<ICourse>;
 
