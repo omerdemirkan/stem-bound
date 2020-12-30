@@ -81,7 +81,7 @@ export interface IChatService {
 
     updateChatById(
         id: Types.ObjectId,
-        chatData: Partial<IChat>
+        chatData: IUpdateQuery<IChat>
     ): Promise<IChat>;
 
     deleteChat(filter: IFilterQuery<IChat>): Promise<IChat>;
@@ -396,22 +396,17 @@ export interface IUserService {
 
     updateUser(
         filter: IFilterQuery<IUser>,
-        userData: Partial<IUser>
+        userData: IUpdateQuery<IUser>
     ): Promise<IUser>;
 
     updateUserById(
         userId: Types.ObjectId,
-        userData: Partial<IUser>
+        userData: IUpdateQuery<IUser>
     ): Promise<IUser>;
 
     deleteUser(where: IQuery<IUser>): Promise<IUser>;
 
     deleteUserById(id: Types.ObjectId): Promise<IUser>;
-
-    updateUserProfilePictureUrl(
-        userId: Types.ObjectId,
-        profilePictureUrl: string
-    ): Promise<IUser>;
 
     updateUserLocationByZip(
         userId: Types.ObjectId,

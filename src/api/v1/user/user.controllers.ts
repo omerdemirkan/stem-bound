@@ -177,10 +177,9 @@ export async function updateUserProfilePicture(
         const file: any = req.files.file;
         const profilePictureUrl = await saveFileToBucket(file);
 
-        const user = await userService.updateUserProfilePictureUrl(
-            ObjectId(req.params.id),
-            profilePictureUrl
-        );
+        const user = await userService.updateUserById(ObjectId(req.params.id), {
+            profilePictureUrl,
+        });
 
         res.json({
             data: configureUserResponseData(user, req.meta),

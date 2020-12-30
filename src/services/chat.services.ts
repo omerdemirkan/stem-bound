@@ -18,13 +18,11 @@ import {
     IErrorService,
 } from "../types";
 import { SERVICE } from "../constants/service.constants";
+import { Chat, Message } from "../models";
 
 @injectable()
 class ChatService implements IChatService {
-    @model(EModels.CHAT)
-    private Chat: Model<IChat>;
-    @model(EModels.MESSAGE)
-    private Message: Model<IMessage>;
+    private chatModel = Chat;
 
     @emitter()
     private eventEmitter: EventEmitter;
@@ -40,7 +38,7 @@ class ChatService implements IChatService {
                 chatData.meta.users
             );
         // @ts-ignore
-        return await this.Chat.create(chatData);
+        return await this.chatModel.create(chatData);
     }
 
     async findPrivateChatByUserIds(userIds: Types.ObjectId[]) {
@@ -53,7 +51,7 @@ class ChatService implements IChatService {
         userIds: Types.ObjectId[],
         options?: { exact?: boolean }
     ) {
-        let query = this.Chat.find({
+        let query = this.chatModel.find({
             "meta.users": { $all: userIds },
         });
 
@@ -71,7 +69,8 @@ class ChatService implements IChatService {
     }
 
     async findChats(query: IQuery<IChat>): Promise<IChat[]> {
-        const chats = await this.Chat.find(query.filter)
+        const chats = await this.chatModel
+            .find(query.filter)
             .sort(query.sort || { lastMessageSentAt: -1 })
             .skip(query.skip || 0)
             .limit(Math.min(query.limit, 20));
@@ -87,7 +86,7 @@ class ChatService implements IChatService {
     }
 
     async findChat(filter: IFilterQuery<IChat>): Promise<IChat> {
-        return await this.Chat.findOne(filter);
+        return await this.chatModel.findOne(filter);
     }
 
     async findChatById(chatId: Types.ObjectId): Promise<IChat> {
@@ -98,7 +97,7 @@ class ChatService implements IChatService {
         filter: IFilterQuery<IChat>,
         chatData: IUpdateQuery<IChat>
     ): Promise<IChat> {
-        return await this.Chat.findOneAndUpdate(filter, chatData, {
+        return await this.chatModel.findOneAndUpdate(filter, chatData, {
             new: true,
             runValidators: true,
         });
@@ -112,22 +111,22 @@ class ChatService implements IChatService {
     }
 
     async deleteChat(filter: IFilterQuery<IChat>): Promise<IChat> {
-        return await this.Chat.findOneAndDelete(filter);
+        return await this.chatModel.findOneAndDelete(filter);
     }
 
     async deleteChatById(id: Types.ObjectId): Promise<IChat> {
-        return await this.Chat.findByIdAndDelete(id);
+        return await this.chatModel.findByIdAndDelete(id);
     }
 
     async findMessages(query: IQuery<IMessage>) {
-        return await this.Message.find(query.filter)
+        return await Message.find(query.filter)
             .sort(query.sort || { createdAt: -1 })
             .skip(query.skip || 0)
             .limit(Math.min(query.limit, 20));
     }
 
     async findMessage(filter: IFilterQuery<IMessage>) {
-        return await this.Message.findOne(filter);
+        return await Message.findOne(filter);
     }
 
     async findMessageById(messageId: Types.ObjectId) {
@@ -149,7 +148,7 @@ class ChatService implements IChatService {
         messageData.meta.chat = chatId;
         const [message, chat] = await Promise.all([
             // @ts-ignore
-            this.Message.create(messageData),
+            Message.create(messageData),
             this.updateChatById(chatId, { lastMessageSentAt: new Date() }),
         ]);
         return { message, chat };
@@ -161,7 +160,7 @@ class ChatService implements IChatService {
     ): Promise<IMessage> {
         // @ts-ignore
         if (messageData.text) messageData.isEdited = true;
-        return await this.Message.findOneAndUpdate(filter, messageData, {
+        return await Message.findOneAndUpdate(filter, messageData, {
             new: true,
             runValidators: true,
         });
@@ -195,7 +194,7 @@ class ChatService implements IChatService {
         userIds: Types.ObjectId[];
         chatIds: Types.ObjectId[];
     }) {
-        await this.Chat.updateMany(
+        await this.chatModel.updateMany(
             { _id: { $in: chatIds } },
             {
                 $pullAll: { "meta.users": userIds },
@@ -210,7 +209,7 @@ class ChatService implements IChatService {
         userIds: Types.ObjectId[];
         chatIds: Types.ObjectId[];
     }) {
-        await this.Chat.updateMany(
+        await this.chatModel.updateMany(
             { _id: { $in: chatIds } },
             {
                 $addToSet: { "meta.users": { $each: userIds } },

@@ -61,7 +61,7 @@ export function configureUserArrayQuery(
         const { latitude, longitude } = getCoordinatesByIp(requestMetadata.ip);
         coordinates = [longitude, latitude];
     }
-    console.log(query);
+
     return { query, coordinates };
 }
 

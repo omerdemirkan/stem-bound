@@ -1,19 +1,16 @@
 import { injectable } from "inversify";
 import config from "../config";
-import { dependency } from "../decorators";
-import { IBcrypt, EDependencies, IBcryptService } from "../types";
+import { IBcryptService } from "../types";
+import bcrypt from "bcryptjs";
 
 @injectable()
 class BcryptService implements IBcryptService {
-    @dependency(EDependencies.BCRYPT)
-    private bcrypt: IBcrypt;
-
     async hash(s: string): Promise<string> {
-        return await this.bcrypt.hash(s, config.saltRounds);
+        return await bcrypt.hash(s, config.saltRounds);
     }
 
     async compare(s: string, hash: string) {
-        return await this.bcrypt.compare(s, hash);
+        return await bcrypt.compare(s, hash);
     }
 
     async replaceKeyWithHash(

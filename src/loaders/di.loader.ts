@@ -1,7 +1,6 @@
-var inversify = require("inversify");
-require("reflect-metadata");
+import { Container } from "inversify";
+import "reflect-metadata";
 
-import { container } from "../config";
 import { SERVICE } from "../constants/service.constants";
 import {
     IAuthMiddlewareService,
@@ -31,6 +30,8 @@ import {
     SchoolService,
     UserService,
 } from "../services";
+
+const container = new Container();
 
 container
     .bind<IAuthMiddlewareService>(SERVICE.AUTH_MIDDLEWARE_SERVICE)

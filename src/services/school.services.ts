@@ -1,24 +1,18 @@
-import { Model, Types } from "mongoose";
+import { Types } from "mongoose";
 import { refreshSchoolDatabase } from "../jobs";
-import {
-    ISchool,
-    EModels,
-    IQuery,
-    IFilterQuery,
-    ISchoolService,
-} from "../types";
-import { model } from "../decorators";
+import { ISchool, IQuery, IFilterQuery, ISchoolService } from "../types";
 import { injectable } from "inversify";
+import { School } from "../models";
 
 @injectable()
 class SchoolService implements ISchoolService {
-    @model(EModels.SCHOOL)
-    private School: Model<ISchool>;
+    private model = School;
 
     async findSchools(
         query: IQuery<ISchool> = { filter: {} }
     ): Promise<ISchool[]> {
-        const schools = await this.School.find(query.filter)
+        const schools = await this.model
+            .find(query.filter)
             .sort(query.sort)
             .skip(query.skip || 0)
             .limit(query.limit ? Math.min(query.limit, 20) : 20);
@@ -50,7 +44,7 @@ class SchoolService implements ISchoolService {
             $limit: query.limit ? Math.min(query.limit, 50) : 20,
         });
 
-        const schools = await this.School.aggregate(aggregateOptions);
+        const schools = await this.model.aggregate(aggregateOptions);
         return schools;
     }
 
@@ -63,11 +57,11 @@ class SchoolService implements ISchoolService {
     }
 
     async findSchool(filter: IFilterQuery<ISchool>): Promise<ISchool> {
-        return await this.School.findOne(filter);
+        return await this.model.findOne(filter);
     }
 
     async findSchoolById(id: Types.ObjectId): Promise<ISchool> {
-        return await this.School.findById(id);
+        return await this.model.findById(id);
     }
 
     async refreshDatabase(options: { url?: string }) {

@@ -1,14 +1,12 @@
-import { Model, Types } from "mongoose";
+import { Types } from "mongoose";
 import { EventEmitter } from "events";
-import { model, emitter } from "../decorators";
-import { ErrorService } from ".";
+import { emitter } from "../decorators";
 import { inject, injectable } from "inversify";
 import {
     ECourseEvents,
     ICourse,
     IMeeting,
     IAnnouncement,
-    EModels,
     EErrorTypes,
     IQuery,
     IFilterQuery,
@@ -18,11 +16,11 @@ import {
     IErrorService,
 } from "../types";
 import { SERVICE } from "../constants/service.constants";
+import { Course } from "../models";
 
 @injectable()
 class CourseService implements ICourseService {
-    @model(EModels.COURSE)
-    private Course: Model<ICourse>;
+    private model = Course;
 
     @emitter()
     private eventEmitter: EventEmitter;
@@ -70,7 +68,7 @@ class CourseService implements ICourseService {
 
     async createCourse(courseData: ICourse): Promise<ICourse> {
         courseData.verified = false;
-        const course: ICourse = await this.Course.create(courseData);
+        const course: ICourse = await this.model.create(courseData);
         this.eventEmitter.emit(ECourseEvents.COURSE_CREATED, course);
         return course;
     }
@@ -86,7 +84,8 @@ class CourseService implements ICourseService {
     async findCourses(
         query: IQuery<ICourse> = { filter: {} }
     ): Promise<ICourse[]> {
-        return await this.Course.find({ verified: true, ...query.filter })
+        return await this.model
+            .find({ verified: true, ...query.filter })
             .sort(query.sort)
             .skip(query.skip || 0)
             .limit(query.limit ? Math.min(query.limit, 20) : 20);
@@ -129,7 +128,7 @@ class CourseService implements ICourseService {
     }
 
     async findCourse(filter: IFilterQuery<ICourse>): Promise<ICourse> {
-        return await this.Course.findOne(filter);
+        return await this.model.findOne(filter);
     }
 
     async findCourseById(id: Types.ObjectId): Promise<ICourse> {
@@ -140,7 +139,7 @@ class CourseService implements ICourseService {
         filter: IFilterQuery<ICourse>,
         udpateQuery: IUpdateQuery<ICourse>
     ): Promise<ICourse> {
-        return this.Course.findOneAndUpdate(filter, udpateQuery, {
+        return this.model.findOneAndUpdate(filter, udpateQuery, {
             new: true,
             runValidators: true,
         });
@@ -154,7 +153,7 @@ class CourseService implements ICourseService {
     }
 
     async deleteCourse(filter: IFilterQuery<ICourse>): Promise<ICourse> {
-        return await this.Course.findOneAndDelete(filter);
+        return await this.model.findOneAndDelete(filter);
     }
 
     async deleteCourseById(id: Types.ObjectId): Promise<ICourse> {
@@ -169,7 +168,7 @@ class CourseService implements ICourseService {
         if (!course)
             this.errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
-                "Course not found"
+                "this.model not found"
             );
 
         return this.configureMeetingsQuery(course, query);
@@ -186,7 +185,7 @@ class CourseService implements ICourseService {
         if (!course) {
             this.errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
-                "Course not found"
+                "this.model not found"
             );
         }
         const meeting = course.meetings.find(
@@ -301,7 +300,7 @@ class CourseService implements ICourseService {
         if (!course) {
             this.errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
-                "Course not found"
+                "this.model not found"
             );
         }
         const announcement = course.announcements.find(
@@ -378,7 +377,7 @@ class CourseService implements ICourseService {
         courseId: Types.ObjectId;
         announcementId: Types.ObjectId;
     }) {
-        const course = await this.Course.findByIdAndUpdate(
+        const course = await this.model.findByIdAndUpdate(
             courseId,
             {
                 $pull: { announcements: { _id: announcementId.toString() } },
@@ -398,7 +397,7 @@ class CourseService implements ICourseService {
         instructorIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
     }): Promise<void> {
-        await this.Course.updateMany(
+        await this.model.updateMany(
             { _id: { $in: courseIds } },
             {
                 $addToSet: { "meta.instructors": { $each: instructorIds } },
@@ -413,7 +412,7 @@ class CourseService implements ICourseService {
         instructorIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
     }): Promise<void> {
-        await this.Course.updateMany(
+        await this.model.updateMany(
             { _id: { $in: courseIds } },
             {
                 $pullAll: { "meta.instructors": instructorIds },
@@ -428,7 +427,7 @@ class CourseService implements ICourseService {
         studentIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
     }): Promise<void> {
-        await this.Course.updateMany(
+        await this.model.updateMany(
             { _id: { $in: courseIds } },
             {
                 $addToSet: { "meta.students": { $each: studentIds } },
@@ -443,7 +442,7 @@ class CourseService implements ICourseService {
         studentIds: Types.ObjectId[];
         courseIds: Types.ObjectId[];
     }): Promise<void> {
-        await this.Course.updateMany(
+        await this.model.updateMany(
             { _id: { $in: courseIds } },
             {
                 $pullAll: { "meta.students": studentIds },
