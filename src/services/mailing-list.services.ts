@@ -1,9 +1,11 @@
+import { injectable } from "inversify";
 import { Model, Document, Types } from "mongoose";
-import { mailClient } from "../config";
+import { container, mailClient } from "../config";
 import { model } from "../decorators";
 import { EModels, IQuery } from "../types";
 
-export default class MailingListService {
+@injectable()
+class MailingListService {
     @model(EModels.MAILING_LIST_SUBSCRIBER)
     private Subscriber: Model<Document>;
 
@@ -35,3 +37,7 @@ export default class MailingListService {
         return await mailClient.messages().send(emailData);
     }
 }
+
+container.bind<MailingListService>(MailingListService).toSelf();
+
+export default MailingListService;

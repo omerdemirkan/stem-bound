@@ -5,17 +5,17 @@ import {
     IInstructor,
     IStudent,
     ISchoolOfficial,
-    IUserQueryOptions,
     IQuery,
     IFilterQuery,
 } from "../types";
 import { Model, Types } from "mongoose";
 import { LocationService, SchoolService } from ".";
 import { model } from "../decorators";
+import { injectable } from "inversify";
+import { container } from "../config";
 
-const { ObjectId } = Types;
-
-export default class UserService {
+@injectable()
+class UserService {
     @model(EModels.USER)
     private User: Model<IUser>;
 
@@ -68,11 +68,6 @@ export default class UserService {
     ) {
         let aggregateOptions: any[] = [];
 
-        if (Object.keys(query.filter).length)
-            aggregateOptions.push({
-                $match: query.filter,
-            });
-
         aggregateOptions.push({
             $geoNear: {
                 near: {
@@ -81,6 +76,7 @@ export default class UserService {
                 },
                 distanceField: "distance.calculated",
                 key: "location.geoJSON",
+                query: query.filter,
             },
         });
 
@@ -263,3 +259,7 @@ export default class UserService {
         );
     }
 }
+
+container.bind<UserService>(UserService).toSelf();
+
+export default UserService;

@@ -1,13 +1,13 @@
 import { EUserRoles, ITokenPayload, EUserEvents, IUser } from "../types";
 import { JwtService, BcryptService, UserService, MetadataService } from ".";
-import { Types } from "mongoose";
 import { EventEmitter } from "events";
 import { emitter } from "../decorators";
 import { configureTokenPayload } from "../helpers";
+import { injectable } from "inversify";
+import { container } from "../config";
 
-const { ObjectId } = Types;
-
-export default class AuthService {
+@injectable()
+class AuthService {
     @emitter()
     private eventEmitter: EventEmitter;
 
@@ -56,3 +56,7 @@ export default class AuthService {
         return null;
     }
 }
+
+container.bind<AuthService>(AuthService).toSelf();
+
+export default AuthService;

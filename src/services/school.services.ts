@@ -2,8 +2,12 @@ import { Model, Types } from "mongoose";
 import { refreshSchoolDatabase } from "../jobs";
 import { ISchool, EModels, IQuery, IFilterQuery } from "../types";
 import { model } from "../decorators";
+import { injectable } from "inversify";
+import { container } from "../config";
+import { School } from "../models";
 
-export default class SchoolService {
+@injectable()
+class SchoolService {
     @model(EModels.SCHOOL)
     private School: Model<ISchool>;
 
@@ -66,3 +70,7 @@ export default class SchoolService {
         return await refreshSchoolDatabase(options);
     }
 }
+
+container.bind<SchoolService>(SchoolService).toSelf();
+
+export default SchoolService;

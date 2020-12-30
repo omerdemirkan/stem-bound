@@ -1,8 +1,10 @@
-import { logger } from "../config";
+import { container, logger } from "../config";
 import { EErrorTypes } from "../types";
 import { errors } from "../constants";
+import { injectable } from "inversify";
 
-export default class ErrorService {
+@injectable()
+class ErrorService {
     status(error: Error) {
         logger.error("%j" + error, error.stack);
 
@@ -22,3 +24,7 @@ export default class ErrorService {
         throw error;
     }
 }
+
+container.bind<ErrorService>(ErrorService).toSelf();
+
+export default ErrorService;

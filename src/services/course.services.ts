@@ -14,8 +14,11 @@ import {
 } from "../types";
 import { model, emitter } from "../decorators";
 import { ErrorService } from ".";
+import { injectable } from "inversify";
+import { container } from "../config";
 
-export default class CourseService {
+@injectable()
+class CourseService {
     @model(EModels.COURSE)
     private Course: Model<ICourse>;
 
@@ -444,3 +447,7 @@ export default class CourseService {
         );
     }
 }
+
+container.bind<CourseService>(CourseService).toSelf();
+
+export default CourseService;

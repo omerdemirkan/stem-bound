@@ -8,8 +8,11 @@ import {
     IInstructor,
     IChat,
 } from "../types";
+import { injectable } from "inversify";
+import { container } from "../config";
 
-export default class MetadataService {
+@injectable()
+class MetadataService {
     constructor(
         private courseService: CourseService,
         private userService: UserService,
@@ -122,3 +125,7 @@ export default class MetadataService {
         });
     }
 }
+
+container.bind<MetadataService>(MetadataService).toSelf();
+
+export default MetadataService;

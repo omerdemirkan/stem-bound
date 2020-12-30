@@ -1,8 +1,11 @@
 import { ILocationData, EModels, IQuery } from "../types";
 import { Model } from "mongoose";
 import { model } from "../decorators";
+import { injectable } from "inversify";
+import { container } from "../config";
 
-export default class LocationService {
+@injectable()
+class LocationService {
     @model(EModels.LOCATION)
     private Location: Model<ILocationData>;
 
@@ -25,3 +28,7 @@ export default class LocationService {
         return await this.Location.findOne({ zip });
     }
 }
+
+container.bind<LocationService>(LocationService).toSelf();
+
+export default LocationService;

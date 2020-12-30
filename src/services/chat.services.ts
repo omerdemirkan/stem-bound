@@ -7,15 +7,17 @@ import {
     EChatTypes,
     IFilterQuery,
     IUpdateQuery,
-    IUser,
 } from "../types";
 import { EventEmitter } from "events";
 import { model, emitter } from "../decorators";
 import { ErrorService } from ".";
 import UserService from "./user.services";
 import { configurePrivateChatKey } from "../helpers";
+import { injectable } from "inversify";
+import { container } from "../config";
 
-export default class ChatService {
+@injectable()
+class ChatService {
     @model(EModels.CHAT)
     private Chat: Model<IChat>;
     @model(EModels.MESSAGE)
@@ -213,3 +215,7 @@ export default class ChatService {
         );
     }
 }
+
+container.bind<ChatService>(ChatService).toSelf();
+
+export default ChatService;

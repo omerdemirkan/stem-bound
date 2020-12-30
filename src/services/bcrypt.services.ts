@@ -1,8 +1,10 @@
-import config from "../config";
+import { injectable } from "inversify";
+import config, { container } from "../config";
 import { dependency } from "../decorators";
 import { IBcrypt, EDependencies } from "../types";
 
-export default class BcryptService {
+@injectable()
+class BcryptService {
     @dependency(EDependencies.BCRYPT)
     private bcrypt: IBcrypt;
 
@@ -34,3 +36,7 @@ export default class BcryptService {
         return obj;
     }
 }
+
+container.bind<BcryptService>(BcryptService).toSelf();
+
+export default BcryptService;

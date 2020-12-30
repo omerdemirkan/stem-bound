@@ -30,3 +30,4 @@ export default config;
 export * from "./dependency.config";
 export * from "./global.config";
 export * from "./assets.config";
+export * from "./di.config";

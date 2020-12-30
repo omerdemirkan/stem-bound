@@ -1,14 +1,16 @@
 import { JwtService } from ".";
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import {
     EUserRoles,
     IModifiedRequest,
     IRequestValidationFunction,
     ITokenPayload,
 } from "../types";
-import { logger } from "../config";
+import { container, logger } from "../config";
+import { injectable } from "inversify";
 
-export default class AuthMiddlewareService {
+@injectable()
+class AuthMiddlewareService {
     constructor(private jwtService: JwtService) {}
 
     extractTokenPayload = async (
@@ -101,3 +103,7 @@ export default class AuthMiddlewareService {
         };
     }
 }
+
+container.bind<AuthMiddlewareService>(AuthMiddlewareService).toSelf();
+
+export default AuthMiddlewareService;
