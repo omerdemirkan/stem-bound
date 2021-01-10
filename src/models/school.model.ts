@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import { schemaValidators } from "../helpers/model.helpers";
 import { ISchool } from "../types";
 import { geoJsonSchema } from "./location.model";
 
@@ -123,6 +122,7 @@ const schoolSchema = new Schema(
     },
     {
         versionKey: false,
+        _id: false,
     }
 );
 

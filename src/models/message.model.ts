@@ -25,10 +25,7 @@ const messageMetaSchema = new Schema(
             index: true,
         },
     },
-    {
-        _id: false,
-        timestamps: false,
-    }
+    { _id: false, timestamps: false, versionKey: false }
 );
 
 const messageSchema = new Schema(
@@ -63,6 +60,7 @@ const messageSchema = new Schema(
             createdAt: true,
             updatedAt: true,
         },
+        versionKey: false,
     }
 );
 

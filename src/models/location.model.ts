@@ -14,7 +14,7 @@ export const geoJsonSchema = new Schema(
             required: [true, "GeoJSON coordinates required"],
         },
     },
-    { _id: false, timestamps: false }
+    { _id: false, timestamps: false, versionKey: false }
 );
 
 export const locationSchema = new Schema(

@@ -33,10 +33,7 @@ const courseMetaSchema = new Schema(
             index: true,
         },
     },
-    {
-        _id: false,
-        timestamps: false,
-    }
+    { _id: false, timestamps: false, versionKey: false }
 );
 
 const announcementMetaSchema = new Schema(
@@ -51,9 +48,7 @@ const announcementMetaSchema = new Schema(
             default: [],
         },
     },
-    {
-        _id: false,
-    }
+    { _id: false, timestamps: false, versionKey: false }
 );
 
 const announcementSchema = new Schema(
@@ -76,6 +71,7 @@ const announcementSchema = new Schema(
         timestamps: {
             createdAt: true,
         },
+        versionKey: false,
     }
 );
 
@@ -129,66 +125,74 @@ const meetingSchema = new Schema(
     },
     {
         _id: true,
+        versionKey: false,
+        timestamps: false,
     }
 );
 
-const courseSchema = new Schema({
-    title: {
-        type: String,
-        minlength: 4,
-        maxlength: 40,
-        required: [true, "Course title is required."],
-        trim: true,
-    },
-    verified: {
-        type: Boolean,
-        required: [true, "Course verification field is required."],
-        default: false,
-    },
-    shortDescription: {
-        type: String,
-        required: [true, "Course short description is required."],
-        minlength: 4,
-        maxlength: 80,
-        trim: true,
-    },
-    longDescription: {
-        type: String,
-        minlength: 4,
-        maxlength: 2000,
-        trim: true,
-    },
-    type: {
-        type: String,
-        enum: Object.values(ECourseTypes),
-        required: [true, "Course type is required."],
-    },
-    meetings: {
-        type: [meetingSchema],
-        required: true,
-        default: [],
-        validate: {
-            validator: schemaValidators.uniqueKeyMapping(function (
-                meeting: IMeeting
-            ) {
-                const date = new Date(meeting.start);
-                date.setHours(0, 0, 0, 0);
-                return date.toString();
-            }),
-            message:
-                "Meeting dates for a course must be unique, cannot have two meetings on the same day!",
+const courseSchema = new Schema(
+    {
+        title: {
+            type: String,
+            minlength: 4,
+            maxlength: 40,
+            required: [true, "Course title is required."],
+            trim: true,
+        },
+        verified: {
+            type: Boolean,
+            required: [true, "Course verification field is required."],
+            default: false,
+        },
+        shortDescription: {
+            type: String,
+            required: [true, "Course short description is required."],
+            minlength: 4,
+            maxlength: 80,
+            trim: true,
+        },
+        longDescription: {
+            type: String,
+            minlength: 4,
+            maxlength: 2000,
+            trim: true,
+        },
+        type: {
+            type: String,
+            enum: Object.values(ECourseTypes),
+            required: [true, "Course type is required."],
+        },
+        meetings: {
+            type: [meetingSchema],
+            required: true,
+            default: [],
+            validate: {
+                validator: schemaValidators.uniqueKeyMapping(function (
+                    meeting: IMeeting
+                ) {
+                    const date = new Date(meeting.start);
+                    date.setHours(0, 0, 0, 0);
+                    return date.toString();
+                }),
+                message:
+                    "Meeting dates for a course must be unique, cannot have two meetings on the same day!",
+            },
+        },
+        announcements: {
+            type: [announcementSchema],
+            required: true,
+            default: [],
+        },
+        meta: {
+            type: courseMetaSchema,
+            required: [true, "Course meta details are required."],
         },
     },
-    announcements: {
-        type: [announcementSchema],
-        required: true,
-        default: [],
-    },
-    meta: {
-        type: courseMetaSchema,
-        required: [true, "Course meta details are required."],
-    },
-});
+    {
+        timestamps: false,
+        versionKey: false,
+    }
+);
 
 courseSchema.index({
     title: "text",

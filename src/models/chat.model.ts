@@ -18,6 +18,7 @@ const chatMetaSchema = new Schema(
     {
         _id: false,
         timestamps: false,
+        versionKey: false,
     }
 );
 
@@ -50,12 +51,18 @@ const chatSchema = new Schema(
             index: true,
             unique: true,
         },
+        numMessages: {
+            type: Number,
+            required: true,
+            default: 0,
+        },
     },
     {
         timestamps: {
             createdAt: true,
             updatedAt: false,
         },
+        versionKey: false,
     }
 );
 

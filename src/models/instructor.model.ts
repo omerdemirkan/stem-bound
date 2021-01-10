@@ -29,10 +29,7 @@ const instructorMetaSchema = new Schema(
             index: true,
         },
     },
-    {
-        _id: false,
-        timestamps: false,
-    }
+    { _id: false, timestamps: false, versionKey: false }
 );
 
 const Instructors = Users.discriminator(

@@ -28,9 +28,7 @@ const studentMetaSchema = new Schema(
             },
         },
     },
-    {
-        _id: false,
-    }
+    { _id: false, timestamps: false, versionKey: false }
 );
 
 const Students = Users.discriminator(
