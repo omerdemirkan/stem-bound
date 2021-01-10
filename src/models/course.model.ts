@@ -28,7 +28,7 @@ const courseMetaSchema = new Schema(
             index: true,
         },
         school: {
-            type: Schema.Types.ObjectId,
+            type: String,
             required: [true, "Course school is required."],
             index: true,
         },

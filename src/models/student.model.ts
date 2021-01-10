@@ -6,7 +6,7 @@ import { EUserRoles } from "../types";
 const studentMetaSchema = new Schema(
     {
         school: {
-            type: Schema.Types.ObjectId,
+            type: String,
             required: [true, "School Metadata Required"],
         },
         courses: {

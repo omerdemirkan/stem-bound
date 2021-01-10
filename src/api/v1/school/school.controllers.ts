@@ -25,8 +25,9 @@ export async function getSchools(req: IModifiedRequest, res: Response) {
 
 export async function getSchool(req: IModifiedRequest, res: Response) {
     try {
-        const id = ObjectId(req.params.id);
-        const school: ISchool = await schoolService.findSchoolById(id);
+        const school: ISchool = await schoolService.findSchoolByNcesId(
+            req.params.id
+        );
 
         if (!school) {
             errorService.throwError(

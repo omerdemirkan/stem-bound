@@ -60,8 +60,8 @@ class SchoolService implements ISchoolService {
         return await this.model.findOne(filter);
     }
 
-    async findSchoolById(id: Types.ObjectId): Promise<ISchool> {
-        return await this.model.findById(id);
+    async findSchoolByNcesId(ncesid: string): Promise<ISchool> {
+        return await this.findSchool({ ncesid });
     }
 
     async refreshDatabase(options: { url?: string }) {

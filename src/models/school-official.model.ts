@@ -6,7 +6,7 @@ import { schemaValidators } from "../helpers/model.helpers";
 const schoolOfficialMetaSchema = new Schema(
     {
         school: {
-            type: Schema.Types.ObjectId,
+            type: String,
             required: [true, "School metadata required"],
             index: true,
         },

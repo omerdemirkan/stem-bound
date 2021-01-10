@@ -144,7 +144,7 @@ export async function getUserSchool(req: IModifiedRequest, res: Response) {
             );
         }
         const schoolId = (user as IStudent | ISchoolOfficial).meta.school;
-        const school = await schoolService.findSchoolById(schoolId);
+        const school = await schoolService.findSchoolByNcesId(schoolId);
 
         res.json({
             message: "User courses successfully fetched",

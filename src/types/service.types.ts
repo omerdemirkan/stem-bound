@@ -363,7 +363,7 @@ export interface ISchoolService {
 
     findSchool(filter: IFilterQuery<ISchool>): Promise<ISchool>;
 
-    findSchoolById(id: Types.ObjectId): Promise<ISchool>;
+    findSchoolByNcesId(ncesid: string): Promise<ISchool>;
 
     refreshDatabase(options: {
         url?: string;

@@ -200,8 +200,9 @@ export async function getCourseSchool(req: IModifiedRequest, res: Response) {
                 "Course not found"
             );
         }
-        const schoolId = course.meta.school;
-        const school = await schoolService.findSchoolById(schoolId);
+        const school = await schoolService.findSchoolByNcesId(
+            course.meta.school
+        );
         res.json({
             message: "Course school successfully fetched",
             data: school,
@@ -223,7 +224,7 @@ export async function verifyCourse(req: IModifiedRequest, res: Response) {
             ) as Promise<ISchoolOfficial>,
         ]);
 
-        if (!schoolOfficial.meta.school.equals(course.meta.school))
+        if (schoolOfficial.meta.school !== course.meta.school)
             errorService.throwError(
                 EErrorTypes.FORBIDDEN,
                 "Only school officials from the school at which the course is taught can verify"

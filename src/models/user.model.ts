@@ -86,7 +86,6 @@ const userSchema = new Schema(
         timestamps: {
             createdAt: true,
         },
-        versionKey: false,
         discriminatorKey: "role",
     }
 );

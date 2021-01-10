@@ -37,7 +37,7 @@ export interface IInstructor extends IBaseUser, Document {
 export interface ISchoolOfficial extends IBaseUser, Document {
     position: string;
     meta: {
-        school: Types.ObjectId;
+        school: string;
         chats: Types.ObjectId[];
     };
 }
@@ -45,7 +45,7 @@ export interface ISchoolOfficial extends IBaseUser, Document {
 export interface IStudent extends IBaseUser, Document {
     interests: string[];
     meta: {
-        school: Types.ObjectId;
+        school: string;
         courses: Types.ObjectId[];
         chats: Types.ObjectId[];
     };

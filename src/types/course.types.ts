@@ -42,7 +42,7 @@ export interface ICourse extends Document {
     meta: {
         instructors: Types.ObjectId[];
         students: Types.ObjectId[];
-        school: Types.ObjectId;
+        school: string;
     };
 }
 

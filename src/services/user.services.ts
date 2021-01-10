@@ -55,7 +55,9 @@ class UserService implements IUserService {
                   )
               ).toObject()
             : (
-                  await this.schoolService.findSchoolById(userData.meta.school)
+                  await this.schoolService.findSchoolByNcesId(
+                      userData.meta.school
+                  )
               ).toObject().location;
         return await this.getUserModelByRole(role).create(userData);
     }
