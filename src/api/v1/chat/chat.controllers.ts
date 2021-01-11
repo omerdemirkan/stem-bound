@@ -19,9 +19,17 @@ export async function createChat(req: IModifiedRequest, res: Response) {
     try {
         let chatData: Partial<IChat> = req.body,
             duplicateChat: IChat;
+
+        const userId = ObjectId(req.payload.user._id);
+
         chatData.meta.users = chatData.meta.users.map((id) =>
             ObjectId(id as any)
         );
+
+        if (chatData.meta.users.findIndex((id) => id.equals(userId)) === -1)
+            chatData.meta.users.push(userId);
+
+        chatData.meta.createdBy = userId;
 
         if (chatData.type === EChatTypes.PRIVATE) {
             duplicateChat = await chatService.findPrivateChatByUserIds(
@@ -32,14 +40,22 @@ export async function createChat(req: IModifiedRequest, res: Response) {
         let newChat: IChat =
             duplicateChat || (await chatService.createChat(chatData));
 
-        if (!duplicateChat)
-            await metadataService.handleNewChatMetadataUpdate(newChat);
+        let promises: Promise<any>[] = [];
 
+        promises.push(configureChatResponseData(newChat, req.meta));
+
+        if (!duplicateChat)
+            promises.push(metadataService.handleNewChatMetadataUpdate(newChat));
+
+        // memory safety accross threads shouldnt be an issue
+        // since we call the toObject function in configuration
+
+        const [chat] = await Promise.all(promises);
         res.json({
             message: duplicateChat
                 ? "Duplicate chat found"
                 : "Chat successfully created",
-            data: configureChatResponseData(newChat, req.meta),
+            data: chat,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

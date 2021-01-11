@@ -18,7 +18,9 @@ export interface IChat extends Document {
     type: EChatTypes;
     meta: {
         users: Types.ObjectId[];
+        createdBy: Types.ObjectId;
     };
+    numMessages: number;
     name?: string;
     pictureUrl?: string;
     lastMessageSentAt?: Date;

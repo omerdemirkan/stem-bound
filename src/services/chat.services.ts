@@ -95,9 +95,9 @@ class ChatService implements IChatService {
 
     async updateChat(
         filter: IFilterQuery<IChat>,
-        chatData: IUpdateQuery<IChat>
+        updateQuery: IUpdateQuery<IChat>
     ): Promise<IChat> {
-        return await this.chatModel.findOneAndUpdate(filter, chatData, {
+        return await this.chatModel.findOneAndUpdate(filter, updateQuery, {
             new: true,
             runValidators: true,
         });
@@ -105,9 +105,9 @@ class ChatService implements IChatService {
 
     async updateChatById(
         id: Types.ObjectId,
-        chatData: Partial<IChat>
+        updateQuery: IUpdateQuery<IChat>
     ): Promise<IChat> {
-        return await this.updateChat({ _id: id }, chatData);
+        return await this.updateChat({ _id: id }, updateQuery);
     }
 
     async deleteChat(filter: IFilterQuery<IChat>): Promise<IChat> {
@@ -149,7 +149,11 @@ class ChatService implements IChatService {
         const [message, chat] = await Promise.all([
             // @ts-ignore
             Message.create(messageData),
-            this.updateChatById(chatId, { lastMessageSentAt: new Date() }),
+            this.updateChatById(chatId, {
+                lastMessageSentAt: new Date(),
+                // @ts-ignore
+                $inc: { numMessages: 1 },
+            }),
         ]);
         return { message, chat };
     }

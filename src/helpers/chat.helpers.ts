@@ -75,19 +75,27 @@ export function configureMessageArrayQuery(
     return query;
 }
 
-export function configureChatArrayResponseData(
+export async function configureChatArrayResponseData(
     chats: IChat[],
     requestMetadata: IRequestMetadata
-): IChat[] {
-    let newChats: IChat[] = chats.map((chat) => chat.toObject());
+): Promise<IChat[]> {
+    let newChats = chats.map((chat) => chat.toObject());
+    await configureChatArrayPictureUrls(
+        newChats,
+        ObjectId(requestMetadata.payload.user._id)
+    );
     return newChats;
 }
 
-export function configureChatResponseData(
+export async function configureChatResponseData(
     chat: IChat,
     requestMetadata: IRequestMetadata
-): IChat {
+): Promise<IChat> {
     let newChat = chat.toObject();
+    await configureChatArrayPictureUrls(
+        [newChat],
+        ObjectId(requestMetadata.payload.user._id)
+    );
     return newChat;
 }
 
@@ -104,6 +112,49 @@ export function configureMessageResponseData(
 ): IMessage {
     return message;
 }
+
+export async function configureChatArrayPictureUrls(
+    chats: IChat[],
+    requestingUserId: Types.ObjectId
+): Promise<IChat[]> {
+    let userHashTable: { [key: string]: IUser } = {};
+
+    chats.forEach(function (chat) {
+        if (chat.type !== EChatTypes.PRIVATE) return;
+        chat.meta.users.forEach(function (userId) {
+            // @ts-ignore
+            userHashTable[userId.toHexString()] = userId;
+        });
+    });
+
+    delete userHashTable[requestingUserId.toHexString()];
+
+    const users = await userService.findUsersByIds(
+        Object.values(userHashTable) as any
+    );
+
+    users.forEach(function (user) {
+        userHashTable[user._id.toHexString()] = user;
+    });
+
+    let i = chats.length;
+    while (i--) {
+        if (chats[i].type === EChatTypes.PRIVATE) {
+            const user =
+                userHashTable[
+                    chats[i].meta.users
+                        .find((u) => !requestingUserId.equals(u))
+                        .toHexString()
+                ];
+
+            chats[i].pictureUrl = user.profilePictureUrl;
+            chats[i].name = `${user.firstName} ${user.lastName}`;
+        }
+    }
+
+    return chats;
+}
+
 export function configurePrivateChatKey(userIds: Types.ObjectId[]): string {
     const stringUserIds = userIds.map((u) => u.toString());
     stringUserIds.sort();

@@ -39,7 +39,6 @@ export function configureUserArrayQuery(
     user_ids = user_ids ? user_ids.split(",").map((id) => ObjectId(id)) : null;
     chat_id = ObjectId.isValid(chat_id) ? ObjectId(chat_id) : null;
     course_id = ObjectId.isValid(course_id) ? ObjectId(course_id) : null;
-    school_id = ObjectId.isValid(school_id) ? ObjectId(school_id) : null;
 
     let query: IQuery<IUser> = { filter: {} };
     let coordinates: ICoordinates;
