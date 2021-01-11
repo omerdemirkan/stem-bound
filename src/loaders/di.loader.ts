@@ -30,6 +30,7 @@ import {
     SchoolService,
     UserService,
 } from "../services";
+import { jwt } from "../config";
 
 const container = new Container();
 

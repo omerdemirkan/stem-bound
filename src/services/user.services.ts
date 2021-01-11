@@ -53,12 +53,12 @@ class UserService implements IUserService {
                   await this.locationService.findLocationByZip(
                       (userData as any).zip
                   )
-              ).toObject()
+              )?.toObject()
             : (
                   await this.schoolService.findSchoolByNcesId(
                       userData.meta.school
                   )
-              ).toObject().location;
+              )?.toObject().location;
         return await this.getUserModelByRole(role).create(userData);
     }
 

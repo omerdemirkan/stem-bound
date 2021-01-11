@@ -14,6 +14,10 @@ const chatMetaSchema = new Schema(
             },
             index: true,
         },
+        createdBy: {
+            type: Schema.Types.ObjectId,
+            required: [true, "Chats require createdBy metadata"],
+        },
     },
     {
         _id: false,

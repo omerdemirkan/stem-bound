@@ -1,10 +1,7 @@
 import { Response } from "express";
-import { Types } from "mongoose";
 import { configureSchoolArrayQuery } from "../../../helpers/school.helpers";
 import { schoolService, errorService } from "../../../services";
 import { ISchool, EErrorTypes, IModifiedRequest } from "../../../types";
-
-const { ObjectId } = Types;
 
 export async function getSchools(req: IModifiedRequest, res: Response) {
     try {

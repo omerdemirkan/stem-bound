@@ -12,13 +12,15 @@ export function saveFileToBucket(file: UploadedFile): Promise<string> {
             resumable: false,
         });
         blobStream
-            .on("finish", () => {
+            .on("finish", function () {
                 resolve(
                     `https://storage.googleapis.com/${bucket.name}/${blob.name}`
                 );
             })
-            .on("error", () => {
-                reject(`Unable to upload image, something went wrong`);
+            .on("error", function (e) {
+                reject(
+                    `Unable to upload image, something went wrong: \n${e.message}`
+                );
             })
             .end(data);
     });

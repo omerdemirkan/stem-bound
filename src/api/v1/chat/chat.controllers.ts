@@ -32,20 +32,14 @@ export async function createChat(req: IModifiedRequest, res: Response) {
         let newChat: IChat =
             duplicateChat || (await chatService.createChat(chatData));
 
-        let promises: Promise<any>[] = [];
-
-        promises.push(configureChatResponseData(newChat, req.meta));
-
         if (!duplicateChat)
-            promises.push(metadataService.handleNewChatMetadataUpdate(newChat));
+            await metadataService.handleNewChatMetadataUpdate(newChat);
 
-        // memory safety accross threads shouldnt be an issue
-        const [chat] = await Promise.all(promises);
         res.json({
             message: duplicateChat
                 ? "Duplicate chat found"
                 : "Chat successfully created",
-            data: chat,
+            data: configureChatResponseData(newChat, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
