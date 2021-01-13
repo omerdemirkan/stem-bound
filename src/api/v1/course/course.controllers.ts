@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import { Types } from "mongoose";
 import {
     courseService,
@@ -7,14 +7,7 @@ import {
     userService,
     schoolService,
 } from "../../../services";
-import {
-    ICourse,
-    IUser,
-    EErrorTypes,
-    ISchoolOfficial,
-    IModifiedRequest,
-    ICourseVerificationStatusUpdate,
-} from "../../../types";
+import { ICourse, IUser, EErrorTypes, IModifiedRequest } from "../../../types";
 import {
     configureCourseArrayQuery,
     configureCourseArrayResponseData,

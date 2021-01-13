@@ -101,7 +101,10 @@ class CourseService implements ICourseService {
         query: IQuery<ICourse> = { filter: {} }
     ): Promise<ICourse[]> {
         return await this.model
-            .find({ verified: true, ...query.filter })
+            .find({
+                verificationStatus: ECourseVerificationStatus.VERIFIED,
+                ...query.filter,
+            })
             .sort(query.sort)
             .skip(query.skip || 0)
             .limit(query.limit ? Math.min(query.limit, 20) : 20);

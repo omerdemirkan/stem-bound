@@ -10,6 +10,7 @@ import {
     ECourseTypes,
     EMeetingTypes,
     ICourseVerificationStatusUpdate,
+    ECourseVerificationStatus,
 } from "../types";
 import { configureSubdocumentQuery } from "./query.helpers";
 
@@ -22,6 +23,7 @@ export function configureCourseArrayQuery(
         skip,
         limit,
         unverified,
+        verification_status,
         type,
         school_id,
         instructor_id,
@@ -43,7 +45,12 @@ export function configureCourseArrayQuery(
 
     if (skip) query.skip = skip;
     if (limit) query.limit = limit;
-    if (unverified) query.filter.verified = false;
+    if (unverified)
+        query.filter.verificationStatus = {
+            $ne: ECourseVerificationStatus.VERIFIED,
+        };
+    if (verification_status)
+        query.filter.verificationStatus = verification_status;
     if (type) query.filter.type = type;
     if (text) query.filter.$text = { $search: text };
 
