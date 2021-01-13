@@ -3,7 +3,12 @@ import { SignOptions, VerifyOptions } from "jsonwebtoken";
 import { Types } from "mongoose";
 import { IRequestValidationFunction, ITokenPayload } from "./auth.types";
 import { IChat, IMessage } from "./chat.types";
-import { IAnnouncement, ICourse, IMeeting } from "./course.types";
+import {
+    IAnnouncement,
+    ICourse,
+    ICourseVerificationStatusUpdate,
+    IMeeting,
+} from "./course.types";
 import {
     IFilterQuery,
     IQuery,
@@ -138,9 +143,15 @@ export interface IChatService {
 export interface ICourseService {
     createCourse(courseData: ICourse): Promise<ICourse>;
 
-    verifyCourse(filter: IFilterQuery<ICourse>): Promise<ICourse>;
+    updateCourseVerificationStatus(
+        filter: IFilterQuery<ICourse>,
+        courseVerificationStatusUpdate: ICourseVerificationStatusUpdate
+    ): Promise<ICourse>;
 
-    verifyCourseById(courseId: Types.ObjectId): Promise<ICourse>;
+    updateCourseVerificationStatusById(
+        courseId: Types.ObjectId,
+        courseVerificationStatusUpdate: ICourseVerificationStatusUpdate
+    ): Promise<ICourse>;
 
     findCourses(query?: IQuery<ICourse>): Promise<ICourse[]>;
 

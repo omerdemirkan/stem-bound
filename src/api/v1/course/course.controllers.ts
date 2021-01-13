@@ -13,11 +13,13 @@ import {
     EErrorTypes,
     ISchoolOfficial,
     IModifiedRequest,
+    ICourseVerificationStatusUpdate,
 } from "../../../types";
 import {
     configureCourseArrayQuery,
     configureCourseArrayResponseData,
     configureCourseResponseData,
+    configureCourseVerificationStatusUpdate,
 } from "../../../helpers";
 
 const { ObjectId } = Types;
@@ -212,28 +214,19 @@ export async function getCourseSchool(req: IModifiedRequest, res: Response) {
     }
 }
 
-export async function verifyCourse(req: IModifiedRequest, res: Response) {
+export async function updateCourseVerification(
+    req: IModifiedRequest,
+    res: Response
+) {
     try {
         const courseId = ObjectId(req.params.id);
-        const schoolOfficialId = ObjectId(req.payload.user._id);
-
-        const [course, schoolOfficial] = await Promise.all([
-            courseService.findCourseById(courseId),
-            userService.findUserById(
-                schoolOfficialId
-            ) as Promise<ISchoolOfficial>,
-        ]);
-
-        if (schoolOfficial.meta.school !== course.meta.school)
-            errorService.throwError(
-                EErrorTypes.FORBIDDEN,
-                "Only school officials from the school at which the course is taught can verify"
-            );
-
-        course.verified = req.body.verified;
-
-        await course.save();
-
+        const courseVerificationStatusUpdate = configureCourseVerificationStatusUpdate(
+            req.meta
+        );
+        const course = await courseService.updateCourseVerificationStatusById(
+            courseId,
+            courseVerificationStatusUpdate
+        );
         res.json({
             message: "Course verification successfully updated",
             data: configureCourseResponseData(course, req.meta),

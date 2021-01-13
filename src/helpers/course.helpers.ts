@@ -9,6 +9,7 @@ import {
     IAnnouncement,
     ECourseTypes,
     EMeetingTypes,
+    ICourseVerificationStatusUpdate,
 } from "../types";
 import { configureSubdocumentQuery } from "./query.helpers";
 
@@ -79,6 +80,20 @@ export function configureAnnouncementArrayQuery(
 ): ISubDocumentQuery<IAnnouncement> {
     let query = configureSubdocumentQuery<IAnnouncement>(requestMetadata);
     return query;
+}
+
+export function configureCourseVerificationStatusUpdate(
+    requestMetadata: IRequestMetadata
+): ICourseVerificationStatusUpdate {
+    const userId = ObjectId(requestMetadata.payload.user._id);
+    const courseVerificationStatusUpdate: ICourseVerificationStatusUpdate =
+        requestMetadata.body;
+    if (!courseVerificationStatusUpdate.meta)
+        courseVerificationStatusUpdate.meta = {
+            from: userId,
+        };
+    else courseVerificationStatusUpdate.meta.from = userId;
+    return courseVerificationStatusUpdate;
 }
 
 export function configureCourseArrayResponseData(

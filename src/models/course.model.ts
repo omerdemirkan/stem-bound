@@ -1,6 +1,13 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import { schemaValidators } from "../helpers/model.helpers";
-import { ECourseTypes, EMeetingTypes, ICourse, IMeeting } from "../types";
+import {
+    ECourseTypes,
+    EMeetingTypes,
+    ICourse,
+    IMeeting,
+    ECourseVerificationStatus,
+    ICourseVerificationStatusUpdate,
+} from "../types";
 
 const courseMetaSchema = new Schema(
     {
@@ -130,6 +137,36 @@ const meetingSchema = new Schema(
     }
 );
 
+const courseVerificationStatusUpdateMetaSchema = new Schema(
+    {
+        from: {
+            type: Schema.Types.ObjectId,
+            required: true,
+        },
+    },
+    {
+        _id: false,
+        timestamps: false,
+        versionKey: false,
+    }
+);
+
+const courseVerificationStatusUpdateSchema = new Schema(
+    {
+        meta: courseVerificationStatusUpdateMetaSchema,
+        status: {
+            type: String,
+            enum: Object.keys(ECourseVerificationStatus),
+            required: true,
+        },
+    },
+    {
+        _id: false,
+        timestamps: { createdAt: true, updatedAt: false },
+        versionKey: false,
+    }
+);
+
 const courseSchema = new Schema(
     {
         title: {
@@ -139,10 +176,31 @@ const courseSchema = new Schema(
             required: [true, "Course title is required."],
             trim: true,
         },
-        verified: {
-            type: Boolean,
-            required: [true, "Course verification field is required."],
-            default: false,
+        verificationStatus: {
+            type: String,
+            enum: Object.keys(ECourseVerificationStatus),
+            required: true,
+            default: ECourseVerificationStatus.PENDING_VERIFICATION,
+        },
+        verificationHistory: {
+            type: [courseVerificationStatusUpdateSchema],
+            validate: {
+                validator: function (
+                    courseVerifications: Partial<ICourseVerificationStatusUpdate>[]
+                ) {
+                    for (let i = 1; i < courseVerifications.length; i++)
+                        if (
+                            courseVerifications[i].status ===
+                            courseVerifications[i - 1].status
+                        )
+                            return false;
+                    return true;
+                },
+                message:
+                    "course verification updates must change update course verification statuses",
+            },
+            required: true,
+            default: [],
         },
         shortDescription: {
             type: String,

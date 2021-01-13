@@ -14,6 +14,8 @@ import {
     ISubDocumentQuery,
     ICourseService,
     IErrorService,
+    ECourseVerificationStatus,
+    ICourseVerificationStatusUpdate,
 } from "../types";
 import { SERVICE } from "../constants/service.constants";
 import { Course } from "../models";
@@ -67,18 +69,32 @@ class CourseService implements ICourseService {
     }
 
     async createCourse(courseData: ICourse): Promise<ICourse> {
-        courseData.verified = false;
+        courseData.verificationStatus =
+            ECourseVerificationStatus.PENDING_VERIFICATION;
         const course: ICourse = await this.model.create(courseData);
         this.eventEmitter.emit(ECourseEvents.COURSE_CREATED, course);
         return course;
     }
 
-    async verifyCourse(filter: IFilterQuery<ICourse>) {
-        return await this.updateCourse(filter, { verified: true });
+    async updateCourseVerificationStatus(
+        filter: IFilterQuery<ICourse>,
+        courseVerificationStatusUpdate: ICourseVerificationStatusUpdate
+    ) {
+        return await this.updateCourse(filter, {
+            verificationStatus: courseVerificationStatusUpdate.status,
+            // @ts-ignore
+            $push: { verificationHistory: courseVerificationStatusUpdate },
+        });
     }
 
-    async verifyCourseById(courseId: Types.ObjectId) {
-        return await this.verifyCourse({ _id: courseId });
+    async updateCourseVerificationStatusById(
+        courseId: Types.ObjectId,
+        courseVerificationStatusUpdate: ICourseVerificationStatusUpdate
+    ) {
+        return await this.updateCourseVerificationStatus(
+            { _id: courseId },
+            courseVerificationStatusUpdate
+        );
     }
 
     async findCourses(

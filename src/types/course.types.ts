@@ -1,11 +1,5 @@
 import { Document, Types } from "mongoose";
 
-export enum ECourseTypes {
-    IN_PERSON = "IN_PERSON",
-    REMOTE = "REMOTE",
-    HYBRID = "HYBRID",
-}
-
 export enum EMeetingTypes {
     IN_PERSON = "IN_PERSON",
     REMOTE = "REMOTE",
@@ -31,9 +25,28 @@ export interface IAnnouncement {
     createdAt?: Date;
 }
 
+export enum ECourseTypes {
+    IN_PERSON = "IN_PERSON",
+    REMOTE = "REMOTE",
+    HYBRID = "HYBRID",
+}
+
+export enum ECourseVerificationStatus {
+    PENDING_VERIFICATION = "PENDING_VERIFICATION",
+    DISMISSED = "DISMISSED",
+    VERIFIED = "VERIFIED",
+}
+
+export interface ICourseVerificationStatusUpdate {
+    meta: { from: Types.ObjectId };
+    status: ECourseVerificationStatus;
+    createdAt?: Date;
+}
+
 export interface ICourse extends Document {
     title: string;
-    verified: boolean;
+    verificationStatus: ECourseVerificationStatus;
+    verificationHistory: ICourseVerificationStatusUpdate[];
     shortDescription: string;
     longDescription: string;
     type: string;

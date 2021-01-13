@@ -56,11 +56,11 @@ courseRouter.delete(
     courseControllers.deleteCourse
 );
 
-courseRouter.put(
-    "/:id/verified",
+courseRouter.patch(
+    "/:id/verification-status",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([EUserRoles.SCHOOL_OFFICIAL]),
-    courseControllers.verifyCourse
+    courseControllers.updateCourseVerification
 );
 
 courseRouter.use("/:courseId/meetings", meetingRouter);
