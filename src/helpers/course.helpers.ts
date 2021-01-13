@@ -34,7 +34,6 @@ export function configureCourseArrayQuery(
     skip = +skip;
     limit = +limit;
     unverified = !!unverified;
-    school_id = ObjectId.isValid(school_id) ? ObjectId(school_id) : null;
     instructor_id = ObjectId.isValid(instructor_id)
         ? ObjectId(instructor_id)
         : null;
@@ -60,6 +59,8 @@ export function configureCourseArrayQuery(
     if (instructor_id) query.filter["meta.instructors"] = instructor_id;
     // @ts-ignore
     if (student_id) query.filter["meta.students"] = student_id;
+    console.log(requestMetadata.query);
+    console.log(query);
     return query;
 }
 
