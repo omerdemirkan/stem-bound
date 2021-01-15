@@ -48,7 +48,7 @@ const chatSchema = new Schema(
         lastMessageSentAt: {
             type: Date,
             required: true,
-            default: new Date(),
+            default: Date.now,
         },
         privateChatKey: {
             type: String,

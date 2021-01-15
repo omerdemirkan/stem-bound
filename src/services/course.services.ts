@@ -83,7 +83,12 @@ class CourseService implements ICourseService {
         return await this.updateCourse(filter, {
             verificationStatus: courseVerificationStatusUpdate.status,
             // @ts-ignore
-            $push: { verificationHistory: courseVerificationStatusUpdate },
+            $push: {
+                verificationHistory: {
+                    $each: [courseVerificationStatusUpdate],
+                    $position: 0,
+                },
+            },
         });
     }
 

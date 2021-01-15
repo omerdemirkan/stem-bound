@@ -159,10 +159,15 @@ const courseVerificationStatusUpdateSchema = new Schema(
             enum: Object.keys(ECourseVerificationStatus),
             required: true,
         },
+        createdAt: {
+            type: Date,
+            required: true,
+            default: Date.now,
+        },
     },
     {
         _id: false,
-        timestamps: { createdAt: true, updatedAt: false },
+        timestamps: false,
         versionKey: false,
     }
 );

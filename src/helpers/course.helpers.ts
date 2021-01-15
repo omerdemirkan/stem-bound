@@ -59,8 +59,6 @@ export function configureCourseArrayQuery(
     if (instructor_id) query.filter["meta.instructors"] = instructor_id;
     // @ts-ignore
     if (student_id) query.filter["meta.students"] = student_id;
-    console.log(requestMetadata.query);
-    console.log(query);
     return query;
 }
 
