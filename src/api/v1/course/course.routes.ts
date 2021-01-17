@@ -4,6 +4,7 @@ import { EUserRoles } from "../../../types";
 import { authMiddlewareService } from "../../../services";
 import meetingRouter from "./meeting/meeting.routes";
 import announcementsRouter from "./announcement/announcement.routes";
+import { validateVerificationStatusUpdateMiddleware } from "../../../middlewares/course.middlewares";
 
 const courseRouter = Router();
 
@@ -63,6 +64,7 @@ courseRouter.patch(
         EUserRoles.SCHOOL_OFFICIAL,
         EUserRoles.INSTRUCTOR,
     ]),
+    validateVerificationStatusUpdateMiddleware,
     courseControllers.updateCourseVerification
 );
 
