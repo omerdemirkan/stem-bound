@@ -34,7 +34,7 @@ courseRouter.post(
 courseRouter.post(
     "/",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR, "ADMIN"]),
+    authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR]),
     authMiddlewareService.validateRequest(({ body, payload }) =>
         body.meta.instructors?.includes(payload.user._id)
     ),
@@ -45,21 +45,24 @@ courseRouter.patch(
     "/:id",
     authMiddlewareService.blockRequestBodyMetadata,
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR, "ADMIN"]),
+    authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR]),
     courseControllers.updateCourse
 );
 
 courseRouter.delete(
     "/:id",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR, "ADMIN"]),
+    authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR]),
     courseControllers.deleteCourse
 );
 
 courseRouter.patch(
     "/:id/verification-status",
     authMiddlewareService.extractTokenPayload,
-    authMiddlewareService.allowedRoles([EUserRoles.SCHOOL_OFFICIAL]),
+    authMiddlewareService.allowedRoles([
+        EUserRoles.SCHOOL_OFFICIAL,
+        EUserRoles.INSTRUCTOR,
+    ]),
     courseControllers.updateCourseVerification
 );
 

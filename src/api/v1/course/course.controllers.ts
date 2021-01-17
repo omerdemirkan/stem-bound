@@ -7,7 +7,13 @@ import {
     userService,
     schoolService,
 } from "../../../services";
-import { ICourse, IUser, EErrorTypes, IModifiedRequest } from "../../../types";
+import {
+    ICourse,
+    IUser,
+    EErrorTypes,
+    IModifiedRequest,
+    ECourseVerificationStatus,
+} from "../../../types";
 import {
     configureCourseArrayQuery,
     configureCourseArrayResponseData,

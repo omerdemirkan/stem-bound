@@ -69,8 +69,7 @@ class CourseService implements ICourseService {
     }
 
     async createCourse(courseData: ICourse): Promise<ICourse> {
-        courseData.verificationStatus =
-            ECourseVerificationStatus.PENDING_VERIFICATION;
+        courseData.verificationStatus = ECourseVerificationStatus.UNPUBLISHED;
         const course: ICourse = await this.model.create(courseData);
         this.eventEmitter.emit(ECourseEvents.COURSE_CREATED, course);
         return course;

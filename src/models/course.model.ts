@@ -185,7 +185,7 @@ const courseSchema = new Schema(
             type: String,
             enum: Object.keys(ECourseVerificationStatus),
             required: true,
-            default: ECourseVerificationStatus.PENDING_VERIFICATION,
+            default: ECourseVerificationStatus.UNPUBLISHED,
         },
         verificationHistory: {
             type: [courseVerificationStatusUpdateSchema],
