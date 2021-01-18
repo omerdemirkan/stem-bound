@@ -218,6 +218,7 @@ export async function updateCourseVerification(
     res: Response
 ) {
     try {
+        console.log("Inside course verification");
         const courseId = ObjectId(req.params.id);
         const courseVerificationStatusUpdate = configureCourseVerificationStatusUpdate(
             req.meta
