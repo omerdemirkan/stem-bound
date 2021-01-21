@@ -191,7 +191,7 @@ class CourseService implements ICourseService {
         if (!course)
             this.errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
-                "this.model not found"
+                "Coursenot found"
             );
 
         return this.configureMeetingsQuery(course, query);
@@ -208,7 +208,7 @@ class CourseService implements ICourseService {
         if (!course) {
             this.errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
-                "this.model not found"
+                "Coursenot found"
             );
         }
         const meeting = course.meetings.find(
@@ -323,7 +323,7 @@ class CourseService implements ICourseService {
         if (!course) {
             this.errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
-                "this.model not found"
+                "Coursenot found"
             );
         }
         const announcement = course.announcements.find(
