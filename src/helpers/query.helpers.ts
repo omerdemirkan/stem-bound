@@ -12,18 +12,14 @@ export function configureSubdocumentQuery<T>(
     limit = +limit;
     skip = +skip;
 
-    let query: ISubDocumentQuery<T> = {};
-    if ((before || after) && !query.filter) query.filter = () => true;
-
-    if (before)
-        query.filter = (element) =>
-            query.filter(element) &&
-            new Date(element[timeKey]).getTime() < before?.getTime();
-
-    if (before)
-        query.filter = (element) =>
-            query.filter(element) &&
-            new Date(element[timeKey]).getTime() > after?.getTime();
+    let query: ISubDocumentQuery<T> = {
+        filter(elem) {
+            return (
+                (!before || new Date(elem[timeKey]) < before) &&
+                (!after || new Date(elem[timeKey]) > after)
+            );
+        },
+    };
 
     if (limit) query.limit = limit;
     if (skip) query.skip = skip;
