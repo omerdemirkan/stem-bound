@@ -9,4 +9,4 @@ export * from "./socket.helpers";
 export * from "./auth.helpers";
 export * from "./chat.helpers";
 export * from "./query.helpers";
-// export * from "./file.helpers";
+export * from "./template.helpers";
