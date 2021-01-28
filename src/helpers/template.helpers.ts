@@ -1,4 +1,5 @@
 import { promises } from "fs";
+import inlineCSS from "inline-css";
 
 const { readFile } = promises;
 
@@ -28,8 +29,11 @@ export async function hydrateSignUpHtmlTemplate(variables: {
     firstName: string;
     url: string;
 }) {
-    return await hydrateHTML(
-        require.resolve("../../public/templates/sign-up-email.html"),
-        variables
+    return await inlineCSS(
+        await hydrateHTML(
+            require.resolve("../../public/templates/sign-up-email.html"),
+            variables
+        ),
+        { url: "https://stembound.education" }
     );
 }

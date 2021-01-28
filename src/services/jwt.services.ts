@@ -11,7 +11,7 @@ class JwtService implements IJwtService {
         payload: ITokenPayload | object | Buffer,
         options?: SignOptions | undefined
     ): string {
-        return jwt.sign(payload, config.accessTokenSecret as string, options);
+        return jwt.sign(payload, config.accessTokenSecret, options);
     }
 
     verify(

@@ -1,58 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>STEM-bound Sign Up Verification</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap"
-      rel="stylesheet"
-    />
-
-    <style type="text/css">
-      * {
-        font-family: "Roboto", sans-serif;
-      }
-      h1,
-      h2,
-      h3,
-      h4,
-      h5 {
-        font-weight: 400;
-      }
-      center {
-        padding: 10vh 10vw;
-      }
-      button {
-        background-color: #6c57eb;
-        border: none;
-        color: white;
-        padding: 12px 24px;
-        border-radius: 4px;
-        cursor: pointer;
-        opacity: 1;
-        transition: opacity 0.1s ease;
-      }
-      button:hover {
-        opacity: 0.9;
-      }
-      img {
-        height: 20px;
-        margin-bottom: 20px;
-      }
-    </style>
-  </head>
-  <body>
-    <main>
-      <center>
-        <img src="/public/assets/stem-bound-logo.png" alt="STEM-bound logo" />
-        <h1>Hi {{firstName}}, you're almost there!</h1>
-        <p>We just need to make sure this is your email and you're set.</p>
-        <a href="{{url}}">
-          <button>COMPLETE SIGN UP</button>
-        </a>
-      </center>
-    </main>
-  </body>
-</html>
+<style type="text/css">
+  * {
+    font-family: "Roboto", sans-serif;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    font-weight: 400;
+  }
+  center {
+    padding: 10vh 10vw;
+  }
+  button {
+    background-color: #6c57eb;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.1s ease;
+  }
+  button:hover {
+    opacity: 0.9;
+  }
+  img {
+    height: 20px;
+    margin-bottom: 20px;
+  }
+</style>
+<center>
+  <img src="/public/assets/stem-bound-logo.png" alt="STEM-bound logo" />
+  <h1>Hi {{firstName}}, you're almost there!</h1>
+  <p>We just need to make sure this is your email and you're set.</p>
+  <a href="{{url}}">
+    <button>COMPLETE SIGN UP</button>
+  </a>
+</center>

@@ -28,12 +28,10 @@ class AuthService implements IAuthService {
     async userSignUp(
         userData: Partial<IUser>,
         role: EUserRoles
-    ): Promise<{ user: any; accessToken: string }> {
-        await this.bcryptService.replaceKeyWithHash(userData, "password", {
-            newKey: "hash",
-        });
+    ): Promise<{ user: IUser; accessToken: string }> {
+        await this.userService.configureUserData(userData, role);
 
-        const newUser: any = await this.userService.createUser(userData, role);
+        const newUser = await this.userService.createUser(userData, role);
 
         const payload: ITokenPayload = configureTokenPayload(newUser);
 

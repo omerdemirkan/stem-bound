@@ -36,12 +36,12 @@ export interface IAuthService {
     userSignUp(
         userData: Partial<IUser>,
         role: EUserRoles
-    ): Promise<{ user: any; accessToken: string }>;
+    ): Promise<{ user: IUser; accessToken: string }>;
 
     userLogin(
         email: string,
         password: string
-    ): Promise<{ user: any; accessToken: string } | null>;
+    ): Promise<{ user: IUser; accessToken: string } | null>;
 }
 
 export interface IBcryptService {
@@ -386,6 +386,11 @@ export interface ISchoolService {
 }
 
 export interface IUserService {
+    configureUserData(
+        userData: Partial<IUser>,
+        role: EUserRoles
+    ): Promise<IUser>;
+
     validate(data: any): Promise<{ isValid: boolean; error?: string }>;
 
     createUser(userData, role: EUserRoles): Promise<IUser>;

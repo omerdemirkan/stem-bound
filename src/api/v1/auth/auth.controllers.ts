@@ -50,30 +50,40 @@ export async function signUp(req: IModifiedRequest, res: Response) {
     try {
         if (!req.params.sign_up_token) {
             // Stage 1: generate sign up token, send verification
-            const userData: Partial<IUser> = req.body,
-                userError = await userService.validate(userData);
-            if (!userError.isValid)
+            const userData = await userService.configureUserData(
+                    req.body as Partial<IUser>,
+                    req.query.role || req.body.role
+                ),
+                userValidation = await userService.validate(userData);
+            if (!userValidation.isValid)
                 errorService.throwError(
                     EErrorTypes.BAD_REQUEST,
-                    userError.error
+                    userValidation.error
                 );
-            const signUpToken = jwtService.sign(userData),
-                signUpUrl = `https://${config.clientDomain}/sign-up?sign_up_token=${signUpToken}`;
-
+            console.log("before signing");
+            const signUpToken = jwtService.sign(userData);
+            console.log("after signing");
+            const signUpUrl = `https://${config.clientDomain}/verify-email?sign_up_token=${signUpToken}`;
+            console.log("before hydrating email template");
+            const emailHtml = await hydrateSignUpHtmlTemplate({
+                firstName: userData.firstName,
+                url: signUpUrl,
+            });
+            console.log("after hydrating email template");
+            console.log("before sending email");
             await emailService.send({
                 to: userData.email,
-                html: await hydrateSignUpHtmlTemplate({
-                    firstName: userData.firstName,
-                    url: signUpUrl,
-                }),
+                html: emailHtml,
                 subject: "Verify your email",
             });
+            console.log("after sending email");
 
             res.json({
                 message: `Email sent to ${userData.email}`,
             });
         } else {
             // Stage 2: validate sign up token and officially create user
+            console.log("verifying token");
             const userData: Partial<IUser> = jwtService.verify(
                 req.params.sign_up_token
             );
@@ -85,6 +95,7 @@ export async function signUp(req: IModifiedRequest, res: Response) {
             });
         }
     } catch (e) {
+        console.log(JSON.stringify(e));
         res.status(errorService.status(e)).json(errorService.json(e));
     }
 }

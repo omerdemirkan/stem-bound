@@ -11,6 +11,9 @@ import {
     IErrorService,
     EErrorTypes,
     IUpdateQuery,
+    IStudent,
+    IInstructor,
+    IBcryptService,
 } from "../types";
 import { SERVICE } from "../constants/service.constants";
 import { Instructor, SchoolOfficial, Student, User } from "../models";
@@ -23,7 +26,8 @@ class UserService implements IUserService {
         @inject(SERVICE.LOCATION_SERVICE)
         protected locationService: ILocationService,
         @inject(SERVICE.SCHOOL_SERVICE) protected schoolService: ISchoolService,
-        @inject(SERVICE.ERROR_SERVICE) protected errorService: IErrorService
+        @inject(SERVICE.ERROR_SERVICE) protected errorService: IErrorService,
+        @inject(SERVICE.BCRYPT_SERVICE) protected bcryptService: IBcryptService
     ) {}
 
     private getUserModelByRole(role: EUserRoles): Model<IUser> {
@@ -42,8 +46,26 @@ class UserService implements IUserService {
         }
     }
 
+    async configureUserData(userData: Partial<IUser>, role: EUserRoles) {
+        await this.bcryptService.replaceKeyWithHash(userData, "password", {
+            newKey: "hash",
+        });
+        userData.location = (userData as any).zip
+            ? (
+                  await this.locationService.findLocationByZip(
+                      (userData as any).zip
+                  )
+              )?.toObject()
+            : (
+                  await this.schoolService.findSchoolByNcesId(
+                      (userData as IStudent).meta.school
+                  )
+              )?.toObject().location;
+        return userData as IUser;
+    }
+
     validate(userData: any): Promise<{ isValid: boolean; error?: string }> {
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             const user = new this.model(userData);
             user.validate((error) => resolve({ isValid: !error, error }));
         });
@@ -54,18 +76,7 @@ class UserService implements IUserService {
             throw new Error(
                 "We don't store plaintext passwords around here kiddo"
             );
-
-        userData.location = (userData as any).zip
-            ? (
-                  await this.locationService.findLocationByZip(
-                      (userData as any).zip
-                  )
-              )?.toObject()
-            : (
-                  await this.schoolService.findSchoolByNcesId(
-                      userData.meta.school
-                  )
-              )?.toObject().location;
+        await this.configureUserData(userData, role);
         return await this.getUserModelByRole(role).create(userData);
     }
 
