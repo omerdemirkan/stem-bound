@@ -12,6 +12,8 @@ const config = Object.freeze({
     accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
     saltRounds: Number(process.env.SALT_ROUNDS),
     mailgunApiKey: process.env.MAILGUN_API_KEY,
+    mailgunApiBaseUrl: process.env.MAILGUN_API_BASE_URL,
+    mailgunDomain: process.env.MAILGUN_DOMAIN,
     clientDomain: "stembound.education",
     clientOrigin:
         process.env.NODE_ENV === "production"

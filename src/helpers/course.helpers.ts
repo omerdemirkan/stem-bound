@@ -78,8 +78,6 @@ export function configureMeetingArrayQuery(
         query.filter = (meeting) =>
             query.filter(meeting) && meeting.roomNum === room_num;
 
-    console.log(requestMetadata.query);
-
     if (query.filter) return query;
 }
 

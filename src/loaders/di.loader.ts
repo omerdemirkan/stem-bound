@@ -8,6 +8,7 @@ import {
     IBcryptService,
     IChatService,
     ICourseService,
+    IEmailService,
     IErrorService,
     IJwtService,
     ILocationService,
@@ -30,6 +31,7 @@ import {
     SchoolService,
     UserService,
 } from "../services";
+import EmailService from "../services/email.services";
 
 const container = new Container();
 
@@ -61,6 +63,8 @@ container.bind<ISchoolService>(SERVICE.SCHOOL_SERVICE).to(SchoolService);
 
 container.bind<IUserService>(SERVICE.USER_SERVICE).to(UserService);
 
+container.bind<IEmailService>(SERVICE.EMAIL_SERVICE).to(EmailService);
+
 export const authMiddlewareService = container.get<IAuthMiddlewareService>(
     SERVICE.AUTH_MIDDLEWARE_SERVICE
 );
@@ -87,3 +91,4 @@ export const schoolService = container.get<ISchoolService>(
     SERVICE.SCHOOL_SERVICE
 );
 export const userService = container.get<IUserService>(SERVICE.USER_SERVICE);
+export const emailService = container.get<IEmailService>(SERVICE.EMAIL_SERVICE);

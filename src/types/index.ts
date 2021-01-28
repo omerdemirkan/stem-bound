@@ -13,3 +13,5 @@ export * from "./db.types";
 export * from "./request.types";
 export * from "./middleware.types";
 export * from "./service.types";
+export * from "./response.types";
+export * from "./email.types";

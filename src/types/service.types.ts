@@ -15,6 +15,7 @@ import {
     ISubDocumentQuery,
     IUpdateQuery,
 } from "./db.types";
+import { IMailDTO } from "./email.types";
 import { EErrorTypes } from "./error.types";
 import { ILocationData } from "./location.types";
 import { IMiddleware } from "./middleware.types";
@@ -455,4 +456,8 @@ export interface IUserService {
             roles?: EUserRoles[];
         }
     ): Promise<void>;
+}
+
+export interface IEmailService {
+    send(data: IMailDTO): any;
 }

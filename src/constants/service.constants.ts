@@ -13,4 +13,5 @@ export const SERVICE = {
     METADATA_SERVICE: Symbol.for("METADATA_SERVICE"),
     SCHOOL_SERVICE: Symbol.for("SCHOOL_SERVICE"),
     USER_SERVICE: Symbol.for("USER_SERVICE"),
+    EMAIL_SERVICE: Symbol.for("EMAIL_SERVICE"),
 };
