@@ -1,3 +1,4 @@
+import config from "../config";
 import { IUser, ITokenPayload } from "../types";
 
 export function configureTokenPayload(user: IUser): ITokenPayload {
@@ -10,4 +11,8 @@ export function configureTokenPayload(user: IUser): ITokenPayload {
             role: user.role,
         },
     };
+}
+
+export function getSignUpUrl(signUpToken: string): string {
+    return `https://${config.clientDomain}/sign-up/verify-email?sign_up_token=${signUpToken}`;
 }

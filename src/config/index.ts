@@ -14,7 +14,10 @@ const config = Object.freeze({
     mailgunApiKey: process.env.MAILGUN_API_KEY,
     mailgunApiBaseUrl: process.env.MAILGUN_API_BASE_URL,
     mailgunDomain: "mail.stembound.education",
-    clientDomain: "stembound.education",
+    clientDomain:
+        process.env.NODE_ENV === "production"
+            ? "stembound.education"
+            : "localhost:3000",
     clientOrigin:
         process.env.NODE_ENV === "production"
             ? "https://stembound.education"

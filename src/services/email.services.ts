@@ -8,7 +8,7 @@ import { SERVICE } from "../constants";
 export default class EmailService implements IEmailService {
     client = mg({
         apiKey: config.mailgunApiKey,
-        domain: config.clientDomain,
+        domain: config.mailgunDomain,
     });
 
     constructor(
@@ -16,19 +16,11 @@ export default class EmailService implements IEmailService {
     ) {}
 
     async send({ to, from, subject, html }: IMailDTO) {
-        return new Promise((resolve, reject) => {
-            this.client.messages().send(
-                {
-                    from: from || `STEM-bound <help@${config.mailgunDomain}>`,
-                    to,
-                    subject,
-                    html,
-                },
-                function (error, body) {
-                    if (error) reject(error);
-                    else resolve(body);
-                }
-            );
+        return await this.client.messages().send({
+            from: from || `STEM-bound <help@${config.mailgunDomain}>`,
+            to,
+            subject,
+            html,
         });
     }
 }

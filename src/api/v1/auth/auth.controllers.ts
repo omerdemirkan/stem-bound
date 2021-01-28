@@ -7,17 +7,12 @@ import {
     emailService,
 } from "../../../services";
 import { Types } from "mongoose";
-import {
-    EErrorTypes,
-    EUserRoles,
-    IModifiedRequest,
-    IUser,
-} from "../../../types";
+import { EErrorTypes, IModifiedRequest, IUser } from "../../../types";
 import {
     configureTokenPayload,
+    getSignUpUrl,
     hydrateSignUpHtmlTemplate,
 } from "../../../helpers";
-import config from "../../../config";
 
 const { ObjectId } = Types;
 
@@ -60,23 +55,17 @@ export async function signUp(req: IModifiedRequest, res: Response) {
                     EErrorTypes.BAD_REQUEST,
                     userValidation.error
                 );
-            console.log("before signing");
-            const signUpToken = jwtService.sign(userData);
-            console.log("after signing");
-            const signUpUrl = `https://${config.clientDomain}/verify-email?sign_up_token=${signUpToken}`;
-            console.log("before hydrating email template");
-            const emailHtml = await hydrateSignUpHtmlTemplate({
-                firstName: userData.firstName,
-                url: signUpUrl,
-            });
-            console.log("after hydrating email template");
-            console.log("before sending email");
+            const signUpToken = jwtService.sign(userData),
+                signUpUrl = getSignUpUrl(signUpToken),
+                emailHtml = await hydrateSignUpHtmlTemplate({
+                    firstName: userData.firstName,
+                    url: signUpUrl,
+                });
             await emailService.send({
                 to: userData.email,
                 html: emailHtml,
                 subject: "Verify your email",
             });
-            console.log("after sending email");
 
             res.json({
                 message: `Email sent to ${userData.email}`,
