@@ -386,6 +386,8 @@ export interface ISchoolService {
 }
 
 export interface IUserService {
+    validate(data: any): Promise<{ isValid: boolean; error?: string }>;
+
     createUser(userData, role: EUserRoles): Promise<IUser>;
 
     findUsers(query: IQuery<IUser>): Promise<IUser[]>;

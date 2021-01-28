@@ -42,6 +42,13 @@ class UserService implements IUserService {
         }
     }
 
+    validate(userData: any): Promise<{ isValid: boolean; error?: string }> {
+        return new Promise(function (resolve, reject) {
+            const user = new this.model(userData);
+            user.validate((error) => resolve({ isValid: !error, error }));
+        });
+    }
+
     async createUser(userData, role: EUserRoles): Promise<IUser> {
         if ((userData as any).password)
             throw new Error(

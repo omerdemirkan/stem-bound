@@ -33,8 +33,3 @@ export async function hydrateSignUpHtmlTemplate(variables: {
         variables
     );
 }
-
-hydrateSignUpHtmlTemplate({
-    firstName: "Omer",
-    url: "stembound.education",
-}).then(console.log);

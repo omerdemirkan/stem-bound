@@ -1,13 +1,23 @@
-import { Request, Response } from "express";
+import { Response } from "express";
 import {
     jwtService,
     errorService,
     authService,
     userService,
+    emailService,
 } from "../../../services";
 import { Types } from "mongoose";
-import { EErrorTypes, IModifiedRequest } from "../../../types";
-import { configureTokenPayload } from "../../../helpers";
+import {
+    EErrorTypes,
+    EUserRoles,
+    IModifiedRequest,
+    IUser,
+} from "../../../types";
+import {
+    configureTokenPayload,
+    hydrateSignUpHtmlTemplate,
+} from "../../../helpers";
+import config from "../../../config";
 
 const { ObjectId } = Types;
 
@@ -38,15 +48,42 @@ export async function me(req: IModifiedRequest, res: Response) {
 
 export async function signUp(req: IModifiedRequest, res: Response) {
     try {
-        const { user, accessToken } = await authService.userSignUp(
-            req.body,
-            req.query.role || req.body.role
-        );
+        if (!req.params.sign_up_token) {
+            // Stage 1: generate sign up token, send verification
+            const userData: Partial<IUser> = req.body,
+                userError = await userService.validate(userData);
+            if (!userError.isValid)
+                errorService.throwError(
+                    EErrorTypes.BAD_REQUEST,
+                    userError.error
+                );
+            const signUpToken = jwtService.sign(userData),
+                signUpUrl = `https://${config.clientDomain}/sign-up?sign_up_token=${signUpToken}`;
 
-        res.json({
-            message: "User sign up successful",
-            data: { user, accessToken },
-        });
+            await emailService.send({
+                to: userData.email,
+                html: await hydrateSignUpHtmlTemplate({
+                    firstName: userData.firstName,
+                    url: signUpUrl,
+                }),
+                subject: "Verify your email",
+            });
+
+            res.json({
+                message: `Email sent to ${userData.email}`,
+            });
+        } else {
+            // Stage 2: validate sign up token and officially create user
+            const userData: Partial<IUser> = jwtService.verify(
+                req.params.sign_up_token
+            );
+            const user = await authService.userSignUp(userData, userData.role);
+
+            res.json({
+                message: "User sign up successful",
+                data: user,
+            });
+        }
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
     }

@@ -13,7 +13,7 @@ const config = Object.freeze({
     saltRounds: Number(process.env.SALT_ROUNDS),
     mailgunApiKey: process.env.MAILGUN_API_KEY,
     mailgunApiBaseUrl: process.env.MAILGUN_API_BASE_URL,
-    mailgunDomain: process.env.MAILGUN_DOMAIN,
+    mailgunDomain: "mail.stembound.education",
     clientDomain: "stembound.education",
     clientOrigin:
         process.env.NODE_ENV === "production"
