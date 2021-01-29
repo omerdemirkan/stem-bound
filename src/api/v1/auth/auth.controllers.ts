@@ -67,14 +67,14 @@ export async function sendVerificationEmail(
 export async function signUp(req: IModifiedRequest, res: Response) {
     // Stage 2: validate sign up token and officially create user
     try {
-        if (!req.params.sign_up_token)
+        if (!req.query.sign_up_token)
             errorService.throwError(
                 EErrorTypes.BAD_REQUEST,
                 "Missing sign up token"
             );
 
         const userData: Partial<IUser> = jwtService.verify(
-            req.params.sign_up_token
+            req.query.sign_up_token as string
         );
         const user = await authService.userSignUp(userData, userData.role);
 

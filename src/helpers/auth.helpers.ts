@@ -16,7 +16,7 @@ export function getTokenPayload(user: IUser): ITokenPayload {
 }
 
 export function getSignUpUrl(signUpToken: string): string {
-    return `https://${config.clientDomain}/sign-up/verify-email?sign_up_token=${signUpToken}`;
+    return `https://${config.clientDomain}/sign-up?sign_up_token=${signUpToken}`;
 }
 
 export async function sendSignUpEmail(userData: Partial<IUser>) {
