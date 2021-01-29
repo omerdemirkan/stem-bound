@@ -1,6 +1,6 @@
 import { EventEmitter } from "events";
 import { emitter } from "../decorators";
-import { configureTokenPayload } from "../helpers";
+import { getTokenPayload } from "../helpers";
 import { inject, injectable } from "inversify";
 import {
     EUserRoles,
@@ -29,11 +29,9 @@ class AuthService implements IAuthService {
         userData: Partial<IUser>,
         role: EUserRoles
     ): Promise<{ user: IUser; accessToken: string }> {
-        await this.userService.configureUserData(userData, role);
-
         const newUser = await this.userService.createUser(userData, role);
 
-        const payload: ITokenPayload = configureTokenPayload(newUser);
+        const payload: ITokenPayload = getTokenPayload(newUser);
 
         const accessToken = await this.jwtService.sign(payload);
 
@@ -52,7 +50,7 @@ class AuthService implements IAuthService {
         }
 
         if (await this.bcryptService.compare(password, user.hash)) {
-            const payload: ITokenPayload = configureTokenPayload(user);
+            const payload: ITokenPayload = getTokenPayload(user);
 
             const accessToken = await this.jwtService.sign(payload);
             return { user, accessToken };

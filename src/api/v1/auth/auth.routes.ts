@@ -10,6 +10,11 @@ authRouter.get(
     authControllers.me
 );
 
+authRouter.post(
+    "/send-verification-email",
+    authControllers.sendVerificationEmail
+);
+
 authRouter.post("/sign-up", authControllers.signUp);
 
 authRouter.post("/log-in", authControllers.logIn);

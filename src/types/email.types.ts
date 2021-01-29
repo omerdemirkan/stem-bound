@@ -1,6 +1,7 @@
 export interface IMailDTO {
     to: string;
-    from?: string;
     html: string;
     subject: string;
+    from?: string;
+    inline?: string | string[];
 }

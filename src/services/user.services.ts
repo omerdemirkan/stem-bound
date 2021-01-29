@@ -47,20 +47,25 @@ class UserService implements IUserService {
     }
 
     async configureUserData(userData: Partial<IUser>, role: EUserRoles) {
-        await this.bcryptService.replaceKeyWithHash(userData, "password", {
-            newKey: "hash",
-        });
-        userData.location = (userData as any).zip
-            ? (
-                  await this.locationService.findLocationByZip(
-                      (userData as any).zip
-                  )
-              )?.toObject()
-            : (
-                  await this.schoolService.findSchoolByNcesId(
-                      (userData as IStudent).meta.school
-                  )
-              )?.toObject().location;
+        // @ts-ignore
+        if (userData.password)
+            await this.bcryptService.replaceKeyWithHash(userData, "password", {
+                newKey: "hash",
+            });
+
+        if (!userData.location)
+            userData.location = (userData as any).zip
+                ? (
+                      await this.locationService.findLocationByZip(
+                          (userData as any).zip
+                      )
+                  )?.toObject()
+                : (
+                      await this.schoolService.findSchoolByNcesId(
+                          (userData as IStudent).meta.school
+                      )
+                  )?.toObject().location;
+
         return userData as IUser;
     }
 
@@ -72,10 +77,6 @@ class UserService implements IUserService {
     }
 
     async createUser(userData, role: EUserRoles): Promise<IUser> {
-        if ((userData as any).password)
-            throw new Error(
-                "We don't store plaintext passwords around here kiddo"
-            );
         await this.configureUserData(userData, role);
         return await this.getUserModelByRole(role).create(userData);
     }

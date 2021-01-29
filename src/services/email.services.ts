@@ -15,12 +15,13 @@ export default class EmailService implements IEmailService {
         @inject(SERVICE.ERROR_SERVICE) protected errorService: IErrorService
     ) {}
 
-    async send({ to, from, subject, html }: IMailDTO) {
+    async send({ to, from, subject, html, inline }: IMailDTO) {
         return await this.client.messages().send({
             from: from || `STEM-bound <help@${config.mailgunDomain}>`,
             to,
             subject,
             html,
+            inline,
         });
     }
 }
