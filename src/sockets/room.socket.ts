@@ -5,6 +5,7 @@ const initializeRoomSockets: ISocketInitializer = (
     { eventEmitter }
 ) => {
     // DEFAULT USER ROOM
+    // @ts-ignore
     const userId = socket.request._query?.user_id;
 
     if (typeof userId === "string") {

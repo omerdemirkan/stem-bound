@@ -6,6 +6,7 @@ import fileUpload from "express-fileupload";
 const corsMiddleware = cors({
     credentials: true,
     origin: config.clientOrigin,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 });
 
 export default function expressLoader(app: Application) {

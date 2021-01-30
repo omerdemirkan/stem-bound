@@ -15,6 +15,7 @@ export function constructClientChatEvent({
 
 export async function findUserFromSocket(socket: Socket): Promise<IUser> {
     try {
+        // @ts-ignore
         const accessToken = socket.request._query["authorization"];
         const payload = (await jwtService.verify(accessToken)) as ITokenPayload;
         return await userService.findUserById(Types.ObjectId(payload.user._id));

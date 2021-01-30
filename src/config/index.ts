@@ -21,7 +21,7 @@ const config = Object.freeze({
     clientOrigin:
         process.env.NODE_ENV === "production"
             ? "https://stembound.education"
-            : "*",
+            : "http://localhost:3000",
     projectId: process.env.PROJECT_ID,
     assetsBucketName: process.env.ASSETS_BUCKET_NAME,
 });

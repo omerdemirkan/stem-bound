@@ -96,6 +96,7 @@ const initializeChatSocket: ISocketInitializer = (socket, { io, user }) => {
     socket.on(
         ESocketEvents.CHAT_MESSAGE_DELETED,
         async function (data: { chatId: string; messageId: string }) {
+            console.log(data);
             try {
                 if (!user.meta.chats.find((chatId) => chatId.equals(chatId)))
                     throw new Error("chatId not found in user metadata");
