@@ -1,14 +1,11 @@
-import { Model, Types } from "mongoose";
+import { Types } from "mongoose";
 import { EventEmitter } from "events";
-import { model, emitter } from "../decorators";
-import { ErrorService } from ".";
-import UserService from "./user.services";
+import { emitter } from "../decorators";
 import { configurePrivateChatKey } from "../helpers";
 import { inject, injectable } from "inversify";
 import {
     IChat,
     IMessage,
-    EModels,
     IQuery,
     EChatTypes,
     IFilterQuery,
