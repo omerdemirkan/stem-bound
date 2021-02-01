@@ -1,4 +1,5 @@
 import { EventEmitter } from "events";
+import { UploadedFile } from "express-fileupload";
 import { SignOptions, VerifyOptions } from "jsonwebtoken";
 import { Types } from "mongoose";
 import { IRequestValidationFunction, ITokenPayload } from "./auth.types";
@@ -467,4 +468,8 @@ export interface IUserService {
 
 export interface IEmailService {
     send(data: IMailDTO): any;
+}
+
+export interface IStorageService {
+    saveFileToBucket(file: UploadedFile): Promise<string>;
 }

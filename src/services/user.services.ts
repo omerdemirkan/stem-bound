@@ -15,7 +15,7 @@ import {
     IInstructor,
     IBcryptService,
 } from "../types";
-import { SERVICE } from "../constants/service.constants";
+import { SERVICE_SYMBOLS } from "../constants/service.constants";
 import { Instructor, SchoolOfficial, Student, User } from "../models";
 import { isValidUserRole } from "../helpers";
 
@@ -23,11 +23,14 @@ import { isValidUserRole } from "../helpers";
 class UserService implements IUserService {
     private model = User;
     constructor(
-        @inject(SERVICE.LOCATION_SERVICE)
+        @inject(SERVICE_SYMBOLS.LOCATION_SERVICE)
         protected locationService: ILocationService,
-        @inject(SERVICE.SCHOOL_SERVICE) protected schoolService: ISchoolService,
-        @inject(SERVICE.ERROR_SERVICE) protected errorService: IErrorService,
-        @inject(SERVICE.BCRYPT_SERVICE) protected bcryptService: IBcryptService
+        @inject(SERVICE_SYMBOLS.SCHOOL_SERVICE)
+        protected schoolService: ISchoolService,
+        @inject(SERVICE_SYMBOLS.ERROR_SERVICE)
+        protected errorService: IErrorService,
+        @inject(SERVICE_SYMBOLS.BCRYPT_SERVICE)
+        protected bcryptService: IBcryptService
     ) {}
 
     private getUserModelByRole(role: EUserRoles): Model<IUser> {

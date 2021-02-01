@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify";
 import { IEmailService, IErrorService, IMailDTO } from "../types";
 import mg from "mailgun-js";
 import config from "../config";
-import { SERVICE } from "../constants";
+import { SERVICE_SYMBOLS } from "../constants";
 
 @injectable()
 export default class EmailService implements IEmailService {
@@ -12,7 +12,8 @@ export default class EmailService implements IEmailService {
     });
 
     constructor(
-        @inject(SERVICE.ERROR_SERVICE) protected errorService: IErrorService
+        @inject(SERVICE_SYMBOLS.ERROR_SERVICE)
+        protected errorService: IErrorService
     ) {}
 
     async send({ to, from, subject, html, inline }: IMailDTO) {

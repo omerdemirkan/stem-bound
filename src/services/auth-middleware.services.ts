@@ -9,12 +9,12 @@ import {
     IAuthMiddlewareService,
     IJwtService,
 } from "../types";
-import { SERVICE } from "../constants/service.constants";
+import { SERVICE_SYMBOLS } from "../constants/service.constants";
 
 @injectable()
 class AuthMiddlewareService implements IAuthMiddlewareService {
     constructor(
-        @inject(SERVICE.JWT_SERVICE) protected jwtService: IJwtService
+        @inject(SERVICE_SYMBOLS.JWT_SERVICE) protected jwtService: IJwtService
     ) {}
 
     extractTokenPayload = async (

@@ -12,7 +12,7 @@ import {
     IBcryptService,
     IUserService,
 } from "../types";
-import { SERVICE } from "../constants/service.constants";
+import { SERVICE_SYMBOLS } from "../constants/service.constants";
 
 @injectable()
 class AuthService implements IAuthService {
@@ -20,9 +20,11 @@ class AuthService implements IAuthService {
     private eventEmitter: EventEmitter;
 
     constructor(
-        @inject(SERVICE.JWT_SERVICE) protected jwtService: IJwtService,
-        @inject(SERVICE.BCRYPT_SERVICE) protected bcryptService: IBcryptService,
-        @inject(SERVICE.USER_SERVICE) protected userService: IUserService
+        @inject(SERVICE_SYMBOLS.JWT_SERVICE) protected jwtService: IJwtService,
+        @inject(SERVICE_SYMBOLS.BCRYPT_SERVICE)
+        protected bcryptService: IBcryptService,
+        @inject(SERVICE_SYMBOLS.USER_SERVICE)
+        protected userService: IUserService
     ) {}
 
     async userSignUp(

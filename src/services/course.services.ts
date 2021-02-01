@@ -17,7 +17,7 @@ import {
     ECourseVerificationStatus,
     ICourseVerificationStatusUpdate,
 } from "../types";
-import { SERVICE } from "../constants/service.constants";
+import { SERVICE_SYMBOLS } from "../constants/service.constants";
 import { Course } from "../models";
 
 @injectable()
@@ -28,7 +28,8 @@ class CourseService implements ICourseService {
     private eventEmitter: EventEmitter;
 
     constructor(
-        @inject(SERVICE.ERROR_SERVICE) protected errorService: IErrorService
+        @inject(SERVICE_SYMBOLS.ERROR_SERVICE)
+        protected errorService: IErrorService
     ) {}
 
     private configureMeetingsQuery(

@@ -1,6 +1,6 @@
 // InversifyJS, our dependency injection library, asks for symbol identifiers for our services.
 
-export const SERVICE = {
+export const SERVICE_SYMBOLS = {
     AUTH_MIDDLEWARE_SERVICE: Symbol.for("AUTH_MIDDLEWARE_SERVICE"),
     AUTH_SERVICE: Symbol.for("AUTH_SERVICE"),
     BCRYPT_SERVICE: Symbol.for("BCRYPT_SERVICE"),
@@ -14,4 +14,5 @@ export const SERVICE = {
     SCHOOL_SERVICE: Symbol.for("SCHOOL_SERVICE"),
     USER_SERVICE: Symbol.for("USER_SERVICE"),
     EMAIL_SERVICE: Symbol.for("EMAIL_SERVICE"),
+    STORAGE_SERVICE: Symbol.for("STORAGE_SERVICE"),
 };

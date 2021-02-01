@@ -17,7 +17,6 @@ export default socketInitializers;
 export function init(io: Server) {
     io.on("connection", async function (socket: Socket) {
         let user = await findUserFromSocket(socket);
-        logger.info(`User ${user._id} connected.`);
 
         if (!user)
             return logger.error("Cannot find user from socket connection");

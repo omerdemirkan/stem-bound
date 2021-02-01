@@ -17,7 +17,7 @@ import {
     IUserService,
     IErrorService,
 } from "../types";
-import { SERVICE } from "../constants/service.constants";
+import { SERVICE_SYMBOLS } from "../constants/service.constants";
 import { Chat, Message } from "../models";
 
 @injectable()
@@ -28,8 +28,10 @@ class ChatService implements IChatService {
     private eventEmitter: EventEmitter;
 
     constructor(
-        @inject(SERVICE.USER_SERVICE) protected userService: IUserService,
-        @inject(SERVICE.ERROR_SERVICE) protected errorService: IErrorService
+        @inject(SERVICE_SYMBOLS.USER_SERVICE)
+        protected userService: IUserService,
+        @inject(SERVICE_SYMBOLS.ERROR_SERVICE)
+        protected errorService: IErrorService
     ) {}
 
     async createChat(chatData: Partial<IChat>): Promise<IChat> {

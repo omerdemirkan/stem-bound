@@ -12,14 +12,17 @@ import {
     IChatService,
 } from "../types";
 import { inject, injectable } from "inversify";
-import { SERVICE } from "../constants/service.constants";
+import { SERVICE_SYMBOLS } from "../constants/service.constants";
 
 @injectable()
 class MetadataService implements IMetadataService {
     constructor(
-        @inject(SERVICE.COURSE_SERVICE) protected courseService: ICourseService,
-        @inject(SERVICE.USER_SERVICE) protected userService: IUserService,
-        @inject(SERVICE.CHAT_SERVICE) protected chatService: IChatService
+        @inject(SERVICE_SYMBOLS.COURSE_SERVICE)
+        protected courseService: ICourseService,
+        @inject(SERVICE_SYMBOLS.USER_SERVICE)
+        protected userService: IUserService,
+        @inject(SERVICE_SYMBOLS.CHAT_SERVICE)
+        protected chatService: IChatService
     ) {}
 
     async handleDeletedUserMetadataUpdate(deletedUser: IUser) {

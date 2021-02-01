@@ -6,12 +6,14 @@ import {
     courseService,
     schoolService,
     chatService,
+    storageService,
 } from "../../../services";
 import {
     configureUserArrayQuery,
     configureUserArrayResponseData,
     configureUserResponseData,
-} from "../../../helpers/user.helpers";
+    configureChatArrayResponseData,
+} from "../../../helpers";
 import { Types } from "mongoose";
 import {
     IUser,
@@ -22,12 +24,10 @@ import {
     IModifiedRequest,
     EUserRoles,
 } from "../../../types";
-import { configureChatArrayResponseData } from "../../../helpers/chat.helpers";
 import {
     configureCourseArrayQuery,
     configureCourseArrayResponseData,
 } from "../../../helpers";
-import { saveFileToBucket } from "../../../jobs";
 
 const { ObjectId } = Types;
 
@@ -175,7 +175,7 @@ export async function updateUserProfilePicture(
 ) {
     try {
         const file: any = req.files.file;
-        const profilePictureUrl = await saveFileToBucket(file);
+        const profilePictureUrl = await storageService.saveFileToBucket(file);
 
         const user = await userService.updateUserById(ObjectId(req.params.id), {
             profilePictureUrl,
