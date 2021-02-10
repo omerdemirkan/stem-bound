@@ -24,7 +24,7 @@ export function configureChatArrayQuery(
         user_ids,
     } = requestMetadata.query;
     skip = +skip;
-    limit = +limit;
+    limit = isNaN(+limit) ? 12 : Math.min(12, +limit);
     before = before ? new Date(before) : null;
     after = after ? new Date(before) : null;
     type = isValidChatType(type) ? type : null;
@@ -54,7 +54,7 @@ export function configureMessageArrayQuery(
 ): IQuery<IMessage> {
     let { skip, limit, before, after, unread, text } = requestMetadata.query;
     skip = +skip;
-    limit = +limit;
+    limit = isNaN(+limit) ? 12 : Math.min(12, +limit);
     before = before ? new Date(before) : null;
     after = after ? new Date(after) : null;
     unread = !!unread && unread !== "false";

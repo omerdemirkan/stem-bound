@@ -1,4 +1,3 @@
-import { EventEmitter } from "events";
 import { UploadedFile } from "express-fileupload";
 import { SignOptions, VerifyOptions } from "jsonwebtoken";
 import { Types } from "mongoose";

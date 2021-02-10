@@ -13,13 +13,19 @@ export async function getChatMessages(req: IModifiedRequest, res: Response) {
     try {
         const chatId = ObjectId(req.params.chatId);
         const query = configureMessageArrayQuery(req.meta);
+        // For hasMore functionality
+        query.limit += 1;
         const messages: IMessage[] = await chatService.findMessagesByChatId(
             chatId,
             query
         );
         res.json({
             message: "Chat successfully fetched",
-            data: configureMessageArrayResponseData(messages, req.meta),
+            data: configureMessageArrayResponseData(
+                messages.slice(0, messages.length),
+                req.meta
+            ),
+            hasMore: messages.length === query.limit,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

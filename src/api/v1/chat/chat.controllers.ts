@@ -31,11 +31,10 @@ export async function createChat(req: IModifiedRequest, res: Response) {
 
         chatData.meta.createdBy = userId;
 
-        if (chatData.type === EChatTypes.PRIVATE) {
+        if (chatData.type === EChatTypes.PRIVATE)
             duplicateChat = await chatService.findPrivateChatByUserIds(
                 chatData.meta.users
             );
-        }
 
         let newChat: IChat =
             duplicateChat || (await chatService.createChat(chatData));
@@ -87,10 +86,16 @@ export async function getChats(req: IModifiedRequest, res: Response) {
     try {
         const userId = ObjectId(req.payload.user._id);
         const query = configureChatArrayQuery(req.meta);
+        // For hasMore functionality
+        query.limit += 1;
         let chats = await chatService.findChatsByUserId(userId, query);
         res.json({
-            data: await configureChatArrayResponseData(chats, req.meta),
+            data: await configureChatArrayResponseData(
+                chats.slice(0, chats.length),
+                req.meta
+            ),
             message: "User chats successfully found",
+            hasMore: chats.length === query.limit,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
