@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { EventEmitter } from "events";
 import { emitter } from "../decorators";
-import { configurePrivateChatKey } from "../helpers";
+import { configurePrivateChatKey, containsDuplicates } from "../helpers";
 import { inject, injectable } from "inversify";
 import {
     IChat,
@@ -13,6 +13,7 @@ import {
     IChatService,
     IUserService,
     IErrorService,
+    EErrorTypes,
 } from "../types";
 import { SERVICE_SYMBOLS } from "../constants/service.constants";
 import { Chat, Message } from "../models";
@@ -32,6 +33,11 @@ class ChatService implements IChatService {
     ) {}
 
     async createChat(chatData: Partial<IChat>): Promise<IChat> {
+        if (containsDuplicates(chatData.meta.users))
+            this.errorService.throwError(
+                EErrorTypes.BAD_REQUEST,
+                "Chat user metadata cannot be duplicated"
+            );
         if (chatData.type === EChatTypes.PRIVATE)
             chatData.privateChatKey = configurePrivateChatKey(
                 chatData.meta.users

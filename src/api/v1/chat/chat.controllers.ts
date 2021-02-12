@@ -26,7 +26,7 @@ export async function createChat(req: IModifiedRequest, res: Response) {
             ObjectId(id as any)
         );
 
-        if (chatData.meta.users.findIndex((id) => id.equals(userId)) === -1)
+        if (!chatData.meta.users.some((id) => id.equals(userId)))
             chatData.meta.users.push(userId);
 
         chatData.meta.createdBy = userId;
@@ -67,12 +67,12 @@ export async function getChat(req: IModifiedRequest, res: Response) {
             _id: ObjectId(req.params.id),
             "meta.users": ObjectId(req.payload.user._id),
         });
-        if (!chat) {
+        if (!chat)
             errorService.throwError(
                 EErrorTypes.DOCUMENT_NOT_FOUND,
                 "Chat not found"
             );
-        }
+
         res.json({
             message: "Chat successfully fetched",
             data: await configureChatResponseData(chat, req.meta),
