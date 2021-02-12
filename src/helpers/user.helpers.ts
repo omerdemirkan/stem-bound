@@ -54,12 +54,14 @@ export function configureUserArrayQuery(
     if (course_id) query.filter["meta.courses"] = course_id;
     if (school_id) query.filter["meta.school"] = school_id;
 
-    if (+lat & +long) {
+    if (+lat && +long) {
         coordinates = [+long, +lat];
     } else if (geo_ip) {
         const { latitude, longitude } = getCoordinatesByIp(requestMetadata.ip);
         coordinates = [longitude, latitude];
     }
+
+    console.log(query.filter._id);
 
     return { query, coordinates };
 }

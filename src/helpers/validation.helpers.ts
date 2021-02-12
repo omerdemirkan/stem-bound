@@ -16,8 +16,10 @@ export function filterDuplicates<T>(values: T[], mapFunc?: (value: T) => any) {
     const valueSet = new Set();
     mapFunc = mapFunc || ((a) => a);
     const newValues = [];
-    for (let i = 0; i < values.length; i++)
-        if (!valueSet.has(mapFunc(values[i]))) newValues.push(values[i]);
-
+    for (let i = 0; i < values.length; i++) {
+        const key = mapFunc(values[i]);
+        if (!valueSet.has(key)) newValues.push(values[i]);
+        valueSet.add(key);
+    }
     return newValues;
 }
