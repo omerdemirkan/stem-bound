@@ -6,7 +6,7 @@ import { injectable } from "inversify";
 @injectable()
 class ErrorService implements IErrorService {
     status(error: Error) {
-        logger.error("%j" + error, error.stack);
+        console.trace(error);
         return (error as any).status || 400;
     }
 

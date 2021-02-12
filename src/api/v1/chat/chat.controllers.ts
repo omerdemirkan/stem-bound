@@ -10,26 +10,16 @@ import {
 import {
     configureChatArrayQuery,
     configureChatArrayResponseData,
+    configureChatData,
     configureChatResponseData,
-} from "../../../helpers/chat.helpers";
+} from "../../../helpers";
 
 const { ObjectId } = Types;
 
 export async function createChat(req: IModifiedRequest, res: Response) {
     try {
-        let chatData: Partial<IChat> = req.body,
+        let chatData: Partial<IChat> = configureChatData(req.body, req.meta),
             duplicateChat: IChat;
-
-        const userId = ObjectId(req.payload.user._id);
-
-        chatData.meta.users = chatData.meta.users.map((id) =>
-            ObjectId(id as any)
-        );
-
-        if (!chatData.meta.users.some((id) => id.equals(userId)))
-            chatData.meta.users.push(userId);
-
-        chatData.meta.createdBy = userId;
 
         if (chatData.type === EChatTypes.PRIVATE)
             duplicateChat = await chatService.findPrivateChatByUserIds(

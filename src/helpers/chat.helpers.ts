@@ -8,8 +8,22 @@ import {
 } from "../types";
 import { Types } from "mongoose";
 import { userService } from "../services";
+import { filterDuplicates } from "./validation.helpers";
 
 const { ObjectId } = Types;
+
+export function configureChatData(
+    chatData: Partial<IChat>,
+    requestMetadata: IRequestMetadata
+) {
+    chatData.meta.users = filterDuplicates([
+        ...chatData.meta.users,
+        requestMetadata.payload.user._id,
+    ]).map((str) => ObjectId(str));
+    const userId = ObjectId(requestMetadata.payload.user._id);
+    chatData.meta.createdBy = userId;
+    return chatData;
+}
 
 export function configureChatArrayQuery(
     requestMetadata: IRequestMetadata

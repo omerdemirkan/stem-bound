@@ -33,7 +33,11 @@ class ChatService implements IChatService {
     ) {}
 
     async createChat(chatData: Partial<IChat>): Promise<IChat> {
-        if (containsDuplicates(chatData.meta.users))
+        if (
+            containsDuplicates(chatData.meta.users, (userId) =>
+                userId.toHexString()
+            )
+        )
             this.errorService.throwError(
                 EErrorTypes.BAD_REQUEST,
                 "Chat user metadata cannot be duplicated"
