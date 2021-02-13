@@ -49,9 +49,40 @@ const Students = Users.discriminator(
                     trim: true,
                 },
             ],
+            required: true,
+            minlength: 1,
+            maxlength: 10,
+        },
+        initialGradeLevel: {
+            type: Number,
+            require: true,
             validate: {
-                validator: schemaValidators.arrayLength({ min: 1, max: 10 }),
-                message: (props) => `1 to 10 interests required.`,
+                validator(gradeLevel: number) {
+                    return (
+                        Math.floor(gradeLevel) === gradeLevel &&
+                        gradeLevel >= 6 &&
+                        gradeLevel <= 12
+                    );
+                },
+                message:
+                    "Student grade level must be between 6 and 12 inclusive",
+            },
+        },
+        initialSchoolYear: {
+            type: String,
+            required: true,
+            validate: {
+                validator(initialSchoolYear) {
+                    const [startYear, endYear] = initialSchoolYear
+                        .split("-")
+                        .map((str) => +str);
+                    return (
+                        !isNaN(startYear) &&
+                        !isNaN(endYear) &&
+                        endYear - startYear === 1 &&
+                        endYear >= new Date().getFullYear()
+                    );
+                },
             },
         },
         meta: {
