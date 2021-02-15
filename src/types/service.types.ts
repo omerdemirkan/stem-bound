@@ -415,12 +415,22 @@ export interface IUserService {
 
     updateUser(
         filter: IFilterQuery<IUser>,
-        userData: IUpdateQuery<IUser>
+        updateQuery: IUpdateQuery<IUser>
     ): Promise<IUser>;
 
     updateUserById(
         userId: Types.ObjectId,
-        userData: IUpdateQuery<IUser>
+        updateQuery: IUpdateQuery<IUser>
+    ): Promise<IUser>;
+
+    updateUserFields(
+        filter: IFilterQuery<IUser>,
+        fields: Partial<IUser>
+    ): Promise<IUser>;
+
+    updateUserFieldsById(
+        userId: Types.ObjectId,
+        fields: Partial<IUser>
     ): Promise<IUser>;
 
     deleteUser(where: IQuery<IUser>): Promise<IUser>;

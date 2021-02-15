@@ -156,6 +156,24 @@ class UserService implements IUserService {
         return await this.updateUser({ _id: userId }, userData);
     }
 
+    async updateUserFields(
+        filter: IFilterQuery<IUser>,
+        userData: Partial<IUser>
+    ): Promise<IUser> {
+        let user = await this.findUser(filter);
+        Object.assign(user, userData);
+        // @ts-ignore
+        await user.save();
+        return user;
+    }
+
+    async updateUserFieldsById(
+        userId: Types.ObjectId,
+        userData: Partial<IUser>
+    ): Promise<IUser> {
+        return await this.updateUserFields({ _id: userId }, userData);
+    }
+
     async deleteUser(where: IQuery<IUser>): Promise<IUser> {
         return await this.model.findOneAndDelete(where);
     }

@@ -49,6 +49,8 @@ export interface IStudent extends IBaseUser, Document {
         courses: Types.ObjectId[];
         chats: Types.ObjectId[];
     };
+    initialGradeLevel: number;
+    initialSchoolYear: string;
 }
 
 export type IUser = IInstructor | ISchoolOfficial | IStudent;

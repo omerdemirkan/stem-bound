@@ -75,14 +75,22 @@ const Students = Users.discriminator(
                 validator(initialSchoolYear) {
                     const [startYear, endYear] = initialSchoolYear
                         .split("-")
-                        .map((str) => +str);
+                        .map((str) => +str) as number[];
+                    const currentYear = new Date().getFullYear();
                     return (
                         !isNaN(startYear) &&
                         !isNaN(endYear) &&
                         endYear - startYear === 1 &&
-                        endYear >= new Date().getFullYear()
+                        (endYear === currentYear || endYear === currentYear + 1)
                     );
                 },
+            },
+            default() {
+                const now = new Date(),
+                    currentMonth = now.getMonth();
+                let startYear = now.getFullYear();
+                if (currentMonth <= 6) startYear -= 1;
+                return `${startYear}-${startYear + 1}`;
             },
         },
         meta: {

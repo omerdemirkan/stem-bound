@@ -73,7 +73,7 @@ export async function getUser(req: IModifiedRequest, res: Response) {
 export async function updateUser(req: IModifiedRequest, res: Response) {
     try {
         const userId = ObjectId(req.params.id);
-        const updatedUser: IUser = await userService.updateUserById(
+        const updatedUser: IUser = await userService.updateUserFieldsById(
             userId,
             req.body
         );
