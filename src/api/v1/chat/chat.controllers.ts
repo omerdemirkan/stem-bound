@@ -29,13 +29,22 @@ export async function createChat(req: IModifiedRequest, res: Response) {
         let newChat: IChat =
             duplicateChat || (await chatService.createChat(chatData));
 
+        let promises: Promise<any>[] = [];
+
+        promises.push(configureChatResponseData(newChat, req.meta));
+
         if (!duplicateChat)
-            await metadataService.handleNewChatMetadataUpdate(newChat);
+            promises.push(metadataService.handleNewChatMetadataUpdate(newChat));
+
+        // memory safety accross threads shouldnt be an issue
+        // since we call the toObject function in configuration
+
+        const [chat] = await Promise.all(promises);
         res.json({
             message: duplicateChat
                 ? "Duplicate chat found"
                 : "Chat successfully created",
-            data: configureChatResponseData(newChat, req.meta),
+            data: chat,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -56,7 +65,7 @@ export async function getChat(req: IModifiedRequest, res: Response) {
 
         res.json({
             message: "Chat successfully fetched",
-            data: configureChatResponseData(chat, req.meta),
+            data: await configureChatResponseData(chat, req.meta),
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));
@@ -71,7 +80,7 @@ export async function getChats(req: IModifiedRequest, res: Response) {
         query.limit += 1;
         let chats = await chatService.findChatsByUserId(userId, query);
         res.json({
-            data: configureChatArrayResponseData(
+            data: await configureChatArrayResponseData(
                 chats.slice(0, chats.length),
                 req.meta
             ),
@@ -92,7 +101,7 @@ export async function updateChat(req: IModifiedRequest, res: Response) {
             req.body
         );
         res.json({
-            data: configureChatResponseData(updatedChat, req.meta),
+            data: await configureChatResponseData(updatedChat, req.meta),
             message: "Chat successfully updated",
         });
     } catch (e) {
@@ -107,10 +116,14 @@ export async function deleteChat(req: IModifiedRequest, res: Response) {
             "meta.users": ObjectId(req.payload.user._id),
         });
 
-        await metadataService.handleDeletedChatMetadataUpdate(deletedChat);
+        // memory safety accross threads shouldnt be an issue
+        const [chat] = await Promise.all([
+            configureChatResponseData(deletedChat, req),
+            metadataService.handleDeletedChatMetadataUpdate(deletedChat),
+        ]);
         res.json({
             message: "Chat successfully deleted",
-            data: configureChatResponseData(deletedChat, req.meta),
+            data: chat,
         });
     } catch (e) {
         res.status(errorService.status(e)).json(errorService.json(e));

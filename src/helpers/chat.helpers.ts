@@ -89,18 +89,28 @@ export function configureMessageArrayQuery(
     return query;
 }
 
-export function configureChatArrayResponseData(
+export async function configureChatArrayResponseData(
     chats: IChat[],
     requestMetadata: IRequestMetadata
-): IChat[] {
-    return chats.map((chat) => chat.toObject());
+): Promise<IChat[]> {
+    let newChats = chats.map((chat) => chat.toObject());
+    await configureChatArrayPictureUrls(
+        newChats,
+        ObjectId(requestMetadata.payload.user._id)
+    );
+    return newChats;
 }
 
-export function configureChatResponseData(
+export async function configureChatResponseData(
     chat: IChat,
     requestMetadata: IRequestMetadata
-): IChat {
-    return chat.toObject();
+): Promise<IChat> {
+    let newChat = chat.toObject();
+    await configureChatArrayPictureUrls(
+        [newChat],
+        ObjectId(requestMetadata.payload.user._id)
+    );
+    return newChat;
 }
 
 export function configureMessageArrayResponseData(
