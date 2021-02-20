@@ -50,7 +50,7 @@ export const schemaValidators = {
         };
     },
 
-    combineValidators(validators: ((el) => boolean)[]) {
+    combineValidators(...validators: ((el) => boolean)[]) {
         return function (data) {
             for (let i = 0; i < validators.length; i++)
                 if (!validators[i](data)) return false;

@@ -1,10 +1,10 @@
 import mongoose, { Schema, Types } from "mongoose";
+import { validateMeetingTimes } from "../helpers";
 import { schemaValidators } from "../helpers/model.helpers";
 import {
     ECourseTypes,
     EMeetingTypes,
     ICourse,
-    IMeeting,
     ECourseVerificationStatus,
     ICourseVerificationStatusUpdate,
 } from "../types";
@@ -15,11 +15,12 @@ const courseMetaSchema = new Schema(
             type: [Schema.Types.ObjectId],
             required: [true, "Course instructor is required."],
             validate: {
-                validator: schemaValidators.uniqueIdArray,
-                message: "Course instructors must be unique",
+                validator: schemaValidators.combineValidators(
+                    schemaValidators.uniqueIdArray,
+                    schemaValidators.arrayLength({ min: 1, max: 5 })
+                ),
+                message: "Courses must have 1 to 5 unique instructors",
             },
-            minlength: 1,
-            maxlength: 5,
             index: true,
         },
         students: {
@@ -27,11 +28,12 @@ const courseMetaSchema = new Schema(
             required: [true, "Course students are required."],
             default: [],
             validate: {
-                validator: schemaValidators.uniqueIdArray,
+                validator: schemaValidators.combineValidators(
+                    schemaValidators.uniqueIdArray,
+                    schemaValidators.arrayLength({ min: 0, max: 100 })
+                ),
                 message: "Course students must be unique",
             },
-            minlength: 0,
-            maxlength: 100,
             index: true,
         },
         school: {
@@ -63,7 +65,7 @@ const announcementSchema = new Schema(
         text: {
             type: String,
             required: [true, "Announcement text field required"],
-            minlength: 4,
+            minlength: 10,
             maxlength: 2000,
         },
         meta: {
@@ -92,7 +94,7 @@ const meetingSchema = new Schema(
         roomNum: {
             type: String,
             minlength: 1,
-            maxlength: 50,
+            maxlength: 100,
             trim: true,
             required: [
                 function () {
@@ -104,9 +106,9 @@ const meetingSchema = new Schema(
         url: {
             type: String,
             validate: {
-                validator: schemaValidators.combineValidators([
-                    schemaValidators.url,
-                ]),
+                validator: schemaValidators.combineValidators(
+                    schemaValidators.url
+                ),
                 message: "Invalid url for meeting type",
             },
             required: [
@@ -211,7 +213,7 @@ const courseSchema = new Schema(
             type: String,
             required: [true, "Course short description is required."],
             minlength: 4,
-            maxlength: 80,
+            maxlength: 100,
             trim: true,
         },
         longDescription: {
@@ -230,15 +232,8 @@ const courseSchema = new Schema(
             required: true,
             default: [],
             validate: {
-                validator: schemaValidators.uniqueKeyMapping(function (
-                    meeting: IMeeting
-                ) {
-                    const date = new Date(meeting.start);
-                    date.setHours(0, 0, 0, 0);
-                    return date.toString();
-                }),
-                message:
-                    "Meeting dates for a course must be unique, cannot have two meetings on the same day!",
+                validator: validateMeetingTimes,
+                message: "Meeting time conflict found!",
             },
         },
         announcements: {

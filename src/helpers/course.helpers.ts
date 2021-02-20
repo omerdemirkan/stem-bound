@@ -213,11 +213,12 @@ export function validateMeetingTimes(meetings: IMeeting[]) {
         return a.step;
     });
 
-    let concurrentInstructions = 0;
-
-    for (let stateChange of stateChanges) {
-        concurrentInstructions += stateChange.step;
-        if (concurrentInstructions > 1 || concurrentInstructions < 0)
+    for (let i = 1; i < stateChanges.length; i += 2) {
+        if (
+            stateChanges[i - 1].step !== 1 ||
+            stateChanges[i].step !== -1 ||
+            stateChanges[i].meetingId !== stateChanges[i - 1].meetingId
+        )
             return false;
     }
 
