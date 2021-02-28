@@ -1,0 +1,56 @@
+<style>
+  div {
+    text-align: center;
+    padding: 10vh 10vw;
+  }
+  h1 {
+    font-size: 2rem;
+    font-weight: 400;
+  }
+  p {
+    font-size: 1rem;
+  }
+  p,
+  h1 {
+    font-family: "Roboto", sans-serif;
+    color: #222;
+  }
+  center {
+    padding: 10vh 10vw;
+  }
+  button {
+    background-color: #6c57eb;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    opacity: 1;
+    transition: opacity 0.1s ease;
+    outline: none;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  button:hover {
+    opacity: 0.9;
+  }
+  img {
+    height: 150px;
+    margin-bottom: 20px;
+  }
+  a {
+    cursor: pointer;
+  }
+</style>
+<div>
+  <img src="cid:stem-bound-logo.png" alt="STEM-bound logo" />
+  <h1>
+    A new course <strong>{{courseName}}</strong> was published for verification!
+  </h1>
+  <p>
+    As a {{schoolName}} school official, you may choose to either verify or deny
+    it.
+  </p>
+  <a href="{{url}}">
+    <button>VIEW COURSE</button>
+  </a>
+</div>

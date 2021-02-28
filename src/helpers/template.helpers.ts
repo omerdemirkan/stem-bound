@@ -37,3 +37,17 @@ export async function hydrateSignUpHtmlTemplate(variables: {
         { url: "https://stembound.education" }
     );
 }
+
+export async function hydrateCoursePublishedHtmlTemplate(variables: {
+    courseName: string;
+    schoolName: string;
+    url: string;
+}) {
+    return await inlineCSS(
+        await hydrateHTML(
+            require.resolve("../../public/templates/course-published.html"),
+            variables
+        ),
+        { url: "https://stembound.education" }
+    );
+}

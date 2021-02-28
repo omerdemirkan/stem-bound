@@ -80,7 +80,7 @@ class CourseService implements ICourseService {
         filter: IFilterQuery<ICourse>,
         courseVerificationStatusUpdate: ICourseVerificationStatusUpdate
     ) {
-        return await this.updateCourse(filter, {
+        const course = await this.updateCourse(filter, {
             verificationStatus: courseVerificationStatusUpdate.status,
             // @ts-ignore
             $push: {
@@ -90,6 +90,8 @@ class CourseService implements ICourseService {
                 },
             },
         });
+        this.eventEmitter.emit(ECourseEvents.COURSE_VERIFICATION_UPDATED);
+        return course;
     }
 
     async updateCourseVerificationStatusById(

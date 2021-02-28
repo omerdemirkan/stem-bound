@@ -476,7 +476,7 @@ export interface IUserService {
 }
 
 export interface IEmailService {
-    sendOne(data: IMailDTO): any;
+    send(data: IMailDTO): any;
 }
 
 export interface IStorageService {
