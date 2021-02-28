@@ -1,3 +1,4 @@
+import { logger } from "../config";
 import { ESocketEvents, ISocketInitializer } from "../types";
 
 const initializeRoomSockets: ISocketInitializer = (
@@ -14,13 +15,13 @@ const initializeRoomSockets: ISocketInitializer = (
 
     socket.on(ESocketEvents.JOIN_ROOM, function (room: string) {
         try {
-            console.log("joined: " + room);
+            logger.info("joined: " + room);
             socket.join(room);
         } catch (e) {}
     });
     socket.on(ESocketEvents.LEAVE_ROOM, function (room: string) {
         try {
-            console.log("left: " + room);
+            logger.info("left: " + room);
             socket.leave(room);
         } catch (e) {}
     });

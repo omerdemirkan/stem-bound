@@ -190,37 +190,44 @@ export function isValidMeetingType(meetingType: EMeetingTypes): boolean {
 
 export function validateMeetingTimes(meetings: IMeeting[]) {
     // -1 means an ending state change, 1 means starting.
-    let stateChanges: { step: 1 | -1; time: Date; meetingId: string }[] = [];
+    let stateChanges: {
+        step: 1 | -1;
+        time: Date;
+        meetingId: string;
+    }[] = [];
+    try {
+        for (let meeting of meetings) {
+            stateChanges.push({
+                step: 1,
+                time: new Date(meeting.start),
+                meetingId: meeting._id.toString(),
+            });
+            stateChanges.push({
+                step: -1,
+                time: new Date(meeting.end),
+                meetingId: meeting._id.toString(),
+            });
+        }
 
-    for (let meeting of meetings) {
-        stateChanges.push({
-            step: 1,
-            time: new Date(meeting.start),
-            meetingId: meeting._id.toString(),
+        stateChanges = stateChanges.sort(function (a, b) {
+            if (a.time !== b.time) return a.time.getTime() - b.time.getTime();
+            // If a is an ending state change (i.e step is -1)
+            // a takes precedence, otherwise b takes precedence.
+            // Note that its impossible for a.step === b.step.
+            return a.step;
         });
-        stateChanges.push({
-            step: -1,
-            time: new Date(meeting.end),
-            meetingId: meeting._id.toString(),
-        });
+
+        for (let i = 1; i < stateChanges.length; i += 2) {
+            if (
+                stateChanges[i - 1].step !== 1 ||
+                stateChanges[i].step !== -1 ||
+                stateChanges[i].meetingId !== stateChanges[i - 1].meetingId
+            )
+                return false;
+        }
+
+        return true;
+    } catch (e) {
+        return false;
     }
-
-    stateChanges = stateChanges.sort(function (a, b) {
-        if (a.time !== b.time) return a.time.getTime() - b.time.getTime();
-        // If a is an ending state change (i.e step is -1)
-        // a takes precedence, otherwise b takes precedence.
-        // Note that its impossible for a.step === b.step.
-        return a.step;
-    });
-
-    for (let i = 1; i < stateChanges.length; i += 2) {
-        if (
-            stateChanges[i - 1].step !== 1 ||
-            stateChanges[i].step !== -1 ||
-            stateChanges[i].meetingId !== stateChanges[i - 1].meetingId
-        )
-            return false;
-    }
-
-    return true;
 }

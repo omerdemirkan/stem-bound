@@ -63,7 +63,7 @@ export async function createMeeting(req: IModifiedRequest, res: Response) {
 
 export async function updateMeeting(req: IModifiedRequest, res: Response) {
     try {
-        const updatedMeeting: IMeeting = await courseService.updateMeeting(
+        const updatedMeeting = await courseService.updateMeeting(
             {
                 _id: ObjectId(req.params.courseId),
                 "meta.instructors": ObjectId(req.payload.user._id),

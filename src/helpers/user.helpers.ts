@@ -61,8 +61,6 @@ export function configureUserArrayQuery(
         coordinates = [longitude, latitude];
     }
 
-    console.log(query.filter._id);
-
     return { query, coordinates };
 }
 

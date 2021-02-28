@@ -59,7 +59,6 @@ export async function sendVerificationEmail(
             message: `Email sent to ${userData.email}`,
         });
     } catch (e) {
-        console.log(JSON.stringify(e));
         res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
