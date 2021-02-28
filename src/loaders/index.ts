@@ -3,6 +3,7 @@ import { Application } from "express";
 import http from "http";
 
 import "./di.loader";
+import "./subscriber.loader";
 import socketLoader from "./socket.loader";
 import expressLoader from "./express.loader";
 import mongooseLoader from "./mongoose.loader";

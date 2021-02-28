@@ -37,7 +37,7 @@ class AuthService implements IAuthService {
 
         const accessToken = await this.jwtService.sign(payload);
 
-        this.eventEmitter.emit(EUserEvents.USER_SIGNUP, newUser);
+        this.eventEmitter.emit(EUserEvents.USER_SIGNUP_COMPLETED, newUser);
         return { user: newUser, accessToken };
     }
 
