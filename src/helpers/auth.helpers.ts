@@ -26,7 +26,7 @@ export async function sendSignUpEmail(userData: Partial<IUser>) {
             firstName: userData.firstName,
             url: signUpUrl,
         });
-    await emailService.send({
+    await emailService.sendOne({
         to: userData.email,
         html: emailHtml,
         subject: "Verify your email",

@@ -29,7 +29,7 @@ const SchoolOfficials = Users.discriminator(
     new Schema({
         position: {
             type: String,
-            maxlength: 200,
+            maxlength: 100,
             minlength: 2,
             required: [true, "Position Required"],
             trim: true,

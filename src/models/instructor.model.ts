@@ -14,7 +14,6 @@ const instructorMetaSchema = new Schema(
                 validator: schemaValidators.uniqueStringArray,
                 message: "Instructors must have 0 to 10 unique courses.",
             },
-
             index: true,
         },
         chats: {

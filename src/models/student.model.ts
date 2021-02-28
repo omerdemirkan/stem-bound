@@ -50,8 +50,10 @@ const Students = Users.discriminator(
                 },
             ],
             required: true,
-            minlength: 1,
-            maxlength: 10,
+            validate: {
+                validator: schemaValidators.arrayLength({ min: 0, max: 50 }),
+                message: "A student can have at most 10 interests",
+            },
         },
         initialGradeLevel: {
             type: Number,

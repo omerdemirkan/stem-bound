@@ -179,7 +179,7 @@ const courseSchema = new Schema(
         title: {
             type: String,
             minlength: 4,
-            maxlength: 40,
+            maxlength: 50,
             required: [true, "Course title is required."],
             trim: true,
         },
