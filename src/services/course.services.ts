@@ -248,22 +248,12 @@ class CourseService implements ICourseService {
         meetingId: Types.ObjectId,
         meetingData: Partial<IMeeting>
     ): Promise<IMeeting> {
-        // const course = await this.model.findOne(filter);
-        // const meetingIndex = course.meetings.findIndex(
-        //     (meeting) => meeting._id.toString() === meetingId.toString()
-        // );
-        // Object.assign(course.meetings[meetingIndex], meetingData);
-        // await course.save();
-        // return course.meetings[meetingIndex];
-        const course = await this.updateCourse(
-            { ...filter, "meetings._id": meetingId },
-            {
-                $set: { "meetings.$": meetingData },
-            }
-        );
+        const course = await this.model.findOne(filter);
         const meetingIndex = course.meetings.findIndex(
             (meeting) => meeting._id.toString() === meetingId.toString()
         );
+        Object.assign(course.meetings[meetingIndex], meetingData);
+        await course.save();
         return course.meetings[meetingIndex];
     }
 
