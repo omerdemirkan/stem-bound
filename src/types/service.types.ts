@@ -407,6 +407,11 @@ export interface IUserService {
         query?: IQuery<IUser>
     ): Promise<IUser[]>;
 
+    findUsersBySchoolNcesId(
+        schoolId: string,
+        filter?: IFilterQuery<IUser>
+    ): Promise<IUser[]>;
+
     findUser(filter: IFilterQuery<IUser>): Promise<IUser>;
 
     findUserById(id: Types.ObjectId): Promise<IUser>;

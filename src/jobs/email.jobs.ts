@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import config from "../config";
 import {
     hydrateCoursePublishedHtmlTemplate,
+    hydrateCourseVerifiedHtmlTemplate,
     hydrateSignUpHtmlTemplate,
 } from "../helpers";
 import {
@@ -32,11 +33,8 @@ export async function sendCoursePublishedEmails(courseId: Types.ObjectId) {
     const course = await courseService.findCourseById(courseId);
     const [school, schoolOfficials] = await Promise.all([
         schoolService.findSchoolByNcesId(course.meta.school),
-        userService.findUsers({
-            filter: {
-                role: EUserRoles.SCHOOL_OFFICIAL,
-                "meta.school": course.meta.school,
-            },
+        userService.findUsersBySchoolNcesId(course.meta.school, {
+            role: EUserRoles.SCHOOL_OFFICIAL,
         }),
     ]);
 
@@ -48,6 +46,27 @@ export async function sendCoursePublishedEmails(courseId: Types.ObjectId) {
         }),
         subject: "New course published!",
         to: schoolOfficials.map((user) => user.email),
+        inline: require.resolve("../../public/assets/stem-bound-logo.png"),
+    });
+}
+
+export async function sendCourseVerifiedEmails(courseId: Types.ObjectId) {
+    const course = await courseService.findCourseById(courseId);
+    const [school, students] = await Promise.all([
+        schoolService.findSchoolByNcesId(course.meta.school),
+        userService.findUsersBySchoolNcesId(course.meta.school, {
+            role: EUserRoles.STUDENT,
+        }),
+    ]);
+
+    await emailService.send({
+        html: await hydrateCourseVerifiedHtmlTemplate({
+            courseName: course.title,
+            schoolName: school.name,
+            url: `https://${config.clientDomain}/app/my-school`,
+        }),
+        subject: "New Course Available!",
+        to: students.map((student) => student._id),
         inline: require.resolve("../../public/assets/stem-bound-logo.png"),
     });
 }

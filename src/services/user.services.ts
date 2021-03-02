@@ -127,6 +127,15 @@ class UserService implements IUserService {
         return await this.findUsers(query);
     }
 
+    async findUsersBySchoolNcesId(
+        schoolId: string,
+        filter?: IFilterQuery<IUser>
+    ) {
+        return await this.findUsers({
+            filter: { ...filter, "meta.school": schoolId },
+        });
+    }
+
     async findUser(filter: IFilterQuery<IUser>): Promise<IUser> {
         return await this.model.findOne(filter);
     }

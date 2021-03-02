@@ -1,5 +1,8 @@
 import { eventEmitter, logger } from "../config";
-import { sendCoursePublishedEmails } from "../jobs/email.jobs";
+import {
+    sendCoursePublishedEmails,
+    sendCourseVerifiedEmails,
+} from "../jobs/email.jobs";
 import {
     ECourseEvents,
     ECourseVerificationStatus,
@@ -14,13 +17,19 @@ eventEmitter.on(
         updatedCourse: ICourse
     ) {
         try {
-            if (
-                courseVerificationStatusUpdate.status ===
-                ECourseVerificationStatus.PENDING_VERIFICATION
-            )
-                await sendCoursePublishedEmails(updatedCourse._id);
-        } catch (e) {
-            logger.error(e);
+            switch (courseVerificationStatusUpdate.status) {
+                case ECourseVerificationStatus.PENDING_VERIFICATION:
+                    await sendCoursePublishedEmails(updatedCourse._id);
+                    break;
+                case ECourseVerificationStatus.VERIFIED:
+                    await sendCourseVerifiedEmails(updatedCourse._id);
+                    break;
+            }
+        } catch (error) {
+            logger.error(
+                "An error occured when sending course verification update emails",
+                error
+            );
         }
     }
 );
