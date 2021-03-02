@@ -29,14 +29,16 @@ export async function sendSignUpEmail(userData: Partial<IUser>) {
 }
 
 export async function sendCoursePublishedEmails(courseId: Types.ObjectId) {
-    const course = await courseService.findCourseById(courseId),
-        school = await schoolService.findSchoolByNcesId(course.meta.school),
-        schoolOfficials = await userService.findUsers({
+    const course = await courseService.findCourseById(courseId);
+    const [school, schoolOfficials] = await Promise.all([
+        schoolService.findSchoolByNcesId(course.meta.school),
+        userService.findUsers({
             filter: {
                 role: EUserRoles.SCHOOL_OFFICIAL,
-                "meta.school": school.ncesid,
+                "meta.school": course.meta.school,
             },
-        });
+        }),
+    ]);
 
     await emailService.send({
         html: await hydrateCoursePublishedHtmlTemplate({

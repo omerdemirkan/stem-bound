@@ -90,7 +90,11 @@ class CourseService implements ICourseService {
                 },
             },
         });
-        this.eventEmitter.emit(ECourseEvents.COURSE_VERIFICATION_UPDATED);
+        this.eventEmitter.emit(
+            ECourseEvents.COURSE_VERIFICATION_UPDATED,
+            courseVerificationStatusUpdate,
+            course
+        );
         return course;
     }
 
