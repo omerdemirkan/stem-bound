@@ -25,7 +25,7 @@ export async function hydrateHTML(
     return stringBuilder.join("");
 }
 
-export async function hydrateSignUpHtmlTemplate(variables: {
+export async function hydrateSignUpTemplate(variables: {
     firstName: string;
     url: string;
 }) {
@@ -38,7 +38,7 @@ export async function hydrateSignUpHtmlTemplate(variables: {
     );
 }
 
-export async function hydrateCoursePublishedHtmlTemplate(variables: {
+export async function hydrateCoursePublishedTemplate(variables: {
     courseName: string;
     schoolName: string;
     url: string;
@@ -52,14 +52,32 @@ export async function hydrateCoursePublishedHtmlTemplate(variables: {
     );
 }
 
-export async function hydrateCourseVerifiedHtmlTemplate(variables: {
+export async function hydrateCourseVerifiedStudentTemplate(variables: {
     courseName: string;
     schoolName: string;
     url: string;
 }) {
     return await inlineCSS(
         await hydrateHTML(
-            require.resolve("../../public/templates/course-published.html"),
+            require.resolve(
+                "../../public/templates/course-verified-student.html"
+            ),
+            variables
+        ),
+        { url: "https://stembound.education" }
+    );
+}
+
+export async function hydrateCourseVerifiedInstructorTemplate(variables: {
+    courseName: string;
+    schoolName: string;
+    url: string;
+}) {
+    return await inlineCSS(
+        await hydrateHTML(
+            require.resolve(
+                "../../public/templates/course-verified-instructor.html"
+            ),
             variables
         ),
         { url: "https://stembound.education" }
