@@ -78,13 +78,13 @@ export async function sendCourseVerifiedEmails(courseId: Types.ObjectId) {
         emailService.send({
             html: studentHtml,
             subject: "New Course Available!",
-            to: students.map((student) => student._id),
+            to: students.map((student) => student.email),
             inline: require.resolve("../../public/assets/stem-bound-logo.png"),
         }),
         emailService.send({
             html: instructorHtml,
             subject: "Your Course was Verified!",
-            to: instructors.map((student) => student._id),
+            to: instructors.map((student) => student.email),
             inline: require.resolve("../../public/assets/stem-bound-logo.png"),
         }),
     ]);
