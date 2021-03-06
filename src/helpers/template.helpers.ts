@@ -83,3 +83,17 @@ export async function hydrateCourseVerifiedInstructorTemplate(variables: {
         { url: "https://stembound.education" }
     );
 }
+
+export async function hydrateCourseDismissedTemplate(variables: {
+    courseName: string;
+    schoolName: string;
+    url: string;
+}) {
+    return await inlineCSS(
+        await hydrateHTML(
+            require.resolve("../../public/templates/course-dismissed.html"),
+            variables
+        ),
+        { url: "https://stembound.education" }
+    );
+}

@@ -1,5 +1,6 @@
 import { eventEmitter, logger } from "../config";
 import {
+    sendCourseDismissedEmails,
     sendCoursePublishedEmails,
     sendCourseVerifiedEmails,
 } from "../jobs/email.jobs";
@@ -23,6 +24,9 @@ eventEmitter.on(
                     break;
                 case ECourseVerificationStatus.VERIFIED:
                     await sendCourseVerifiedEmails(updatedCourse._id);
+                    break;
+                case ECourseVerificationStatus.DISMISSED:
+                    await sendCourseDismissedEmails(updatedCourse._id);
                     break;
             }
         } catch (error) {

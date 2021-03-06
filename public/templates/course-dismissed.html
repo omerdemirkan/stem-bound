@@ -1,0 +1,57 @@
+<style>
+  div {
+    text-align: center;
+    padding: 10vh 10vw;
+  }
+  h1 {
+    font-size: 2rem;
+    font-weight: 400;
+  }
+  p {
+    font-size: 1rem;
+  }
+  p,
+  h1 {
+    font-family: "Roboto", sans-serif;
+    color: #222;
+  }
+  center {
+    padding: 10vh 10vw;
+  }
+  button {
+    background-color: #6c57eb;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    opacity: 1;
+    transition: opacity 0.1s ease;
+    outline: none;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  button:hover {
+    opacity: 0.9;
+  }
+  img {
+    height: 150px;
+    margin-bottom: 20px;
+  }
+  a {
+    cursor: pointer;
+  }
+</style>
+<div>
+  <img src="cid:stem-bound-logo.png" alt="STEM-bound logo" />
+  <h1>
+    Your course <strong>{{courseName}}</strong> was dismissed by a
+    {{schoolName}} school official.
+  </h1>
+  <p>
+    You may contact the school official regarding this decision to get the
+    matter resolved.
+  </p>
+  <a href="{{url}}">
+    <button>SEE DETAILS</button>
+  </a>
+</div>

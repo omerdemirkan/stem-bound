@@ -1,6 +1,7 @@
 import { Types } from "mongoose";
 import config from "../config";
 import {
+    hydrateCourseDismissedTemplate,
     hydrateCoursePublishedTemplate,
     hydrateCourseVerifiedInstructorTemplate,
     hydrateCourseVerifiedStudentTemplate,
@@ -88,4 +89,23 @@ export async function sendCourseVerifiedEmails(courseId: Types.ObjectId) {
             inline: require.resolve("../../public/assets/stem-bound-logo.png"),
         }),
     ]);
+}
+
+export async function sendCourseDismissedEmails(courseId: Types.ObjectId) {
+    const course = await courseService.findCourseById(courseId);
+    const [school, instructors] = await Promise.all([
+        schoolService.findSchoolByNcesId(course.meta.school),
+        userService.findUsersByIds(course.meta.instructors),
+    ]);
+
+    await emailService.send({
+        html: await hydrateCourseDismissedTemplate({
+            courseName: course.title,
+            schoolName: school.name,
+            url: `https://${config.clientDomain}/app/courses/${course._id}`,
+        }),
+        subject: "Your Course was Dismissed.",
+        to: instructors.map((user) => user.email),
+        inline: require.resolve("../../public/assets/stem-bound-logo.png"),
+    });
 }
