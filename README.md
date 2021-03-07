@@ -4,7 +4,7 @@
 
 # Stem-bound API V1
 
-The REST API behind **Stem-bound**, a platform that connects professionals in STEM fields with schools in need to teach courses on in demand skills.
+The REST API behind **[Stem-bound](https://stembound.education/)**, a platform that connects professionals in STEM fields with schools in need to teach courses on in demand skills.
 
 ## Documentation
 
