@@ -3,37 +3,37 @@ import * as announcementControllers from "./announcement.controllers";
 import { authMiddlewareService } from "../../../../services";
 import { EUserRoles } from "../../../../types";
 
-const announcementsRouter = Router({ mergeParams: true });
+const announcementRouter = Router({ mergeParams: true });
 
-announcementsRouter.post(
+announcementRouter.post(
     "/",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR]),
     announcementControllers.createAnnouncement
 );
 
-announcementsRouter.get(
+announcementRouter.get(
     "/",
     authMiddlewareService.extractTokenPayload,
     announcementControllers.getAnnouncements
 );
 
-announcementsRouter.get(
+announcementRouter.get(
     "/:announcementId",
     authMiddlewareService.extractTokenPayload,
     announcementControllers.getAnnouncement
 );
 
-announcementsRouter.patch(
+announcementRouter.patch(
     "/:announcementId",
     authMiddlewareService.extractTokenPayload,
     announcementControllers.updateAnnouncement
 );
 
-announcementsRouter.delete(
+announcementRouter.delete(
     "/:announcementId",
     authMiddlewareService.extractTokenPayload,
     announcementControllers.deleteAnnouncement
 );
 
-export default announcementsRouter;
+export default announcementRouter;

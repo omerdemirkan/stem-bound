@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import config from "../config";
 import {
     hydrateCourseDismissedTemplate,
+    hydrateCourseInstructorInvitationTemplate,
     hydrateCoursePublishedTemplate,
     hydrateCourseVerifiedInstructorTemplate,
     hydrateCourseVerifiedStudentTemplate,
@@ -106,6 +107,38 @@ export async function sendCourseDismissedEmails(courseId: Types.ObjectId) {
         }),
         subject: "Your Course was Dismissed.",
         to: instructors.map((user) => user.email),
+        inline: require.resolve("../../public/assets/stem-bound-logo.png"),
+    });
+}
+
+export async function sendCourseInstructorInvitationEmail({
+    invitedId,
+    inviterId,
+    courseId,
+    schoolId,
+}: {
+    invitedId: Types.ObjectId;
+    inviterId: Types.ObjectId;
+    courseId: Types.ObjectId;
+    schoolId: string;
+}) {
+    const [course, school, users] = await Promise.all([
+        courseService.findCourseById(courseId),
+        schoolService.findSchoolByNcesId(schoolId),
+        userService.findUsersByIds([invitedId, inviterId]),
+    ]);
+    const inviter = users.find((u) => inviterId.equals(u._id)),
+        invited = users.find((u) => invitedId.equals(u._id));
+
+    await emailService.send({
+        html: await hydrateCourseInstructorInvitationTemplate({
+            courseName: course.title,
+            inviterName: `${inviter.firstName} ${inviter.lastName}`,
+            schoolName: school.name,
+            url: `https://${config.clientDomain}/app/courses/${course._id}/instructor-invitation`,
+        }),
+        subject: "Course instructor invitation!",
+        to: invited.email,
         inline: require.resolve("../../public/assets/stem-bound-logo.png"),
     });
 }

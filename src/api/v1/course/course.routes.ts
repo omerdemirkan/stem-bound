@@ -3,8 +3,9 @@ import * as courseControllers from "./course.controllers";
 import { EUserRoles } from "../../../types";
 import { authMiddlewareService } from "../../../services";
 import meetingRouter from "./meeting/meeting.routes";
-import announcementsRouter from "./announcement/announcement.routes";
+import announcementRouter from "./announcement/announcement.routes";
 import { validateVerificationStatusUpdateMiddleware } from "../../../middlewares/course.middlewares";
+import invitationRouter from "./invitation/invitation.controllers";
 
 const courseRouter = Router();
 
@@ -69,6 +70,7 @@ courseRouter.patch(
 );
 
 courseRouter.use("/:courseId/meetings", meetingRouter);
-courseRouter.use("/:courseId/announcements", announcementsRouter);
+courseRouter.use("/:courseId/announcements", announcementRouter);
+courseRouter.use("/:courseId/invitations", invitationRouter);
 
 export default courseRouter;
