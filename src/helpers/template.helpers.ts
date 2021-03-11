@@ -3,6 +3,10 @@ import inlineCSS from "inline-css";
 
 const { readFile } = promises;
 
+async function inlineStyles(html) {
+    return await inlineCSS(html, { url: "https://stembound.education" });
+}
+
 export async function hydrateHTML(
     filepath: string,
     variables: { [key: string]: string }
@@ -29,12 +33,11 @@ export async function hydrateSignUpTemplate(variables: {
     firstName: string;
     url: string;
 }) {
-    return await inlineCSS(
+    return await inlineStyles(
         await hydrateHTML(
             require.resolve("../../public/templates/sign-up-email.html"),
             variables
-        ),
-        { url: "https://stembound.education" }
+        )
     );
 }
 
@@ -43,12 +46,11 @@ export async function hydrateCoursePublishedTemplate(variables: {
     schoolName: string;
     url: string;
 }) {
-    return await inlineCSS(
+    return await inlineStyles(
         await hydrateHTML(
             require.resolve("../../public/templates/course-published.html"),
             variables
-        ),
-        { url: "https://stembound.education" }
+        )
     );
 }
 
@@ -57,14 +59,13 @@ export async function hydrateCourseVerifiedStudentTemplate(variables: {
     schoolName: string;
     url: string;
 }) {
-    return await inlineCSS(
+    return await inlineStyles(
         await hydrateHTML(
             require.resolve(
                 "../../public/templates/course-verified-student.html"
             ),
             variables
-        ),
-        { url: "https://stembound.education" }
+        )
     );
 }
 
@@ -73,14 +74,13 @@ export async function hydrateCourseVerifiedInstructorTemplate(variables: {
     schoolName: string;
     url: string;
 }) {
-    return await inlineCSS(
+    return await inlineStyles(
         await hydrateHTML(
             require.resolve(
                 "../../public/templates/course-verified-instructor.html"
             ),
             variables
-        ),
-        { url: "https://stembound.education" }
+        )
     );
 }
 
@@ -89,11 +89,24 @@ export async function hydrateCourseDismissedTemplate(variables: {
     schoolName: string;
     url: string;
 }) {
-    return await inlineCSS(
+    return await inlineStyles(
         await hydrateHTML(
             require.resolve("../../public/templates/course-dismissed.html"),
             variables
-        ),
-        { url: "https://stembound.education" }
+        )
+    );
+}
+
+export async function hydrateCourseInstructorInvitationTemplate(variables: {
+    inviterName: string;
+    schoolName: string;
+    courseName: string;
+    url: string;
+}) {
+    return await inlineStyles(
+        await hydrateHTML(
+            require.resolve("../../public/templates/course-dismissed.html"),
+            variables
+        )
     );
 }
