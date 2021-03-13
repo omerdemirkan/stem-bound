@@ -105,7 +105,9 @@ export async function hydrateCourseInstructorInvitationTemplate(variables: {
 }) {
     return await inlineStyles(
         await hydrateHTML(
-            require.resolve("../../public/templates/course-dismissed.html"),
+            require.resolve(
+                "../../public/templates/course-instructor-invitation.html"
+            ),
             variables
         )
     );

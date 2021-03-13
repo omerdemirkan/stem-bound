@@ -10,7 +10,7 @@ export async function inviteInstructor(req: IModifiedRequest, res: Response) {
     try {
         const courseId = ObjectId(req.params.courseId),
             inviterId = ObjectId(req.payload.user._id),
-            invitedId = ObjectId(req.body.userId),
+            invitedId = ObjectId(req.body.invitedUserId),
             [invited, course] = await Promise.all([
                 userService.findUserById(invitedId),
                 courseService.findCourseById(courseId),
