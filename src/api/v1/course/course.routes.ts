@@ -2,10 +2,12 @@ import { Router } from "express";
 import * as courseControllers from "./course.controllers";
 import { EUserRoles } from "../../../types";
 import { authMiddlewareService } from "../../../services";
+import { validateVerificationStatusUpdateMiddleware } from "../../../middlewares/course.middlewares";
+
+// Routers
 import meetingRouter from "./meeting/meeting.routes";
 import announcementRouter from "./announcement/announcement.routes";
-import { validateVerificationStatusUpdateMiddleware } from "../../../middlewares/course.middlewares";
-import invitationRouter from "./invitation/invitation.controllers";
+import invitationRouter from "./invitation/invitation.routes";
 
 const courseRouter = Router();
 
