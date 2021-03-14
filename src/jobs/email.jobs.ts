@@ -15,7 +15,7 @@ import {
     schoolService,
     userService,
 } from "../services";
-import { EUserRoles, IUser } from "../types";
+import { EUserRoles, IInstructorInvitationTokenPayload, IUser } from "../types";
 
 export async function sendSignUpEmail(userData: Partial<IUser>) {
     const signUpToken = jwtService.sign(userData),
@@ -130,12 +130,20 @@ export async function sendCourseInstructorInvitationEmail({
     const inviter = users.find((u) => inviterId.equals(u._id)),
         invited = users.find((u) => invitedId.equals(u._id));
 
+    const invitationTokenPayload: IInstructorInvitationTokenPayload = {
+        from: inviterId.toHexString(),
+        to: invitedId.toHexString(),
+    };
+    const invitationToken = jwtService.sign(invitationTokenPayload);
+
     await emailService.send({
         html: await hydrateCourseInstructorInvitationTemplate({
             courseName: course.title,
             inviterName: `${inviter.firstName} ${inviter.lastName}`,
             schoolName: school.name,
-            url: `https://${config.clientDomain}/app/courses/${course._id}/instructor-invitation`,
+            url: `https://${config.clientDomain}/app/courses/${
+                course._id
+            }/instructor-invitation?invitation_token=${invitationToken}&inviter_id=${inviterId.toHexString()}`,
         }),
         subject: "Course instructor invitation!",
         to: invited.email,

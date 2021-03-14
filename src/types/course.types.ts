@@ -64,3 +64,8 @@ export interface IMeetingsQuery {
     after?: Date | string;
     before?: Date | string;
 }
+
+export interface IInstructorInvitationTokenPayload {
+    from: string;
+    to: string;
+}
