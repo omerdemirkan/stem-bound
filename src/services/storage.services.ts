@@ -7,11 +7,11 @@ import { IStorageService } from "../types";
 @injectable()
 export default class StorageService implements IStorageService {
     private storage = new Storage({
-        keyFilename: require.resolve("../../env/gcp-storage.json"),
         projectId: config.projectId,
+        credentials: config.storageCredentials,
     });
 
-    private assetsBucket = this.storage.bucket(config.assetsBucketName);
+    private assetsBucket = this.storage.bucket(config.storageBucketName);
 
     saveFileToBucket(file: UploadedFile): Promise<string> {
         return new Promise((resolve, reject) => {

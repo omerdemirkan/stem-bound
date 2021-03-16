@@ -23,12 +23,12 @@ const config = Object.freeze({
             ? "https://stembound.education"
             : "http://localhost:3000",
     projectId: process.env.PROJECT_ID,
-    assetsBucketName: process.env.ASSETS_BUCKET_NAME,
+    storageBucketName: process.env.STORAGE_BUCKET_NAME as string,
+    storageCredentials: JSON.parse(process.env.STORAGE_CREDENTIALS as string),
 });
 
-if (Object.values(config).includes(undefined)) {
+if (Object.values(config).includes(undefined))
     logger.error(`Some .env variables are missing. config: ${config}`);
-}
 
 export default config;
 
