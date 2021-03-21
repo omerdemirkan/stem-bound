@@ -38,13 +38,27 @@ const Instructors = Users.discriminator(
             type: [String],
             validate: {
                 validator: schemaValidators.arrayLength({ min: 1, max: 10 }),
-                message: (props) => `1 to 10 specialties required.`,
+                message: "1 to 10 specialties required.",
             },
         },
         meta: {
             type: instructorMetaSchema,
             required: true,
             default: {},
+        },
+        remoteResumeUrl: {
+            type: String,
+            validate: {
+                validator: schemaValidators.url,
+                message: "Remote resume URL not valid",
+            },
+        },
+        resumeUrl: {
+            type: String,
+            validate: {
+                validator: schemaValidators.url,
+                message: "Resume URL not valid",
+            },
         },
     })
 );
