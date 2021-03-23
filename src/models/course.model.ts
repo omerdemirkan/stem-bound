@@ -1,5 +1,9 @@
 import mongoose, { Schema, Types } from "mongoose";
-import { validateMeetingTimes } from "../helpers";
+import {
+    courseEndValidator,
+    courseVerificationHistoryValidator,
+    courseMeetingsValidator,
+} from "../helpers";
 import { schemaValidators } from "../helpers/model.helpers";
 import {
     ECourseTypes,
@@ -192,17 +196,7 @@ const courseSchema = new Schema(
         verificationHistory: {
             type: [courseVerificationStatusUpdateSchema],
             validate: {
-                validator: function (
-                    courseVerifications: Partial<ICourseVerificationStatusUpdate>[]
-                ) {
-                    for (let i = 1; i < courseVerifications.length; i++)
-                        if (
-                            courseVerifications[i].status ===
-                            courseVerifications[i - 1].status
-                        )
-                            return false;
-                    return true;
-                },
+                validator: courseVerificationHistoryValidator,
                 message:
                     "course verification updates must change update course verification statuses",
             },
@@ -222,6 +216,18 @@ const courseSchema = new Schema(
             maxlength: 2000,
             trim: true,
         },
+        start: {
+            type: Date,
+            required: [true, "Course start date required"],
+        },
+        end: {
+            type: Date,
+            required: [true, "Course start date required"],
+            validate: {
+                validator: courseEndValidator,
+                message: "Course end date is invalid",
+            },
+        },
         type: {
             type: String,
             enum: Object.values(ECourseTypes),
@@ -232,7 +238,7 @@ const courseSchema = new Schema(
             required: true,
             default: [],
             validate: {
-                validator: validateMeetingTimes,
+                validator: courseMeetingsValidator,
                 message: "Meeting time conflict found!",
             },
         },

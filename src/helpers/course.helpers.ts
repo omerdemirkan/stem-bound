@@ -1,5 +1,6 @@
 import { request } from "express";
 import { Types } from "mongoose";
+import { logger } from "../config";
 import {
     ICourse,
     IMeeting,
@@ -188,7 +189,9 @@ export function isValidMeetingType(meetingType: EMeetingTypes): boolean {
     return Object.keys(EMeetingTypes).includes(meetingType);
 }
 
-export function validateMeetingTimes(meetings: IMeeting[]) {
+// Model Validators
+
+export function courseMeetingsValidator(meetings: IMeeting[]) {
     // -1 means an ending state change, 1 means starting.
     let stateChanges: {
         step: 1 | -1;
@@ -196,20 +199,20 @@ export function validateMeetingTimes(meetings: IMeeting[]) {
         meetingId: string;
     }[] = [];
     try {
-        for (let meeting of meetings) {
+        for (let i = 0; i < meetings.length; i++) {
             stateChanges.push({
                 step: 1,
-                time: new Date(meeting.start),
-                meetingId: meeting._id.toString(),
+                time: new Date(meetings[i].start),
+                meetingId: meetings[i]._id.toString(),
             });
             stateChanges.push({
                 step: -1,
-                time: new Date(meeting.end),
-                meetingId: meeting._id.toString(),
+                time: new Date(meetings[i].end),
+                meetingId: meetings[i]._id.toString(),
             });
         }
 
-        stateChanges = stateChanges.sort(function (a, b) {
+        stateChanges.sort(function (a, b) {
             if (a.time !== b.time) return a.time.getTime() - b.time.getTime();
             // If a is an ending state change (i.e step is -1)
             // a takes precedence, otherwise b takes precedence.
@@ -217,6 +220,7 @@ export function validateMeetingTimes(meetings: IMeeting[]) {
             return a.step;
         });
 
+        // ensuring no overlapping meeting times
         for (let i = 1; i < stateChanges.length; i += 2) {
             if (
                 stateChanges[i - 1].step !== 1 ||
@@ -226,8 +230,51 @@ export function validateMeetingTimes(meetings: IMeeting[]) {
                 return false;
         }
 
+        // ensuring all meetings are within the course start and end dates
+        const courseStart = new Date(this.start),
+            courseEnd = new Date(this.end);
+
+        for (let i = 0; i < stateChanges.length; i++)
+            if (
+                stateChanges[i].time < courseStart ||
+                stateChanges[i].time > courseEnd
+            )
+                return false;
+
         return true;
     } catch (e) {
+        logger.error("An error occured in courseMeetingsValidator", e);
+        return false;
+    }
+}
+
+export function courseVerificationHistoryValidator(
+    courseVerifications: Partial<ICourseVerificationStatusUpdate>[]
+) {
+    try {
+        for (let i = 1; i < courseVerifications.length; i++)
+            if (
+                courseVerifications[i].status ===
+                courseVerifications[i - 1].status
+            )
+                return false;
+        return true;
+    } catch (e) {
+        logger.error(
+            "An error occured in courseVerificationHistoryValidator",
+            e
+        );
+        return false;
+    }
+}
+
+export function courseEndValidator(end: Date): boolean {
+    try {
+        const startDate = new Date(this.start),
+            endDate = new Date(end);
+        return startDate < endDate;
+    } catch (e) {
+        logger.error("An error occured in courseEndValidator", e);
         return false;
     }
 }

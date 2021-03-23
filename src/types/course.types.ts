@@ -50,6 +50,8 @@ export interface ICourse extends Document {
     verificationHistory: ICourseVerificationStatusUpdate[];
     shortDescription: string;
     longDescription: string;
+    start: Date;
+    end: Date;
     type: string;
     meetings: IMeeting[];
     announcements: IAnnouncement[];
