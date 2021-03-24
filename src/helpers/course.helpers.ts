@@ -14,8 +14,11 @@ import {
     ECourseVerificationStatus,
 } from "../types";
 import { configureSubdocumentQuery } from "./query.helpers";
+import { isValidDateString } from "./validation.helpers";
 
 const { ObjectId } = Types;
+
+// Query configurations
 
 export function configureCourseArrayQuery(
     requestMetadata: IRequestMetadata
@@ -30,6 +33,8 @@ export function configureCourseArrayQuery(
         instructor_id,
         student_id,
         text,
+        before,
+        after,
     } = requestMetadata.query;
 
     skip = +skip;
@@ -40,6 +45,8 @@ export function configureCourseArrayQuery(
         : null;
     student_id = ObjectId.isValid(student_id) ? ObjectId(student_id) : null;
     type = isValidCourseType(type) ? type : null;
+    before = isValidDateString(before) ? new Date(before) : null;
+    after = isValidDateString(after) ? new Date(after) : null;
 
     let query: IQuery<ICourse> = { filter: {} };
 
@@ -53,6 +60,8 @@ export function configureCourseArrayQuery(
         query.filter.verificationStatus = verification_status;
     if (type) query.filter.type = type;
     if (text) query.filter.$text = { $search: text };
+    if (before) query.filter.start = { $lt: before };
+    if (after) query.filter.end = { $gt: after };
 
     // @ts-ignore
     if (school_id) query.filter["meta.school"] = school_id;
@@ -89,7 +98,7 @@ export function configureAnnouncementArrayQuery(
     return query;
 }
 
-export function configureCourseVerificationStatusUpdate(
+export function configureCourseVerificationStatusUpdateQuery(
     requestMetadata: IRequestMetadata
 ): ICourseVerificationStatusUpdate {
     const userId = ObjectId(requestMetadata.payload.user._id);
@@ -102,6 +111,8 @@ export function configureCourseVerificationStatusUpdate(
     else courseVerificationStatusUpdate.meta.from = userId;
     return courseVerificationStatusUpdate;
 }
+
+// Response configurations
 
 export function configureCourseArrayResponseData(
     courses: ICourse[],
@@ -180,15 +191,6 @@ export function configureAnnouncementResponseData(
 ): IAnnouncement {
     return announcement;
 }
-
-export function isValidCourseType(courseType: ECourseTypes): boolean {
-    return Object.keys(ECourseTypes).includes(courseType);
-}
-
-export function isValidMeetingType(meetingType: EMeetingTypes): boolean {
-    return Object.keys(EMeetingTypes).includes(meetingType);
-}
-
 // Model Validators
 
 export function courseMeetingsValidator(meetings: IMeeting[]) {
@@ -277,4 +279,14 @@ export function courseEndValidator(end: Date): boolean {
         logger.error("An error occured in courseEndValidator", e);
         return false;
     }
+}
+
+// Miscellaneous
+
+export function isValidCourseType(courseType: ECourseTypes): boolean {
+    return Object.keys(ECourseTypes).includes(courseType);
+}
+
+export function isValidMeetingType(meetingType: EMeetingTypes): boolean {
+    return Object.keys(EMeetingTypes).includes(meetingType);
 }

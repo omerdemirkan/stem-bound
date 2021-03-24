@@ -23,3 +23,7 @@ export function filterDuplicates<T>(values: T[], mapFunc?: (value: T) => any) {
     }
     return newValues;
 }
+
+export function isValidDateString(value: any) {
+    return !isNaN(Date.parse(value));
+}

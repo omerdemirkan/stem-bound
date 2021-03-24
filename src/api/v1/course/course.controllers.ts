@@ -18,7 +18,7 @@ import {
     configureCourseArrayQuery,
     configureCourseArrayResponseData,
     configureCourseResponseData,
-    configureCourseVerificationStatusUpdate,
+    configureCourseVerificationStatusUpdateQuery,
 } from "../../../helpers";
 
 const { ObjectId } = Types;
@@ -219,7 +219,7 @@ export async function updateCourseVerification(
 ) {
     try {
         const courseId = ObjectId(req.params.id);
-        const courseVerificationStatusUpdate = configureCourseVerificationStatusUpdate(
+        const courseVerificationStatusUpdate = configureCourseVerificationStatusUpdateQuery(
             req.meta
         );
         const course = await courseService.updateCourseVerificationStatusById(
