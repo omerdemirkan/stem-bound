@@ -229,10 +229,12 @@ class CourseService implements ICourseService {
         filter: IFilterQuery<ICourse>,
         meetings: IMeeting[]
     ): Promise<IMeeting[]> {
-        const course = await this.updateCourse(filter, {
-            // @ts-ignore
-            $push: { meetings: { $each: meetings, $sort: { start: -1 } } },
-        });
+        const course = await this.findCourse(filter);
+        course.meetings.push(...meetings);
+        course.meetings.sort(
+            (a, b) => new Date(b.start).getTime() - new Date(a.start).getTime()
+        );
+        await course.save();
         const meetingDatesSet = new Set<string>();
         meetings.forEach(function (meeting) {
             meetingDatesSet.add(new Date(meeting.start).toString());

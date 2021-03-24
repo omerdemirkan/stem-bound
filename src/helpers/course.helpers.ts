@@ -233,13 +233,15 @@ export function courseMeetingsValidator(meetings: IMeeting[]) {
         }
 
         // ensuring all meetings are within the course start and end dates
+        if (!this) return true;
+
         const courseStart = new Date(this.start),
             courseEnd = new Date(this.end);
 
         for (let i = 0; i < stateChanges.length; i++)
             if (
-                stateChanges[i].time < courseStart ||
-                stateChanges[i].time > courseEnd
+                stateChanges[i].time.getTime() < courseStart.getTime() ||
+                stateChanges[i].time.getTime() > courseEnd.getTime()
             )
                 return false;
 
