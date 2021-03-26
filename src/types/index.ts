@@ -15,3 +15,4 @@ export * from "./middleware.types";
 export * from "./service.types";
 export * from "./response.types";
 export * from "./email.types";
+export * from "./contact.types";

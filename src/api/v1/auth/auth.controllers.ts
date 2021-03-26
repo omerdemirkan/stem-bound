@@ -8,7 +8,7 @@ import {
 import { Types } from "mongoose";
 import { EErrorTypes, IModifiedRequest, IUser } from "../../../types";
 import { getTokenPayload } from "../../../helpers";
-import { sendSignUpEmail } from "../../../jobs/email.jobs";
+import { sendSignUpEmail } from "../../../jobs";
 
 const { ObjectId } = Types;
 

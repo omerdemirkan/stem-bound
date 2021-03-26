@@ -3,7 +3,7 @@ import {
     sendCourseDismissedEmails,
     sendCoursePublishedEmails,
     sendCourseVerifiedEmails,
-} from "../jobs/email.jobs";
+} from "../jobs";
 import {
     ECourseEvents,
     ECourseVerificationStatus,

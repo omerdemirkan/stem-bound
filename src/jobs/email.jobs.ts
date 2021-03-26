@@ -1,5 +1,6 @@
 import { Types } from "mongoose";
 import config from "../config";
+import { stemBoundTeamEmails } from "../constants";
 import {
     hydrateCourseDismissedTemplate,
     hydrateCourseInstructorInvitationTemplate,
@@ -15,7 +16,12 @@ import {
     schoolService,
     userService,
 } from "../services";
-import { EUserRoles, IInstructorInvitationTokenPayload, IUser } from "../types";
+import {
+    EUserRoles,
+    IInstructorInvitationTokenPayload,
+    IUser,
+    IContactData,
+} from "../types";
 
 export async function sendSignUpEmail(userData: Partial<IUser>) {
     const signUpToken = jwtService.sign(userData),
@@ -148,5 +154,16 @@ export async function sendCourseInstructorInvitationEmail({
         subject: "Course instructor invitation!",
         to: invited.email,
         inline: require.resolve("../../public/assets/stem-bound-logo.png"),
+    });
+}
+
+export async function sendContactUsEmails(
+    contactData: IContactData,
+    emails = stemBoundTeamEmails
+) {
+    await emailService.send({
+        subject: "STEM-bound contact",
+        text: `From: ${contactData.email}\n\nMessage: ${contactData.message}`,
+        to: emails,
     });
 }
