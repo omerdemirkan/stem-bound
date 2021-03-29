@@ -130,6 +130,26 @@ class MetadataService implements IMetadataService {
             userIds,
         });
     }
+
+    async handleNewInstructorMetadataUpdate({
+        instructorId,
+        courseId,
+    }: {
+        instructorId: Types.ObjectId;
+        courseId: Types.ObjectId;
+    }) {
+        await Promise.all([
+            this.courseService.addInstructorMetadata({
+                instructorIds: [instructorId],
+                courseIds: [courseId],
+            }),
+            this.userService.addCourseMetadata({
+                userIds: [instructorId],
+                courseIds: [courseId],
+                roles: [EUserRoles.INSTRUCTOR],
+            }),
+        ]);
+    }
 }
 
 export default MetadataService;

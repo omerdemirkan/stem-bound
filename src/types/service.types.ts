@@ -358,6 +358,11 @@ export interface IMetadataService {
     handleNewChatMetadataUpdate(newChat: IChat): Promise<void>;
 
     handleDeletedChatMetadataUpdate(deletedChat: IChat): Promise<void>;
+
+    handleNewInstructorMetadataUpdate(data: {
+        instructorId: Types.ObjectId;
+        courseId: Types.ObjectId;
+    }): Promise<void>;
 }
 
 export interface ISchoolService {
