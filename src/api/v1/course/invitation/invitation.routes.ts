@@ -11,7 +11,14 @@ invitationRouter.post(
     "/send-instructor-invitation",
     authMiddlewareService.extractTokenPayload,
     authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR]),
-    invitationControllers.setInstructorInvitation
+    invitationControllers.sendInstructorInvitation
+);
+
+invitationRouter.post(
+    "/accept-instructor-invitation",
+    authMiddlewareService.extractTokenPayload,
+    authMiddlewareService.allowedRoles([EUserRoles.INSTRUCTOR]),
+    invitationControllers.acceptInstructorInvitation
 );
 
 export default invitationRouter;
