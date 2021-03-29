@@ -5,6 +5,8 @@ export function configureContactData(data: any): IContactData | null {
         email: data.email,
         message: data.message,
         purpose: data.purpose,
+        firstName: data.firstName,
+        lastName: data.lastName,
     };
     // Return to set up validation with yup
     return contactData;

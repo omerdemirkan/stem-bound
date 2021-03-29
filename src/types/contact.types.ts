@@ -5,6 +5,8 @@ export enum EContactPurpose {
 }
 
 export interface IContactData {
+    firstName: string;
+    lastName: string;
     email: string;
     purpose: EContactPurpose;
     message: string;

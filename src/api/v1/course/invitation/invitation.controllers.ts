@@ -6,7 +6,10 @@ import { EErrorTypes, EUserRoles, IModifiedRequest } from "../../../../types";
 
 const { ObjectId } = Types;
 
-export async function inviteInstructor(req: IModifiedRequest, res: Response) {
+export async function setInstructorInvitation(
+    req: IModifiedRequest,
+    res: Response
+) {
     try {
         const courseId = ObjectId(req.params.courseId),
             inviterId = ObjectId(req.payload.user._id),
@@ -45,3 +48,8 @@ export async function inviteInstructor(req: IModifiedRequest, res: Response) {
         res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
+
+export async function acceptInstructorInvitation(
+    req: IModifiedRequest,
+    res: Response
+) {}
