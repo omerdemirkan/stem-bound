@@ -119,6 +119,10 @@ class UserService implements IUserService {
             .limit(Math.min(query.limit, 20));
     }
 
+    async countUsers(filter: IFilterQuery<IUser>): Promise<number> {
+        return await this.model.count(filter);
+    }
+
     async findUsersByIds(
         ids: Types.ObjectId[],
         query: IQuery<IUser> = { filter: {} }

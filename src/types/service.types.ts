@@ -402,6 +402,8 @@ export interface IUserService {
 
     findUsers(query: IQuery<IUser>): Promise<IUser[]>;
 
+    countUsers(query: IFilterQuery<IUser>): Promise<number>;
+
     findUsersByCoordinates(
         coordinates: number[],
         query?: IQuery<IUser>
