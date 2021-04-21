@@ -206,3 +206,16 @@ export async function updateUserLocation(req: IModifiedRequest, res: Response) {
         res.status(errorService.status(e)).json(errorService.json(e));
     }
 }
+
+export async function countUsers(req: IModifiedRequest, res: Response) {
+    try {
+        const { query } = configureUserArrayQuery(req.meta);
+        const numUsers = await userService.countUsers(query.filter);
+        res.json({
+            message: "Users successfully counted",
+            data: numUsers,
+        });
+    } catch (e) {
+        res.status(errorService.status(e)).json(errorService.json(e));
+    }
+}

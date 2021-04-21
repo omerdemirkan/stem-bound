@@ -7,6 +7,8 @@ const userRouter = Router();
 
 userRouter.get("/", userControllers.getUsers);
 
+userRouter.get("/count", userControllers.countUsers);
+
 userRouter.get("/:id", userControllers.getUser);
 
 userRouter.get(
