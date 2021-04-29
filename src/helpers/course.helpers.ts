@@ -274,11 +274,12 @@ export function courseVerificationHistoryValidator(
 
 export function courseEndValidator(end: Date): boolean {
     try {
+        if (!this?.start) return true;
         const startDate = new Date(this.start),
             endDate = new Date(end);
         return startDate < endDate;
     } catch (e) {
-        logger.error("An error occured in courseEndValidator", e);
+        logger.error("An error occured in courseEndValidator\n", e);
         return false;
     }
 }

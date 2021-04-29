@@ -10,7 +10,6 @@ import {
     EMeetingTypes,
     ICourse,
     ECourseVerificationStatus,
-    ICourseVerificationStatusUpdate,
 } from "../types";
 
 const courseMetaSchema = new Schema(
