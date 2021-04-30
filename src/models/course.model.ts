@@ -232,6 +232,10 @@ const courseSchema = new Schema(
             enum: Object.values(ECourseTypes),
             required: [true, "Course type is required."],
         },
+        remoteSyllabusUrl: {
+            type: String,
+            validate: [schemaValidators.url, "Boojie doojie"],
+        },
         meetings: {
             type: [meetingSchema],
             required: true,

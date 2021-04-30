@@ -60,6 +60,7 @@ export interface ICourse extends Document {
         students: Types.ObjectId[];
         school: string;
     };
+    remoteSyllabusUrl?: string;
 }
 
 export interface IMeetingsQuery {
