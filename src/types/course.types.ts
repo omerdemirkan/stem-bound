@@ -44,6 +44,12 @@ export interface ICourseVerificationStatusUpdate {
     createdAt?: Date;
 }
 
+export interface ICourseResource {
+    url: string;
+    label: string;
+    description?: string;
+}
+
 export interface ICourse extends Document {
     title: string;
     verificationStatus: ECourseVerificationStatus;
@@ -61,6 +67,7 @@ export interface ICourse extends Document {
         school: string;
     };
     remoteSyllabusUrl?: string;
+    resources: ICourseResource[];
 }
 
 export interface IMeetingsQuery {

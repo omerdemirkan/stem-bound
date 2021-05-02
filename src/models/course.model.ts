@@ -177,6 +177,26 @@ const courseVerificationStatusUpdateSchema = new Schema(
     }
 );
 
+const courseResourceSchema = new Schema({
+    url: {
+        type: String,
+        required: true,
+        validate: [schemaValidators.url, "Course resources require a url"],
+        maxlength: 1000,
+    },
+    label: {
+        type: String,
+        required: true,
+        minlength: 2,
+        maxlength: 100,
+    },
+    description: {
+        type: String,
+        minlength: 2,
+        maxlength: 1000,
+    },
+});
+
 const courseSchema = new Schema(
     {
         title: {
@@ -253,6 +273,11 @@ const courseSchema = new Schema(
         meta: {
             type: courseMetaSchema,
             required: [true, "Course meta details are required."],
+        },
+        resources: {
+            type: [courseResourceSchema],
+            required: [true, "Course resources required"],
+            default: [],
         },
     },
     {
